@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-import pl.sparkbit.security.SecurityServiceImpl;
+import pl.sparkbit.security.SecurityService;
 import pl.sparkbit.security.domain.Session;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
@@ -18,7 +18,7 @@ public class LoginController {
     public static final String LOGIN = "/login";
     private static final String LOGOUT = "/logout";
 
-    private final SecurityServiceImpl securityService;
+    private final SecurityService securityService;
 
     @PostMapping(LOGIN)
     public SessionIdDTO login(@RequestHeader(name = SESSION_ID_HEADER, required = false) String oldSessionId) {
