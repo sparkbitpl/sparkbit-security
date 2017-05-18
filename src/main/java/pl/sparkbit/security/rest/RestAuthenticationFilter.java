@@ -16,6 +16,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 import static pl.sparkbit.security.Security.SESSION_ID_HEADER;
 
@@ -32,27 +33,26 @@ public class RestAuthenticationFilter extends GenericFilterBean {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
-        try {
-            String sessionId = getSessionId(request);
-            SessionIdAuthenticationToken token = new SessionIdAuthenticationToken(sessionId);
-            Authentication authentication = authenticationManager.authenticate(token);
-            Assert.isTrue(authentication.isAuthenticated(),
-                    "Authentication is not authenticated after successful authentication");
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (AuthenticationException failed) {
-            SecurityContextHolder.clearContext();
-            entryPoint.commence(request, response, failed);
-            return;
+        Optional<String> sessionId = getSessionId(request);
+        if (sessionId.isPresent()) {
+            try {
+                SessionIdAuthenticationToken token = new SessionIdAuthenticationToken(sessionId.get());
+                Authentication authentication = authenticationManager.authenticate(token);
+                Assert.isTrue(authentication.isAuthenticated(),
+                        "Authentication is not authenticated after successful authentication");
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (AuthenticationException failed) {
+                SecurityContextHolder.clearContext();
+                entryPoint.commence(request, response, failed);
+                return;
+            }
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private String getSessionId(HttpServletRequest request) throws AuthenticationException {
+    private Optional<String> getSessionId(HttpServletRequest request) throws AuthenticationException {
         String sessionId = request.getHeader(SESSION_ID_HEADER);
-        if (sessionId == null || sessionId.isEmpty()) {
-            throw new MissingSessionIdHeaderException(SESSION_ID_HEADER + " is mandatory");
-        }
-        return sessionId;
+        return Optional.ofNullable(sessionId);
     }
 }

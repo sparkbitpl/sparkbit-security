@@ -23,6 +23,12 @@ import pl.sparkbit.security.rest.RestAuthenticationProvider;
 
 import java.util.Set;
 
+import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.HEAD;
+import static org.springframework.http.HttpMethod.PATCH;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static pl.sparkbit.security.login.LoginController.LOGIN;
 
@@ -83,12 +89,25 @@ public class SecurityConfig {
     }
 
     @Configuration
-    @Order(2)
+    @Order(10)
     @RequiredArgsConstructor
     public static class RestConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
         private final SecurityService securityService;
         private final AuthenticationEntryPoint authenticationEntryPoint;
+
+        @Value("#{'${sparkbit.security.open-endpoints.delete:FAKE_PATH}'.split(',')}")
+        private Set<String> openDeletes;
+        @Value("#{'${sparkbit.security.open-endpoints.get:FAKE_PATH}'.split(',')}")
+        private Set<String> openGets;
+        @Value("#{'${sparkbit.security.open-endpoints.head:FAKE_PATH}'.split(',')}")
+        private Set<String> openHeads;
+        @Value("#{'${sparkbit.security.open-endpoints.patch:FAKE_PATH}'.split(',')}")
+        private Set<String> openPatches;
+        @Value("#{'${sparkbit.security.open-endpoints.post:FAKE_PATH}'.split(',')}")
+        private Set<String> openPosts;
+        @Value("#{'${sparkbit.security.open-endpoints.put:FAKE_PATH}'.split(',')}")
+        private Set<String> openPuts;
 
         @Bean
         public RestAuthenticationProvider restAuthenticationProvider() {
@@ -99,11 +118,19 @@ public class SecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             GenericFilterBean restAuthenticationFiler =
                     new RestAuthenticationFilter(authenticationManager(), authenticationEntryPoint);
+
             http
                     .addFilterBefore(restAuthenticationFiler, BasicAuthenticationFilter.class)
 
                     .authorizeRequests()
                     .antMatchers(LOGIN).denyAll() //fail-safe but LOGIN is already handled by LoginConfigurationAdapter
+                    .antMatchers("FAKE_PATH").denyAll() //fake value open for all methods without any allowed patterns
+                    .antMatchers(DELETE, openDeletes.toArray(new String[0])).permitAll()
+                    .antMatchers(GET, openGets.toArray(new String[0])).permitAll()
+                    .antMatchers(HEAD, openHeads.toArray(new String[0])).permitAll()
+                    .antMatchers(PATCH, openPatches.toArray(new String[0])).permitAll()
+                    .antMatchers(POST, openPosts.toArray(new String[0])).permitAll()
+                    .antMatchers(PUT, openPuts.toArray(new String[0])).permitAll()
                     .anyRequest().authenticated()
                     .and()
 
