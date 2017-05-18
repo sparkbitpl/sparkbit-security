@@ -33,7 +33,6 @@ public class SecurityServiceImpl implements SecurityService, UserDetailsService 
 
     @Override
     @Transactional
-    //todo should be cacheable
     public UserDetails loadUserByUsername(String principalData) throws UsernameNotFoundException {
         LoginPrincipal principal = new LoginPrincipal(principalData);
         Optional<LoginUserDetails> userDetails =
