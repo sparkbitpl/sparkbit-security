@@ -89,7 +89,7 @@ public class SecurityConfig {
     }
 
     @Configuration
-    @Order(10)
+    @Order(2)
     @RequiredArgsConstructor
     public static class RestConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
@@ -123,8 +123,10 @@ public class SecurityConfig {
                     .addFilterBefore(restAuthenticationFiler, BasicAuthenticationFilter.class)
 
                     .authorizeRequests()
-                    .antMatchers(LOGIN).denyAll() //fail-safe but LOGIN is already handled by LoginConfigurationAdapter
-                    .antMatchers("FAKE_PATH").denyAll() //fake value open for all methods without any allowed patterns
+                    //fail-safe but LOGIN is already handled by LoginConfigurationAdapter
+                    .antMatchers(LOGIN).denyAll()
+                    //fake value open for all methods without any allowed patterns
+                    .antMatchers("FAKE_PATH").denyAll()
                     .antMatchers(DELETE, openDeletes.toArray(new String[0])).permitAll()
                     .antMatchers(GET, openGets.toArray(new String[0])).permitAll()
                     .antMatchers(HEAD, openHeads.toArray(new String[0])).permitAll()

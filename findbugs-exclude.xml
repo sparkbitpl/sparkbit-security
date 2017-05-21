@@ -1,0 +1,22 @@
+<FindBugsFilter>
+    <Match>
+        <Class name="pl.sparkbit.security.rest.RestAuthenticationProvider"/>
+        <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+        <Class name="pl.sparkbit.security.login.SessionIdDTO"/>
+        <Field name="sessionId"/>
+        <Bug pattern="URF_UNREAD_FIELD"/>
+    </Match>
+
+    <Match>
+        <Class name="pl.sparkbit.security.rest.RestUserDetails"/>
+        <Field name="roles"/>
+        <Bug pattern="UWF_UNWRITTEN_FIELD"/>
+    </Match>
+
+    <Match>
+        <Bug pattern="SE_NO_SERIALVERSIONID"/>
+    </Match>
+</FindBugsFilter>
