@@ -23,12 +23,6 @@ import pl.sparkbit.security.rest.RestAuthenticationProvider;
 
 import java.util.Set;
 
-import static org.springframework.http.HttpMethod.DELETE;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.HEAD;
-import static org.springframework.http.HttpMethod.PATCH;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static pl.sparkbit.security.login.LoginController.LOGIN;
 
@@ -81,33 +75,34 @@ public class SecurityConfig {
                     .rememberMe().disable()
                     .csrf().disable();
         }
-
-        @Override
-        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-            auth.authenticationProvider(daoAuthenticationProvider());
-        }
     }
 
     @Configuration
     @Order(2)
+    public static class PublicRestConfigurationAdapter extends WebSecurityConfigurerAdapter {
+
+        private static final String PUBLIC_PATTERN = "/public/**";
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http
+                    .antMatcher(PUBLIC_PATTERN)
+                    .sessionManagement().sessionCreationPolicy(STATELESS).and()
+                    .anonymous().disable()
+                    .logout().disable()
+                    .rememberMe().disable()
+                    .csrf().disable();
+        }
+    }
+
+    @Configuration
     @RequiredArgsConstructor
     public static class RestConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
+        private static final String ADMIN_PATTERN = "/admin/**";
+
         private final SecurityService securityService;
         private final AuthenticationEntryPoint authenticationEntryPoint;
-
-        @Value("#{'${sparkbit.security.open-endpoints.delete:FAKE_PATH}'.split(',')}")
-        private Set<String> openDeletes;
-        @Value("#{'${sparkbit.security.open-endpoints.get:FAKE_PATH}'.split(',')}")
-        private Set<String> openGets;
-        @Value("#{'${sparkbit.security.open-endpoints.head:FAKE_PATH}'.split(',')}")
-        private Set<String> openHeads;
-        @Value("#{'${sparkbit.security.open-endpoints.patch:FAKE_PATH}'.split(',')}")
-        private Set<String> openPatches;
-        @Value("#{'${sparkbit.security.open-endpoints.post:FAKE_PATH}'.split(',')}")
-        private Set<String> openPosts;
-        @Value("#{'${sparkbit.security.open-endpoints.put:FAKE_PATH}'.split(',')}")
-        private Set<String> openPuts;
 
         @Bean
         public RestAuthenticationProvider restAuthenticationProvider() {
@@ -125,18 +120,12 @@ public class SecurityConfig {
                     .authorizeRequests()
                     //fail-safe but LOGIN is already handled by LoginConfigurationAdapter
                     .antMatchers(LOGIN).denyAll()
-                    //fake value open for all methods without any allowed patterns
-                    .antMatchers("FAKE_PATH").denyAll()
-                    .antMatchers(DELETE, openDeletes.toArray(new String[0])).permitAll()
-                    .antMatchers(GET, openGets.toArray(new String[0])).permitAll()
-                    .antMatchers(HEAD, openHeads.toArray(new String[0])).permitAll()
-                    .antMatchers(PATCH, openPatches.toArray(new String[0])).permitAll()
-                    .antMatchers(POST, openPosts.toArray(new String[0])).permitAll()
-                    .antMatchers(PUT, openPuts.toArray(new String[0])).permitAll()
+                    .antMatchers(ADMIN_PATTERN).hasRole("ADMIN")
                     .anyRequest().authenticated()
                     .and()
 
                     .sessionManagement().sessionCreationPolicy(STATELESS).and()
+                    .anonymous().disable()
                     .logout().disable()
                     .rememberMe().disable()
                     .csrf().disable();
