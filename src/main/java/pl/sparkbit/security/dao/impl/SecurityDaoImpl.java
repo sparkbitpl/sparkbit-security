@@ -30,17 +30,17 @@ public class SecurityDaoImpl implements SecurityDao {
     }
 
     @Override
-    public Optional<RestUserDetails> selectRestUserDetails(String sessionId) {
-        return Optional.ofNullable(securityMapper.selectRestUserDetails(sessionId));
+    public Optional<RestUserDetails> selectRestUserDetails(String authToken) {
+        return Optional.ofNullable(securityMapper.selectRestUserDetails(authToken));
     }
 
     @Override
-    public Optional<Session> selectSession(String id) {
-        return Optional.ofNullable(securityMapper.selectSession(id));
+    public Optional<Session> selectSession(String authToken) {
+        return Optional.ofNullable(securityMapper.selectSession(authToken));
     }
 
     @Override
-    public void deleteSession(String sessionId) {
-        securityMapper.deleteSession(sessionId);
+    public void deleteSession(String authToken) {
+        securityMapper.deleteSession(authToken);
     }
 }

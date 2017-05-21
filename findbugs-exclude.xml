@@ -5,8 +5,8 @@
     </Match>
 
     <Match>
-        <Class name="pl.sparkbit.security.login.SessionIdDTO"/>
-        <Field name="sessionId"/>
+        <Class name="pl.sparkbit.security.login.AuthTokenDTO"/>
+        <Field name="authToken"/>
         <Bug pattern="URF_UNREAD_FIELD"/>
     </Match>
 

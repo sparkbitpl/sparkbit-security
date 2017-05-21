@@ -35,17 +35,17 @@ public class SecurityMapperTest extends MapperTestBase {
     public void shouldInsertSession() {
         insertTestData(USER_1);
 
-        String sessionId = "id54321";
+        String authToken = "id54321";
         Instant creation = Instant.ofEpochSecond(31232133);
         Session session = Session.builder()
-                .id(sessionId)
+                .authToken(authToken)
                 .userId(USER_1_ID)
                 .creation(creation)
                 .build();
         securityMapper.insertSession(session);
 
         assertEquals(1, countRowsInTableWhereColumnsEquals(SESSION,
-                "id", quote(sessionId),
+                "auth_token", quote(authToken),
                 "user_id", quote(USER_1_ID),
                 "creation_ts", creation.toEpochMilli()));
     }
@@ -76,14 +76,14 @@ public class SecurityMapperTest extends MapperTestBase {
 
     @Test
     public void shouldSelectRestUserDetails() {
-        String sessionId = "id12345";
+        String authToken = "id12345";
         Instant creation = Instant.ofEpochSecond(31232133);
 
-        insertTestData(USER_1, session(sessionId, USER_1_ID, creation));
+        insertTestData(USER_1, session(authToken, USER_1_ID, creation));
 
-        RestUserDetails restUserDetails = securityMapper.selectRestUserDetails(sessionId);
+        RestUserDetails restUserDetails = securityMapper.selectRestUserDetails(authToken);
         assertNotNull(restUserDetails);
-        assertEquals(sessionId, restUserDetails.getSessionId());
+        assertEquals(authToken, restUserDetails.getAuthToken());
         assertEquals(USER_1_ID, restUserDetails.getUserId());
         assertTrue(restUserDetails.getRoles() == restUserDetails.getAuthorities());
         assertEquals(2, restUserDetails.getRoles().size());
@@ -93,26 +93,26 @@ public class SecurityMapperTest extends MapperTestBase {
 
     @Test
     public void shouldSelectSession() {
-        String id = "id12345";
+        String authToken = "id12345";
         Instant creation = Instant.ofEpochSecond(31232133);
 
-        insertTestData(USER_1, session(id, USER_1_ID, creation));
+        insertTestData(USER_1, session(authToken, USER_1_ID, creation));
 
-        Session session = securityMapper.selectSession(id);
+        Session session = securityMapper.selectSession(authToken);
         assertNotNull(session);
-        assertEquals(id, session.getId());
+        assertEquals(authToken, session.getAuthToken());
         assertEquals(USER_1_ID, session.getUserId());
         assertEquals(creation, session.getCreation());
     }
 
     @Test
     public void shouldDeleteSession() {
-        String sessionId = "id12345";
+        String authToken = "id12345";
         Instant creation = Instant.ofEpochSecond(31232133);
 
-        insertTestData(USER_1, session(sessionId, USER_1_ID, creation));
+        insertTestData(USER_1, session(authToken, USER_1_ID, creation));
 
-        securityMapper.deleteSession(sessionId);
-        assertEquals(0, countRowsInTableWhereColumnsEquals(SESSION, "id", quote(sessionId)));
+        securityMapper.deleteSession(authToken);
+        assertEquals(0, countRowsInTableWhereColumnsEquals(SESSION, "auth_token", quote(authToken)));
     }
 }

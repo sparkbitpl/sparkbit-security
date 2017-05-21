@@ -11,7 +11,7 @@ import java.time.Instant;
 @Getter
 public class Session {
 
-    private final String id;
+    private final String authToken;
     private final String userId;
     private final Instant creation;
 }

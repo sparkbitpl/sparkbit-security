@@ -13,9 +13,9 @@ public interface SecurityDao {
 
     Optional<LoginUserDetails> selectLoginUserDetails(AuthnAttributes authnAttributes);
 
-    Optional<RestUserDetails> selectRestUserDetails(String sessionId);
+    Optional<RestUserDetails> selectRestUserDetails(String authToken);
 
-    Optional<Session> selectSession(String id);
+    Optional<Session> selectSession(String authToken);
 
-    void deleteSession(String sessionId);
+    void deleteSession(String authToken);
 }

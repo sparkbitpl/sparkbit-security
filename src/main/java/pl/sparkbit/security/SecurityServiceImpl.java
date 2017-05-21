@@ -40,7 +40,7 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public Session startNewSession(String oldSessionId) {
+    public Session startNewSession(String oldAuthToken) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         Assert.notNull(auth, "Can't create session for unauthenticated user");
@@ -49,19 +49,19 @@ public class SecurityServiceImpl implements SecurityService {
         LoginUserDetails loginUserDetails = (LoginUserDetails) auth.getPrincipal();
 
         Session newSession = Session.builder()
-                .id(idGenerator.generate())
+                .authToken(idGenerator.generate())
                 .userId(loginUserDetails.getUserId())
                 .creation(clock.instant())
                 .build();
         securityDao.insertSession(newSession);
 
-        if (oldSessionId != null && !oldSessionId.isEmpty()) {
-            Optional<Session> oldSession = securityDao.selectSession(oldSessionId);
+        if (oldAuthToken != null && !oldAuthToken.isEmpty()) {
+            Optional<Session> oldSession = securityDao.selectSession(oldAuthToken);
             if (oldSession.isPresent()) {
                 if (oldSession.get().getUserId().equals(newSession.getUserId())) {
                     log.info("Login request with X-Sid header - should never happened for correctly implemented " +
                             "clients. Invalidating old session for user {}", newSession.getUserId());
-                    securityDao.deleteSession(oldSessionId);
+                    securityDao.deleteSession(oldAuthToken);
                 } else {
                     log.info("Login request from user {} with X-Sid header from another user {}",
                             newSession.getUserId(), oldSession.get().getUserId());
@@ -75,15 +75,15 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public RestUserDetails retrieveRestUserDetails(String sessionId) {
-        Optional<RestUserDetails> restUserDetails = securityDao.selectRestUserDetails(sessionId);
+    public RestUserDetails retrieveRestUserDetails(String authToken) {
+        Optional<RestUserDetails> restUserDetails = securityDao.selectRestUserDetails(authToken);
         return restUserDetails.orElseThrow(() -> new SessionNotFoundException("Session not found"));
     }
 
     @Override
     public void logout() {
         RestUserDetails restUserDetails = security.currentUserDetails();
-        securityDao.deleteSession(restUserDetails.getSessionId());
+        securityDao.deleteSession(restUserDetails.getAuthToken());
         SecurityContextHolder.clearContext();
     }
 }

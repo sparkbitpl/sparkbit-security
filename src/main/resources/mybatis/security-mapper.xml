@@ -4,7 +4,7 @@
 <mapper namespace="pl.sparkbit.security.dao.mybatis.SecurityMapper">
 
     <insert id="insertSession">
-        INSERT INTO session (id,user_id,creation_ts) VALUES (#{id},#{userId},#{creation})
+        INSERT INTO session (auth_token,user_id,creation_ts) VALUES (#{authToken},#{userId},#{creation})
     </insert>
 
     <resultMap id="loginUserDetailsResultMap" type="pl.sparkbit.security.login.LoginUserDetails">
@@ -23,7 +23,7 @@
 
     <resultMap id="restUserDetailsResultMap" type="pl.sparkbit.security.rest.RestUserDetails">
         <constructor>
-            <idArg column="sessionId" javaType="String"/>
+            <idArg column="auth_token" javaType="String"/>
             <arg column="user_id" javaType="String"/>
         </constructor>
         <collection property="roles" ofType="org.springframework.security.core.authority.SimpleGrantedAuthority">
@@ -34,24 +34,25 @@
     </resultMap>
 
     <select id="selectRestUserDetails" resultMap="restUserDetailsResultMap">
-        SELECT s.id as sessionId, s.user_id, ur.role FROM session s LEFT OUTER JOIN user_role ur on s.user_id=ur.user_id
-        WHERE s.id=#{sessionId}
+        SELECT s.auth_token as auth_token, s.user_id, ur.role
+        FROM session s LEFT OUTER JOIN user_role ur on s.user_id=ur.user_id
+        WHERE s.auth_token=#{authToken}
     </select>
 
     <resultMap id="sessionResultMap" type="pl.sparkbit.security.domain.Session">
         <constructor>
-            <idArg column="id" javaType="String"/>
+            <idArg column="auth_token" javaType="String"/>
             <arg column="user_id" javaType="String"/>
             <arg column="creation_ts" javaType="java.time.Instant"/>
         </constructor>
     </resultMap>
 
     <select id="selectSession" resultMap="sessionResultMap">
-        SELECT id, user_id, creation_ts FROM session s WHERE id=#{id}
+        SELECT auth_token, user_id, creation_ts FROM session s WHERE auth_token=#{authToken}
     </select>
 
     <delete id="deleteSession">
-        DELETE FROM session where id=#{id}
+        DELETE FROM session where auth_token=#{authToken}
     </delete>
 
 </mapper>

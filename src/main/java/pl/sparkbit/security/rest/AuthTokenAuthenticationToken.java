@@ -5,15 +5,15 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 import java.util.Collections;
 
-public class SessionIdAuthenticationToken extends AbstractAuthenticationToken {
+public class AuthTokenAuthenticationToken extends AbstractAuthenticationToken {
 
     @Getter
-    private final String sessionId;
+    private final String authToken;
 
-    SessionIdAuthenticationToken(String sessionId) {
+    AuthTokenAuthenticationToken(String authToken) {
         super(Collections.emptyList());
 
-        this.sessionId = sessionId;
+        this.authToken = authToken;
         setAuthenticated(false);
     }
 
@@ -24,6 +24,6 @@ public class SessionIdAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getPrincipal() {
-        return sessionId;
+        return authToken;
     }
 }

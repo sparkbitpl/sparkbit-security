@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
-import static pl.sparkbit.security.Security.SESSION_ID_HEADER;
+import static pl.sparkbit.security.Security.AUTH_TOKEN_HEADER;
 
 @RequiredArgsConstructor
 public class RestAuthenticationFilter extends GenericFilterBean {
@@ -33,10 +33,10 @@ public class RestAuthenticationFilter extends GenericFilterBean {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
-        Optional<String> sessionId = getSessionId(request);
-        if (sessionId.isPresent()) {
+        Optional<String> authToken = getAuthToken(request);
+        if (authToken.isPresent()) {
             try {
-                SessionIdAuthenticationToken token = new SessionIdAuthenticationToken(sessionId.get());
+                AuthTokenAuthenticationToken token = new AuthTokenAuthenticationToken(authToken.get());
                 Authentication authentication = authenticationManager.authenticate(token);
                 Assert.isTrue(authentication.isAuthenticated(),
                         "Authentication is not authenticated after successful authentication");
@@ -51,8 +51,8 @@ public class RestAuthenticationFilter extends GenericFilterBean {
         filterChain.doFilter(request, response);
     }
 
-    private Optional<String> getSessionId(HttpServletRequest request) throws AuthenticationException {
-        String sessionId = request.getHeader(SESSION_ID_HEADER);
-        return Optional.ofNullable(sessionId);
+    private Optional<String> getAuthToken(HttpServletRequest request) throws AuthenticationException {
+        String authToken = request.getHeader(AUTH_TOKEN_HEADER);
+        return Optional.ofNullable(authToken);
     }
 }

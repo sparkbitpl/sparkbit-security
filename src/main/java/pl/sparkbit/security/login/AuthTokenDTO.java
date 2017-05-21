@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-class SessionIdDTO {
+class AuthTokenDTO {
 
-    @JsonProperty("sid")
+    @JsonProperty("authToken")
     @SuppressWarnings("unused")
-    private final String sessionId;
+    private final String authToken;
 }

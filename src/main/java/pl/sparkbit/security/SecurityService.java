@@ -6,9 +6,9 @@ import pl.sparkbit.security.rest.RestUserDetails;
 
 public interface SecurityService extends UserDetailsService {
 
-    Session startNewSession(String oldSessionId);
+    Session startNewSession(String oldAuthToken);
 
-    RestUserDetails retrieveRestUserDetails(String sessionId);
+    RestUserDetails retrieveRestUserDetails(String authToken);
 
     void logout();
 }

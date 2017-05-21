@@ -14,11 +14,11 @@ public class RestAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        Assert.isInstanceOf(SessionIdAuthenticationToken.class, authentication,
-                "Only SessionIdAuthenticationToken is supported");
+        Assert.isInstanceOf(AuthTokenAuthenticationToken.class, authentication,
+                "Only AuthTokenAuthenticationToken is supported");
 
-        String sessionId = ((SessionIdAuthenticationToken) authentication).getSessionId();
-        RestUserDetails restUserDetails = securityService.retrieveRestUserDetails(sessionId);
+        String authToken = ((AuthTokenAuthenticationToken) authentication).getAuthToken();
+        RestUserDetails restUserDetails = securityService.retrieveRestUserDetails(authToken);
 
         Assert.notNull(restUserDetails, "Returned restUserDetails should never be null - method contract violation");
 
@@ -27,6 +27,6 @@ public class RestAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return (SessionIdAuthenticationToken.class.isAssignableFrom(authentication));
+        return (AuthTokenAuthenticationToken.class.isAssignableFrom(authentication));
     }
 }

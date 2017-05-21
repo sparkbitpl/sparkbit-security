@@ -9,7 +9,7 @@ import pl.sparkbit.security.SecurityService;
 import pl.sparkbit.security.domain.Session;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static pl.sparkbit.security.Security.SESSION_ID_HEADER;
+import static pl.sparkbit.security.Security.AUTH_TOKEN_HEADER;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,10 +21,10 @@ public class LoginController {
     private final SecurityService securityService;
 
     @PostMapping(LOGIN)
-    public SessionIdDTO login(@RequestHeader(name = SESSION_ID_HEADER, required = false) String oldSessionId) {
-        Session session = securityService.startNewSession(oldSessionId);
+    public AuthTokenDTO login(@RequestHeader(name = AUTH_TOKEN_HEADER, required = false) String oldAuthToken) {
+        Session session = securityService.startNewSession(oldAuthToken);
 
-        return new SessionIdDTO(session.getId());
+        return new AuthTokenDTO(session.getAuthToken());
     }
 
     @PostMapping(LOGOUT)

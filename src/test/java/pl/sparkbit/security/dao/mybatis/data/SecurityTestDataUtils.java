@@ -11,10 +11,10 @@ import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.USER_ROLE;
 
 public class SecurityTestDataUtils {
 
-    public static Operation session(String id, String user_id, Instant creation) {
+    public static Operation session(String authToken, String user_id, Instant creation) {
         return insertInto(SESSION)
-                .columns("id", "user_id", "creation_ts")
-                .values(id, user_id, creation.toEpochMilli())
+                .columns("auth_token", "user_id", "creation_ts")
+                .values(authToken, user_id, creation.toEpochMilli())
                 .build();
     }
 

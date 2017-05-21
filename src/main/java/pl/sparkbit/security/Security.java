@@ -9,7 +9,7 @@ import pl.sparkbit.security.rest.RestUserDetails;
 @Component
 public class Security {
 
-    public static final String SESSION_ID_HEADER = "X-Sid";
+    public static final String AUTH_TOKEN_HEADER = "X-Sparkbit-Auth-Token";
 
     public RestUserDetails currentUserDetails() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

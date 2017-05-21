@@ -11,7 +11,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class RestUserDetails implements UserDetails {
 
-    private final String sessionId;
+    private final String authToken;
     private final String userId;
     @SuppressWarnings("unused")
     private Collection<GrantedAuthority> roles;
@@ -28,7 +28,7 @@ public class RestUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return sessionId;
+        return authToken;
     }
 
     @Override

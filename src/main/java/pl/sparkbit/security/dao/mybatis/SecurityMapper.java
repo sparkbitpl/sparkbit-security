@@ -12,9 +12,9 @@ public interface SecurityMapper {
 
     LoginUserDetails selectLoginUserDetails(@Param("authnAttributes") AuthnAttributes authnAttributes);
 
-    RestUserDetails selectRestUserDetails(String sessionId);
+    RestUserDetails selectRestUserDetails(String authToken);
 
-    Session selectSession(String i);
+    Session selectSession(String authToken);
 
-    void deleteSession(String sessionId);
+    void deleteSession(String authToken);
 }
