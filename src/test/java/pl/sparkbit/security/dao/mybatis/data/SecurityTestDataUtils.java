@@ -6,22 +6,15 @@ import java.time.Instant;
 
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.SESSION;
-import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.USER;
+import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.CREDENTIALS;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.USER_ROLE;
 
 public class SecurityTestDataUtils {
 
-    public static Operation session(String authToken, String user_id, Instant creation) {
-        return insertInto(SESSION)
-                .columns("auth_token", "user_id", "creation_ts")
-                .values(authToken, user_id, creation.toEpochMilli())
-                .build();
-    }
-
-    static Operation user(SampleUser u) {
-        return insertInto(USER)
-                .columns("id", "username", "password")
-                .values(u.getId(), u.getUsername(), u.getPassword())
+    static Operation user(Credentials u) {
+        return insertInto(CREDENTIALS)
+                .columns("user_id", "username", "password")
+                .values(u.getUserId(), u.getUsername(), u.getPassword())
                 .build();
     }
 
@@ -29,6 +22,13 @@ public class SecurityTestDataUtils {
         return insertInto(USER_ROLE)
                 .columns("user_id", "role")
                 .values(userId, role)
+                .build();
+    }
+
+    public static Operation session(String authToken, String user_id, Instant creation) {
+        return insertInto(SESSION)
+                .columns("auth_token", "user_id", "creation_ts")
+                .values(authToken, user_id, creation.toEpochMilli())
                 .build();
     }
 }

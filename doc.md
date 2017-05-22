@@ -38,29 +38,45 @@
 
    One way to obtain authToken is to call authenticate with password. In this solution credentials are being kept in the same MySQL database that is used by REST API.
    
-   0. In your database you must have table _uzer_ with:
-      0. Id column: "_id VARCHAR(32) NOT NULL_"
-      0. Password column: "_password VARCHAR(82)_" (only hashes of passwords will be kept in the database)
-      0. One or more varchar columns identifying the user (eg. _username_, _email_ or _email_ + _application_name_)
-
    0. Create the following tables:
-      ```apple js
-       CREATE TABLE user_role (
+      ```
+      CREATE TABLE credentials (
+        user_id  VARCHAR(32) NOT NULL,
+        -- here youe need to put one or more columns identyfying the user eg.
+        -- username VARCHAR(50) NOT NULL,
+        -- or
+        -- email            VARCHAR(50) NOT NULL,
+        -- application_name VARCHAR(50) NOT NULL,
+        password VARCHAR(82) NOT NULL,
+        PRIMARY KEY (user_id),
+        -- you might add foreign key to your user table eg.
+        -- FOREIGN KEY (user_id) REFERENCES uzer(id),
+        -- you should also add unique contraint:
+        -- UNIQUE (username)
+        -- or
+        -- UNIQUE (email, application_name)
+        --
+      );
+
+      CREATE TABLE user_role (
          user_id VARCHAR(32) NOT NULL,
          role    VARCHAR(50) NOT NULL,
          PRIMARY KEY (user_id, role),
          FOREIGN KEY (user_id) REFERENCES uzer (id)
            ON DELETE CASCADE
-       );
+      );
        
-       CREATE TABLE session (
+      CREATE TABLE session (
          auth_token  VARCHAR(32) NOT NULL,
          user_id     VARCHAR(32) NOT NULL,
          creation_ts BIGINT      NOT NULL,
          PRIMARY KEY (auth_token),
          FOREIGN KEY (user_id) REFERENCES uzer (id)
-       );
-       ```
+      );
+      ```
+      * user_id column should match user id in a table in which you store users. It should be defined as: "_id VARCHAR(32) NOT NULL_"
+      * Only hashes of passwords will be kept in the database.
+      * Column identifying the user (eg. username) should be _varchars_
        
    0. In _application.properties_ configure which attributes identify the user. For example:
       ```
@@ -72,8 +88,8 @@
       ```
       {
       	"authnAttributes": {
-      		"email": "user0@foo.bar",
-      		"applicationName": "go11"
+      	  "email": "user0@foo.bar",
+      	  "applicationName": "go11"
       	},
       	"password": "1"
       }

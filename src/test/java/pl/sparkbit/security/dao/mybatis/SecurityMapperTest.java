@@ -19,10 +19,10 @@ import static org.junit.Assert.assertTrue;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.SESSION;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.ROLE_ADMIN;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.ROLE_USER;
-import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.USER_1;
-import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.USER_1_ID;
-import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.USER_1_PASSWORD;
-import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.USER_1_USERNAME;
+import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.CREDS_1;
+import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.CREDS_1_USER_ID;
+import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.CREDS_1_PASSWORD;
+import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.CREDS_1_USERNAME;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityTestDataUtils.session;
 
 @SuppressWarnings("SpringJavaAutowiringInspection")
@@ -33,42 +33,42 @@ public class SecurityMapperTest extends MapperTestBase {
 
     @Test
     public void shouldInsertSession() {
-        insertTestData(USER_1);
+        insertTestData(CREDS_1);
 
         String authToken = "id54321";
         Instant creation = Instant.ofEpochSecond(31232133);
         Session session = Session.builder()
                 .authToken(authToken)
-                .userId(USER_1_ID)
+                .userId(CREDS_1_USER_ID)
                 .creation(creation)
                 .build();
         securityMapper.insertSession(session);
 
         assertEquals(1, countRowsInTableWhereColumnsEquals(SESSION,
                 "auth_token", quote(authToken),
-                "user_id", quote(USER_1_ID),
+                "user_id", quote(CREDS_1_USER_ID),
                 "creation_ts", creation.toEpochMilli()));
     }
 
     @Test
     public void shouldSelectLoginUserDetails() {
-        insertTestData(USER_1);
+        insertTestData(CREDS_1);
 
         AuthnAttributes authnAttributes =
-                new AuthnAttributes(singletonMap("username", USER_1_USERNAME), singleton("username"));
+                new AuthnAttributes(singletonMap("username", CREDS_1_USERNAME), singleton("username"));
         LoginUserDetails loginUserDetails = securityMapper.selectLoginUserDetails(authnAttributes);
 
         assertNotNull(loginUserDetails);
-        assertEquals(USER_1_ID, loginUserDetails.getUserId());
-        assertEquals(USER_1_ID, loginUserDetails.getUsername());
-        assertEquals(USER_1_PASSWORD, loginUserDetails.getPassword());
+        assertEquals(CREDS_1_USER_ID, loginUserDetails.getUserId());
+        assertEquals(CREDS_1_USER_ID, loginUserDetails.getUsername());
+        assertEquals(CREDS_1_PASSWORD, loginUserDetails.getPassword());
         assertNull(loginUserDetails.getAuthorities());
     }
 
     @Test
     public void shouldReturnNullWhenUserNotFound() {
         AuthnAttributes authnAttributes =
-                new AuthnAttributes(singletonMap("username", USER_1_USERNAME), singleton("username"));
+                new AuthnAttributes(singletonMap("username", CREDS_1_USERNAME), singleton("username"));
         LoginUserDetails loginUserDetails = securityMapper.selectLoginUserDetails(authnAttributes);
 
         assertNull(loginUserDetails);
@@ -79,12 +79,12 @@ public class SecurityMapperTest extends MapperTestBase {
         String authToken = "id12345";
         Instant creation = Instant.ofEpochSecond(31232133);
 
-        insertTestData(USER_1, session(authToken, USER_1_ID, creation));
+        insertTestData(CREDS_1, session(authToken, CREDS_1_USER_ID, creation));
 
         RestUserDetails restUserDetails = securityMapper.selectRestUserDetails(authToken);
         assertNotNull(restUserDetails);
         assertEquals(authToken, restUserDetails.getAuthToken());
-        assertEquals(USER_1_ID, restUserDetails.getUserId());
+        assertEquals(CREDS_1_USER_ID, restUserDetails.getUserId());
         assertTrue(restUserDetails.getRoles() == restUserDetails.getAuthorities());
         assertEquals(2, restUserDetails.getRoles().size());
         assertTrue(restUserDetails.getRoles().contains(new SimpleGrantedAuthority(ROLE_ADMIN)));
@@ -96,12 +96,12 @@ public class SecurityMapperTest extends MapperTestBase {
         String authToken = "id12345";
         Instant creation = Instant.ofEpochSecond(31232133);
 
-        insertTestData(USER_1, session(authToken, USER_1_ID, creation));
+        insertTestData(CREDS_1, session(authToken, CREDS_1_USER_ID, creation));
 
         Session session = securityMapper.selectSession(authToken);
         assertNotNull(session);
         assertEquals(authToken, session.getAuthToken());
-        assertEquals(USER_1_ID, session.getUserId());
+        assertEquals(CREDS_1_USER_ID, session.getUserId());
         assertEquals(creation, session.getCreation());
     }
 
@@ -110,7 +110,7 @@ public class SecurityMapperTest extends MapperTestBase {
         String authToken = "id12345";
         Instant creation = Instant.ofEpochSecond(31232133);
 
-        insertTestData(USER_1, session(authToken, USER_1_ID, creation));
+        insertTestData(CREDS_1, session(authToken, CREDS_1_USER_ID, creation));
 
         securityMapper.deleteSession(authToken);
         assertEquals(0, countRowsInTableWhereColumnsEquals(SESSION, "auth_token", quote(authToken)));

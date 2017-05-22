@@ -9,6 +9,5 @@ public final class SecurityDbTables {
 
     public static final String SESSION = "session";
     public static final String USER_ROLE = "user_role";
-    public static final String USER = "uzer";
-
+    public static final String CREDENTIALS = "credentials";
 }

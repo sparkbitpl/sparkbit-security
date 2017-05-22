@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 @Builder(toBuilder = true)
 @Getter
 @RequiredArgsConstructor
-public class SampleUser {
-    private final String id;
+public class Credentials {
+    private final String userId;
     private final String username;
     private final String password;
 }
