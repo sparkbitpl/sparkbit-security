@@ -21,8 +21,9 @@ import pl.sparkbit.security.login.LoginAuthenticationFilter;
 import pl.sparkbit.security.rest.RestAuthenticationFilter;
 import pl.sparkbit.security.rest.RestAuthenticationProvider;
 
-import java.util.Set;
+import java.util.Arrays;
 
+import static java.util.stream.Collectors.toSet;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static pl.sparkbit.security.login.LoginController.LOGIN;
 
@@ -44,8 +45,8 @@ public class SecurityConfig {
         private final SecurityService securityService;
         private final AuthenticationEntryPoint authenticationEntryPoint;
 
-        @Value("#{'${sparkbit.security.expected-authn-attributes}'.split(',')}")
-        private Set<String> expectedAuthnAttributes;
+        @Value("${sparkbit.security.expected-authn-attributes}")
+        private String[] expectedAuthnAttributes;
 
         @Bean
         public PasswordEncoder passwordEncoder() {
@@ -64,7 +65,7 @@ public class SecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             GenericFilterBean loginAuthenticationFiler =
                     new LoginAuthenticationFilter(authenticationManager(), authenticationEntryPoint,
-                            expectedAuthnAttributes);
+                            Arrays.stream(expectedAuthnAttributes).collect(toSet()));
             http
                     .addFilterBefore(loginAuthenticationFiler, BasicAuthenticationFilter.class)
                     .antMatcher(LOGIN)
