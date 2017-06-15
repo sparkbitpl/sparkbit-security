@@ -67,6 +67,7 @@ public class SecurityConfig {
                     new LoginAuthenticationFilter(authenticationManager(), authenticationEntryPoint,
                             Arrays.stream(expectedAuthnAttributes).collect(toSet()));
             http
+                    .cors().and()
                     .addFilterBefore(loginAuthenticationFiler, BasicAuthenticationFilter.class)
                     .antMatcher(LOGIN)
 
@@ -116,6 +117,7 @@ public class SecurityConfig {
                     new RestAuthenticationFilter(authenticationManager(), authenticationEntryPoint);
 
             http
+                    .cors().and()
                     .addFilterBefore(restAuthenticationFiler, BasicAuthenticationFilter.class)
 
                     .authorizeRequests()
