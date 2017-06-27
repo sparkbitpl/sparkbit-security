@@ -7,11 +7,14 @@ import org.springframework.boot.autoconfigure.security.Http401AuthenticationEntr
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -20,8 +23,10 @@ import org.springframework.web.filter.GenericFilterBean;
 import pl.sparkbit.security.login.LoginAuthenticationFilter;
 import pl.sparkbit.security.rest.RestAuthenticationFilter;
 import pl.sparkbit.security.rest.RestAuthenticationProvider;
+import pl.sparkbit.security.social.GoogleAuthenticationProvider;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -31,6 +36,11 @@ import static pl.sparkbit.security.login.LoginController.LOGIN;
 @EnableWebSecurity
 @MapperScan("pl.sparkbit.security.dao.mybatis")
 public class SecurityConfig {
+
+    @Bean
+    public ConversionService conversionService() {
+        return new DefaultConversionService();
+    }
 
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
@@ -44,9 +54,13 @@ public class SecurityConfig {
 
         private final SecurityService securityService;
         private final AuthenticationEntryPoint authenticationEntryPoint;
+        private final UserDetailsService userDetailsService;
 
         @Value("${sparkbit.security.expected-authn-attributes}")
         private String[] expectedAuthnAttributes;
+
+        @Value(value = "${sparkbit.security.social.google.clientIds:#{null}}")
+        private List<String> googleClientIds;
 
         @Bean
         public PasswordEncoder passwordEncoder() {
@@ -76,6 +90,14 @@ public class SecurityConfig {
                     .logout().disable()
                     .rememberMe().disable()
                     .csrf().disable();
+        }
+
+        @Override
+        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+            auth.authenticationProvider(daoAuthenticationProvider());
+            if (googleClientIds != null) {
+                auth.authenticationProvider(new GoogleAuthenticationProvider(googleClientIds, userDetailsService));
+            }
         }
     }
 

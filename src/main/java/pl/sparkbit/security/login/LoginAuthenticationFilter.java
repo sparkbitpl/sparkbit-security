@@ -1,11 +1,13 @@
 package pl.sparkbit.security.login;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +32,21 @@ public class LoginAuthenticationFilter extends GenericFilterBean {
     private final AuthenticationManager authenticationManager;
     private final AuthenticationEntryPoint entryPoint;
     private final Set<String> expectedAuthnAttributes;
+    private final ObjectReader jsonReader;
+
+    public LoginAuthenticationFilter(
+            AuthenticationManager authenticationManager,
+            AuthenticationEntryPoint entryPoint, Set<String> expectedAuthnAttributes) {
+        this.authenticationManager = authenticationManager;
+        this.entryPoint = entryPoint;
+        this.expectedAuthnAttributes = expectedAuthnAttributes;
+        LoginDTODeserializer deserializer = new LoginDTODeserializer();
+        SimpleModule module = new SimpleModule("LoginDeserializerModule", Version.unknownVersion());
+        module.addDeserializer(LoginDTO.class, deserializer);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(module);
+        this.jsonReader = objectMapper.readerFor(LoginDTO.class);
+    }
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain)
@@ -40,11 +57,7 @@ public class LoginAuthenticationFilter extends GenericFilterBean {
 
         try {
             LoginDTO dto = getLoginData(request.getReader());
-            AuthnAttributes authnAttributes =
-                    new AuthnAttributes(dto.getAuthnAttributes(), expectedAuthnAttributes);
-            LoginPrincipal principal = new LoginPrincipal(authnAttributes);
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(principal,
-                    dto.getPassword());
+            Authentication token = dto.toToken(expectedAuthnAttributes);
 
             Authentication authentication = authenticationManager.authenticate(token);
             Assert.isTrue(authentication.isAuthenticated(),
@@ -61,7 +74,7 @@ public class LoginAuthenticationFilter extends GenericFilterBean {
 
     private LoginDTO getLoginData(Reader reader) throws AuthenticationException, IOException {
         try {
-            return new ObjectMapper().readerFor(LoginDTO.class).readValue(reader);
+            return this.jsonReader.readValue(reader);
         } catch (JsonProcessingException e) {
             throw new InvalidJsonException("Invalid request JSON", e);
         }

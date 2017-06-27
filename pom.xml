@@ -191,6 +191,14 @@
             <version>1.3.0</version>
         </dependency>
 
+        <!-- Social login begin -->
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>1.22.0</version>
+        </dependency>
+        <!-- Social login end -->
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
