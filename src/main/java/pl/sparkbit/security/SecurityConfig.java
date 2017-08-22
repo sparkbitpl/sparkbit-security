@@ -24,6 +24,7 @@ import org.springframework.web.filter.GenericFilterBean;
 import pl.sparkbit.security.login.LoginAuthenticationFilter;
 import pl.sparkbit.security.rest.RestAuthenticationFilter;
 import pl.sparkbit.security.rest.RestAuthenticationProvider;
+import pl.sparkbit.security.social.FacebookAuthenticationProvider;
 import pl.sparkbit.security.social.GoogleAuthenticationProvider;
 import pl.sparkbit.security.social.TwitterAuthenticationProvider;
 
@@ -70,6 +71,14 @@ public class SecurityConfig {
         private String twitterAppSecret;
         @Value("${sparkbit.security.social.twitter.verificationRequestUrl:#{null}}")
         private String twitterVerifyUrl;
+        @Value("${sparkbit.security.social.facebook.appKey:#{null}}")
+        private String facebookAppKey;
+        @Value("${sparkbit.security.social.facebook.appSecret:#{null}}")
+        private String facebookAppSecret;
+        @Value("${sparkbit.security.social.facebook.redirectUri:#{null}}")
+        private String facebookRedirectUri;
+        @Value("${sparkbit.security.social.facebook.verificationRequestUrl:#{null}}")
+        private String facebookVerifyUrl;
 
         @Bean
         public PasswordEncoder passwordEncoder() {
@@ -110,6 +119,10 @@ public class SecurityConfig {
             if (twitterAppKey != null) {
                 auth.authenticationProvider(new TwitterAuthenticationProvider(twitterAppKey, twitterAppSecret,
                         twitterVerifyUrl, userDetailsService, objectMapper));
+            }
+            if (facebookAppKey != null) {
+                auth.authenticationProvider(new FacebookAuthenticationProvider(facebookAppKey, facebookAppSecret,
+                        facebookRedirectUri, facebookVerifyUrl, userDetailsService, objectMapper));
             }
         }
     }
