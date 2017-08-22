@@ -1,5 +1,6 @@
 package pl.sparkbit.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ import pl.sparkbit.security.login.LoginAuthenticationFilter;
 import pl.sparkbit.security.rest.RestAuthenticationFilter;
 import pl.sparkbit.security.rest.RestAuthenticationProvider;
 import pl.sparkbit.security.social.GoogleAuthenticationProvider;
+import pl.sparkbit.security.social.TwitterAuthenticationProvider;
 
 import java.util.Arrays;
 import java.util.List;
@@ -55,12 +57,19 @@ public class SecurityConfig {
         private final SecurityService securityService;
         private final AuthenticationEntryPoint authenticationEntryPoint;
         private final UserDetailsService userDetailsService;
+        private final ObjectMapper objectMapper;
 
         @Value("${sparkbit.security.expected-authn-attributes}")
         private String[] expectedAuthnAttributes;
 
         @Value(value = "${sparkbit.security.social.google.clientIds:#{null}}")
         private List<String> googleClientIds;
+        @Value("${sparkbit.security.social.twitter.appKey:#{null}}")
+        private String twitterAppKey;
+        @Value("${sparkbit.security.social.twitter.appSecret:#{null}}")
+        private String twitterAppSecret;
+        @Value("${sparkbit.security.social.twitter.verificationRequestUrl:#{null}}")
+        private String twitterVerifyUrl;
 
         @Bean
         public PasswordEncoder passwordEncoder() {
@@ -97,6 +106,10 @@ public class SecurityConfig {
             auth.authenticationProvider(daoAuthenticationProvider());
             if (googleClientIds != null) {
                 auth.authenticationProvider(new GoogleAuthenticationProvider(googleClientIds, userDetailsService));
+            }
+            if (twitterAppKey != null) {
+                auth.authenticationProvider(new TwitterAuthenticationProvider(twitterAppKey, twitterAppSecret,
+                        twitterVerifyUrl, userDetailsService, objectMapper));
             }
         }
     }

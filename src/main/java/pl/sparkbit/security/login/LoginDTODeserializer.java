@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import pl.sparkbit.security.social.GoogleLoginDTO;
+import pl.sparkbit.security.social.TwitterLoginDTO;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ public class LoginDTODeserializer extends StdDeserializer<LoginDTO> {
     private static final String TYPE_FIELD = "type";
     private static final String DEFAULT_TYPE = "password";
     private static final String GOOGLE_TYPE = "google";
+    private static final String TWITTER_TYPE = "twitter";
     private final Map<String, Class<? extends LoginDTO>> registry;
 
     LoginDTODeserializer() {
@@ -24,6 +26,7 @@ public class LoginDTODeserializer extends StdDeserializer<LoginDTO> {
         registry = new HashMap<>();
         registry.put(DEFAULT_TYPE, PasswordLoginDTO.class);
         registry.put(GOOGLE_TYPE, GoogleLoginDTO.class);
+        registry.put(TWITTER_TYPE, TwitterLoginDTO.class);
     }
 
     public void registerLoginType(String type, Class<? extends LoginDTO> animalClass) {
