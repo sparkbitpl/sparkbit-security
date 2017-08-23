@@ -5,7 +5,7 @@
 <mapper namespace="pl.sparkbit.security.dao.mybatis.SecurityMapper">
 
     <insert id="insertSession">
-        INSERT INTO session (auth_token,user_id,creation_ts) VALUES (#{authToken},#{userId},#{creation})
+        INSERT INTO ${prefix}_session (auth_token,${prefix}_id,creation_ts) VALUES (#{session.authToken},#{session.userId},#{session.creation})
     </insert>
 
     <resultMap id="loginUserDetailsResultMap" type="pl.sparkbit.security.login.LoginUserDetails">
@@ -16,7 +16,7 @@
     </resultMap>
 
     <select id="selectLoginUserDetails" resultMap="loginUserDetailsResultMap">
-        SELECT user_id, password FROM credentials WHERE
+        SELECT ${prefix}_id AS user_id, password FROM ${prefix}_credentials WHERE
         <foreach collection="authnAttributes" index="key" item="value" open="" separator="and" close="">
             ${key}=#{value}
         </foreach>
@@ -35,8 +35,8 @@
     </resultMap>
 
     <select id="selectRestUserDetails" resultMap="restUserDetailsResultMap">
-        SELECT s.auth_token as auth_token, s.user_id, ur.role
-        FROM session s LEFT OUTER JOIN user_role ur on s.user_id=ur.user_id
+        SELECT s.auth_token as auth_token, s.${prefix}_id AS user_id, ur.role
+        FROM ${prefix}_session s LEFT OUTER JOIN ${prefix}_role ur on s.${prefix}_id=ur.${prefix}_id
         WHERE s.auth_token=#{authToken}
     </select>
 
@@ -49,11 +49,11 @@
     </resultMap>
 
     <select id="selectSession" resultMap="sessionResultMap">
-        SELECT auth_token, user_id, creation_ts FROM session s WHERE auth_token=#{authToken}
+        SELECT auth_token, ${prefix}_id AS user_id, creation_ts FROM ${prefix}_session s WHERE auth_token=#{authToken}
     </select>
 
     <delete id="deleteSession">
-        DELETE FROM session where auth_token=#{authToken}
+        DELETE FROM ${prefix}_session where auth_token=#{authToken}
     </delete>
 
 </mapper>

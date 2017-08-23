@@ -3,6 +3,7 @@ package pl.sparkbit.security.dao.mybatis;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import pl.sparkbit.security.dao.mybatis.data.SecurityDbTables;
 import pl.sparkbit.security.domain.Session;
 import pl.sparkbit.security.login.AuthnAttributes;
 import pl.sparkbit.security.login.LoginUserDetails;
@@ -16,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.PREFIX;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.SESSION;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.ROLE_ADMIN;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.ROLE_USER;
@@ -42,7 +44,7 @@ public class SecurityMapperTest extends MapperTestBase {
                 .userId(CREDS_1_USER_ID)
                 .creation(creation)
                 .build();
-        securityMapper.insertSession(session);
+        securityMapper.insertSession(session, PREFIX);
 
         assertEquals(1, countRowsInTableWhereColumnsEquals(SESSION,
                 "auth_token", quote(authToken),
@@ -56,7 +58,7 @@ public class SecurityMapperTest extends MapperTestBase {
 
         AuthnAttributes authnAttributes =
                 new AuthnAttributes(singletonMap("username", CREDS_1_USERNAME), singleton("username"));
-        LoginUserDetails loginUserDetails = securityMapper.selectLoginUserDetails(authnAttributes);
+        LoginUserDetails loginUserDetails = securityMapper.selectLoginUserDetails(authnAttributes, PREFIX);
 
         assertNotNull(loginUserDetails);
         assertEquals(CREDS_1_USER_ID, loginUserDetails.getUserId());
@@ -69,7 +71,7 @@ public class SecurityMapperTest extends MapperTestBase {
     public void shouldReturnNullWhenUserNotFound() {
         AuthnAttributes authnAttributes =
                 new AuthnAttributes(singletonMap("username", CREDS_1_USERNAME), singleton("username"));
-        LoginUserDetails loginUserDetails = securityMapper.selectLoginUserDetails(authnAttributes);
+        LoginUserDetails loginUserDetails = securityMapper.selectLoginUserDetails(authnAttributes, PREFIX);
 
         assertNull(loginUserDetails);
     }
@@ -81,7 +83,7 @@ public class SecurityMapperTest extends MapperTestBase {
 
         insertTestData(CREDS_1, session(authToken, CREDS_1_USER_ID, creation));
 
-        RestUserDetails restUserDetails = securityMapper.selectRestUserDetails(authToken);
+        RestUserDetails restUserDetails = securityMapper.selectRestUserDetails(authToken, PREFIX);
         assertNotNull(restUserDetails);
         assertEquals(authToken, restUserDetails.getAuthToken());
         assertEquals(CREDS_1_USER_ID, restUserDetails.getUserId());
@@ -98,7 +100,7 @@ public class SecurityMapperTest extends MapperTestBase {
 
         insertTestData(CREDS_1, session(authToken, CREDS_1_USER_ID, creation));
 
-        Session session = securityMapper.selectSession(authToken);
+        Session session = securityMapper.selectSession(authToken, PREFIX);
         assertNotNull(session);
         assertEquals(authToken, session.getAuthToken());
         assertEquals(CREDS_1_USER_ID, session.getUserId());
@@ -112,7 +114,7 @@ public class SecurityMapperTest extends MapperTestBase {
 
         insertTestData(CREDS_1, session(authToken, CREDS_1_USER_ID, creation));
 
-        securityMapper.deleteSession(authToken);
+        securityMapper.deleteSession(authToken, PREFIX);
         assertEquals(0, countRowsInTableWhereColumnsEquals(SESSION, "auth_token", quote(authToken)));
     }
 }

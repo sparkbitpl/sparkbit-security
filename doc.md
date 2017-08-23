@@ -40,7 +40,7 @@
    
    0. Create the following tables:
       ```
-      CREATE TABLE credentials (
+      CREATE TABLE user_credentials (
         user_id  VARCHAR(32) NOT NULL,
         -- here youe need to put one or more columns identyfying the user eg.
         -- username VARCHAR(50) NOT NULL,
@@ -66,7 +66,7 @@
            ON DELETE CASCADE
       );
        
-      CREATE TABLE session (
+      CREATE TABLE user_session (
          auth_token  VARCHAR(32) NOT NULL,
          user_id     VARCHAR(32) NOT NULL,
          creation_ts BIGINT      NOT NULL,
@@ -77,7 +77,23 @@
       * user_id column should match user id in a table in which you store users. It should be defined as: "_id VARCHAR(32) NOT NULL_"
       * Only hashes of passwords will be kept in the database.
       * Column identifying the user (eg. username) should be _varchars_
-       
+      
+      You can configure the name of the tables and columns (you can only change the _user_ prefix) by setting the
+      _sparkbit.security.user-entity-name_ configuration parameter.
+      For example, if you will add to your _application.properties_ 
+      ```
+      sparkbit.security.user-entity-name=driver
+      ```
+      The table with roles should look like:
+      ```
+            CREATE TABLE driver_role (
+               driver_id VARCHAR(32) NOT NULL,
+               role    VARCHAR(50) NOT NULL,
+               PRIMARY KEY (driver_id, role),
+               FOREIGN KEY (driver_id) REFERENCES driver (id)
+                 ON DELETE CASCADE
+            );
+      ```
    0. In _application.properties_ configure which attributes identify the user. For example:
       ```
       sparkbit.security.expected-authn-attributes=email,applicationName

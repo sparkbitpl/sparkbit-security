@@ -8,13 +8,14 @@ import pl.sparkbit.security.rest.RestUserDetails;
 
 public interface SecurityMapper {
 
-    void insertSession(Session session);
+    void insertSession(@Param("session") Session session, @Param("prefix") String prefix);
 
-    LoginUserDetails selectLoginUserDetails(@Param("authnAttributes") AuthnAttributes authnAttributes);
+    LoginUserDetails selectLoginUserDetails(@Param("authnAttributes") AuthnAttributes authnAttributes,
+                                            @Param("prefix") String prefix);
 
-    RestUserDetails selectRestUserDetails(String authToken);
+    RestUserDetails selectRestUserDetails(@Param("authToken") String authToken, @Param("prefix") String prefix);
 
-    Session selectSession(String authToken);
+    Session selectSession(@Param("authToken") String authToken, @Param("prefix") String prefix);
 
-    void deleteSession(String authToken);
+    void deleteSession(@Param("authToken") String authToken, @Param("prefix") String prefix);
 }
