@@ -91,15 +91,98 @@
       	  "email": "user0@foo.bar",
       	  "applicationName": "go11"
       	},
-      	"password": "1"
+      	"type" : "authType",
+      	// other fields described below
       }
       ```
-      Attributes inside authnAttributes must match these configured in _application.properties_. The response will have the following body:
+      Attributes inside authnAttributes must match these configured in _application.properties_.
+      _type_ field is optional. Default authentication method is _password_. The chapters below describes this with details.  
+      The response will have the following body:
       ```
       {
         "authToken": "11e73e4c9cf04d47aacca0481cdbcc40"
       }
       ```
+      0. Password
+      Password is the default authorization method.
+      Login with password does not require additional configuration.
+      Example JSON:
+      ```
+      {
+      	"authnAttributes": {
+      	  "email": "user0@foo.bar",
+      	  "applicationName": "go11"
+      	},
+      	"password": "****"
+      }
+      ```
+      Where _password_ is a user's password.
+      0. Social - Google
+      Login with Google does not require addition columns in database.
+      _email_ field in _authnAttributes_ object is mandatory.
+      You have to add _sparkbit.security.social.google.clientIds_ parameter to your _application.properties_
+      Example JSON:
+      ```
+      {
+      	"authnAttributes": {
+      	  "email": "user0@foo.bar",
+      	  "applicationName": "go11"
+      	},
+      	"type" : "google",
+      	"googleIdToken": "eyJhbGci...hQhgyUoQ"
+      }
+      ```
+      Where _googleIdToken_ is a Google Id Token from Google response
+      0. Social - Twitter
+      Login with Twitter does not require addition columns in database.
+      _email_ field in _authnAttributes_ object is mandatory.
+      You have to configure the following parameters in your _application.properties_
+      ```
+      sparkbit.security.social.twitter.appKey=RvmepO3iG3ZwZ1RYmlMcdngs8
+      sparkbit.security.social.twitter.appSecret=ybnUrBAwwNymdc4MqsOQjBheu1yTSeFNjMVlLBnZbytW5xXUji
+      sparkbit.security.social.twitter.verificationRequestUrl=https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true
+      ```
+      Don't forget to add _include_email=true_ part to _verificationRequestUrl_
+      Example JSON:
+      ```
+      {
+        "authnAttributes": {
+      	  "email": "user0@foo.bar",
+      	  "applicationName": "go11"
+        },
+        "type" : "twitter",
+	    "oauthVerifier": "3050991",
+	    "oauthToken" : "YxIeEwAAAAAA1S8EAAABXglyneY",
+	    "oauthTokenSecret" : "eQIz2zAafTdbvQ9XubVNBIZmE6dMOITD"
+      }
+      ```
+      Where _oauthVerifier_ is a PIN or other token from Twitter.
+      _oauthToken_ is a oauth_token field from Twitter response
+      _oauthTokenSecret_ is a oauth_token_secret field from Twitter response
+      0. Social - Facebook
+      Login with Facebook does not require addition columns in database.
+      _email_ field in _authnAttributes_ object is mandatory.
+      You have to configure the following parameters to your _application.properties_
+      ```
+      sparkbit.security.social.facebook.appKey=994269070716344
+      sparkbit.security.social.facebook.appSecret=33e65a5e3fc3beb802ced6f7e7601d17
+      sparkbit.security.social.facebook.redirectUri=http://localhost:8080/public/facebook/
+      sparkbit.security.social.facebook.verificationRequestUrl=https://graph.facebook.com/me?fields=email
+      ```
+      Don't forget to add _fields=email_ part to _verificationRequestUrl_
+      _redirectUri_ must be the same as in frontend app.
+      Example JSON:  
+      ```
+      {
+        "authnAttributes": {
+          "email": "user0@foo.bar",
+          "applicationName": "go11"
+        },
+        "type" : "facebook",
+        "code": "AQAvudrFG...bVSfeNg"
+      }
+      ```
+      Where _code_ is a Facebook auth code
 0. Using authToken
 
    Having obtained _authToken_ you can now access REST API resources.
