@@ -199,7 +199,20 @@
         "code": "AQAvudrFG...bVSfeNg"
       }
       ```
-      Where _code_ is a Facebook auth code
+      OR
+      ```
+      {
+        "authnAttributes": {
+          "email": "user0@foo.bar",
+          "applicationName": "go11"
+        },
+        "type" : "facebook",
+        "accessToken": "EAAOIS...V4ZCRi5u5"
+      }
+      ```
+      Where _accessToken_ is a Facebook auth token
+      _code_ is a code that allows to fetch auth code
+      Sparkbit Security supports two flows to auth with Facebook
 0. Using authToken
 
    Having obtained _authToken_ you can now access REST API resources.

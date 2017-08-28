@@ -11,18 +11,20 @@ import java.util.Collections;
 public class FacebookAuthenticationToken extends AbstractAuthenticationToken {
 
     private String code;
+    private String accessToken;
     private Object principal;
 
-    public FacebookAuthenticationToken(String code, Object principal,
+    public FacebookAuthenticationToken(String code, String accessToken, Object principal,
                                        Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.code = code;
         this.principal = principal;
+        this.accessToken = accessToken;
         setAuthenticated(true);
     }
 
-    public FacebookAuthenticationToken(String code, Object principal) {
-        this(code, principal, Collections.emptyList());
+    public FacebookAuthenticationToken(String code, String accessToken, Object principal) {
+        this(code, accessToken, principal, Collections.emptyList());
     }
 
     @Override

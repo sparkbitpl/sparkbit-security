@@ -58,13 +58,13 @@ public class FacebookAuthenticationProvider implements AuthenticationProvider {
         Assert.notNull(user,
                 "verify returned null - a violation of the interface contract");
         authenticationChecks.check(user);
-        return new FacebookAuthenticationToken(token.getCode(), user, user.getAuthorities());
+        return new FacebookAuthenticationToken(token.getCode(), token.getAccessToken(), user, user.getAuthorities());
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
     private UserDetails verify(FacebookAuthenticationToken authentication) throws AuthenticationException {
         try {
-            OAuth2AccessToken accessToken = service.getAccessToken(authentication.getCode());
+            OAuth2AccessToken accessToken = getAccessToken(authentication);
             OAuthRequest request = new OAuthRequest(Verb.GET, verifyUrl);
             service.signRequest(accessToken, request);
             Response response = service.execute(request);
@@ -87,6 +87,15 @@ public class FacebookAuthenticationProvider implements AuthenticationProvider {
         } catch (IOException | InterruptedException | ExecutionException | RuntimeException e) {
             throw new BadCredentialsException("Facebook code is invalid", e);
         }
+    }
+
+    private OAuth2AccessToken getAccessToken(FacebookAuthenticationToken authentication)
+            throws IOException, InterruptedException, ExecutionException {
+        if (authentication.getAccessToken() != null) {
+            return new OAuth2AccessToken(authentication.getAccessToken());
+        }
+
+        return service.getAccessToken(authentication.getCode());
     }
 
     @Override

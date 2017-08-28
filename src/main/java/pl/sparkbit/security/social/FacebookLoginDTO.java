@@ -15,6 +15,8 @@ public class FacebookLoginDTO extends LoginDTO {
 
     @JsonProperty
     private String code;
+    @JsonProperty
+    private String accessToken;
 
     public FacebookLoginDTO() {
         super(null);
@@ -25,6 +27,6 @@ public class FacebookLoginDTO extends LoginDTO {
         AuthnAttributes authnAttributes =
                 new AuthnAttributes(getAuthnAttributes(), expectedAuthnAttributes);
         LoginPrincipal principal = new LoginPrincipal(authnAttributes);
-        return new FacebookAuthenticationToken(code, principal);
+        return new FacebookAuthenticationToken(code, accessToken, principal);
     }
 }
