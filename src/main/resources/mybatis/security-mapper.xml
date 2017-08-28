@@ -12,11 +12,12 @@
         <constructor>
             <idArg column="user_id" javaType="String"/>
             <arg column="password" javaType="String"/>
+            <arg column="enabled" javaType="Boolean"/>
         </constructor>
     </resultMap>
 
     <select id="selectLoginUserDetails" resultMap="loginUserDetailsResultMap">
-        SELECT ${prefix}_id AS user_id, password FROM ${prefix}_credentials WHERE
+        SELECT ${prefix}_id AS user_id, password, enabled FROM ${prefix}_credentials WHERE
         <foreach collection="authnAttributes" index="key" item="value" open="" separator="and" close="">
             ${key}=#{value}
         </foreach>

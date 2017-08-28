@@ -19,12 +19,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.PREFIX;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.SESSION;
-import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.ROLE_ADMIN;
-import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.ROLE_USER;
-import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.CREDS_1;
-import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.CREDS_1_USER_ID;
-import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.CREDS_1_PASSWORD;
-import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.CREDS_1_USERNAME;
+import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.*;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityTestDataUtils.session;
 
 @SuppressWarnings("SpringJavaAutowiringInspection")
@@ -64,6 +59,7 @@ public class SecurityMapperTest extends MapperTestBase {
         assertEquals(CREDS_1_USER_ID, loginUserDetails.getUserId());
         assertEquals(CREDS_1_USER_ID, loginUserDetails.getUsername());
         assertEquals(CREDS_1_PASSWORD, loginUserDetails.getPassword());
+        assertEquals(CREDS_1_ENABLED, loginUserDetails.isEnabled());
         assertNull(loginUserDetails.getAuthorities());
     }
 

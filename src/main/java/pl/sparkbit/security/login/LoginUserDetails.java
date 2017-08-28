@@ -1,5 +1,6 @@
 package pl.sparkbit.security.login;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.CredentialsContainer;
@@ -14,6 +15,8 @@ public class LoginUserDetails implements UserDetails, CredentialsContainer {
 
     private final String userId;
     private String password;
+    @Getter(AccessLevel.NONE)
+    private final Boolean enabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -42,7 +45,7 @@ public class LoginUserDetails implements UserDetails, CredentialsContainer {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 
     @Override

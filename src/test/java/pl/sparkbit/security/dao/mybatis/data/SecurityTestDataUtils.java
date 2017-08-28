@@ -13,8 +13,8 @@ public class SecurityTestDataUtils {
 
     static Operation user(Credentials u) {
         return insertInto(CREDENTIALS)
-                .columns("user_id", "username", "password")
-                .values(u.getUserId(), u.getUsername(), u.getPassword())
+                .columns("user_id", "username", "password", "enabled")
+                .values(u.getUserId(), u.getUsername(), u.getPassword(), u.getEnabled())
                 .build();
     }
 

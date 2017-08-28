@@ -48,6 +48,7 @@
         -- email            VARCHAR(50) NOT NULL,
         -- application_name VARCHAR(50) NOT NULL,
         password VARCHAR(82) NOT NULL,
+        enabled BOOLEAN NOT NULL,
         PRIMARY KEY (user_id),
         -- you might add foreign key to your user table eg.
         -- FOREIGN KEY (user_id) REFERENCES uzer(id),

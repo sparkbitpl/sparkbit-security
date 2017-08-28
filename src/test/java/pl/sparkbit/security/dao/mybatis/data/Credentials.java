@@ -11,4 +11,5 @@ public class Credentials {
     private final String userId;
     private final String username;
     private final String password;
+    private final Boolean enabled;
 }

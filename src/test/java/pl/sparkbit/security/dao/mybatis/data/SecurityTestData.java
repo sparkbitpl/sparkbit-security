@@ -14,8 +14,9 @@ public class SecurityTestData {
     public static final String CREDS_1_USER_ID = "user0000000000000000000000000001";
     public static final String CREDS_1_USERNAME = "user0";
     public static final String CREDS_1_PASSWORD = "secret";
+    public static final Boolean CREDS_1_ENABLED = true;
     public static final Operation CREDS_1 = CompositeOperation.sequenceOf(
             user(Credentials.builder().userId(CREDS_1_USER_ID).username(CREDS_1_USERNAME).password(CREDS_1_PASSWORD)
-                    .build()),
+                    .enabled(CREDS_1_ENABLED).build()),
             role(CREDS_1_USER_ID, ROLE_USER), role(CREDS_1_USER_ID, ROLE_ADMIN));
 }
