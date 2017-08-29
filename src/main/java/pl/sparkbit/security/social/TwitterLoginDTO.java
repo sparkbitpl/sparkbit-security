@@ -15,8 +15,6 @@ import java.util.Set;
 public class TwitterLoginDTO extends LoginDTO {
 
     @JsonProperty
-    private String oauthVerifier;
-    @JsonProperty
     private String oauthToken;
     @JsonProperty
     private String oauthTokenSecret;
@@ -31,7 +29,6 @@ public class TwitterLoginDTO extends LoginDTO {
                 new AuthnAttributes(getAuthnAttributes(), expectedAuthnAttributes);
         LoginPrincipal principal = new LoginPrincipal(authnAttributes);
         TwitterCredentials credentials = TwitterCredentials.builder()
-                .oauthVerifier(oauthVerifier)
                 .oauthToken(oauthToken)
                 .oauthTokenSecret(oauthTokenSecret)
                 .build();

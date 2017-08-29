@@ -64,9 +64,8 @@ public class TwitterAuthenticationProvider implements AuthenticationProvider {
             Assert.isInstanceOf(TwitterCredentials.class, authentication.getCredentials(),
                     "Illegal credentials");
             TwitterCredentials credentials = (TwitterCredentials) authentication.getCredentials();
-            OAuth1RequestToken requestToken = new OAuth1RequestToken(credentials.getOauthToken(),
+            OAuth1AccessToken accessToken = new OAuth1AccessToken(credentials.getOauthToken(),
                     credentials.getOauthTokenSecret());
-            OAuth1AccessToken accessToken = service.getAccessToken(requestToken, credentials.getOauthVerifier());
             OAuthRequest request = new OAuthRequest(Verb.GET, verifyUrl);
             service.signRequest(accessToken, request);
             Response response = service.execute(request);

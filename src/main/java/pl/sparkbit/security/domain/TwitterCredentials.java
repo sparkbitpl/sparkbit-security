@@ -11,7 +11,6 @@ import java.io.Serializable;
 @Data
 public class TwitterCredentials implements Serializable {
 
-    private final String oauthVerifier;
     private final String oauthToken;
     private final String oauthTokenSecret;
 

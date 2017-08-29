@@ -168,14 +168,12 @@
       	  "applicationName": "go11"
         },
         "type" : "twitter",
-	    "oauthVerifier": "3050991",
 	    "oauthToken" : "YxIeEwAAAAAA1S8EAAABXglyneY",
 	    "oauthTokenSecret" : "eQIz2zAafTdbvQ9XubVNBIZmE6dMOITD"
       }
       ```
-      Where _oauthVerifier_ is a PIN or other token from Twitter.
-      _oauthToken_ is a oauth_token field from Twitter response
-      _oauthTokenSecret_ is a oauth_token_secret field from Twitter response
+      Where _oauthToken_ is a Twitter access token
+      _oauthTokenSecret_ is a Twitter secret
       0. Social - Facebook
       Login with Facebook does not require addition columns in database.
       _email_ field in _authnAttributes_ object is mandatory.
