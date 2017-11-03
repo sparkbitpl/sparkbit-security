@@ -60,6 +60,7 @@ public class SecurityMapperTest extends MapperTestBase {
         assertEquals(CREDS_1_USER_ID, loginUserDetails.getUsername());
         assertEquals(CREDS_1_PASSWORD, loginUserDetails.getPassword());
         assertEquals(CREDS_1_ENABLED, loginUserDetails.isEnabled());
+        assertEquals(CREDS_1_DELETED, loginUserDetails.getDeleted());
         assertNull(loginUserDetails.getAuthorities());
     }
 

@@ -7,6 +7,7 @@ CREATE TABLE user_credentials (
   username VARCHAR(50) NOT NULL,
   password VARCHAR(82) NOT NULL,
   enabled  BOOLEAN     NOT NULL,
+  deleted  BOOLEAN     NOT NULL,
   PRIMARY KEY (user_id)
 );
 
