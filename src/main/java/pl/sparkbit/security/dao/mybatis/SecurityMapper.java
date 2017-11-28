@@ -6,6 +6,8 @@ import pl.sparkbit.security.login.AuthnAttributes;
 import pl.sparkbit.security.login.LoginUserDetails;
 import pl.sparkbit.security.rest.RestUserDetails;
 
+import java.time.Instant;
+
 public interface SecurityMapper {
 
     void insertSession(@Param("session") Session session, @Param("prefix") String prefix);
@@ -17,5 +19,6 @@ public interface SecurityMapper {
 
     Session selectSession(@Param("authToken") String authToken, @Param("prefix") String prefix);
 
-    void deleteSession(@Param("authToken") String authToken, @Param("prefix") String prefix);
+    void deleteSession(@Param("authToken") String authToken, @Param("prefix") String prefix,
+                       @Param("deletedTs") Instant deletedTs);
 }

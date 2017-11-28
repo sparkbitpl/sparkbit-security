@@ -22,6 +22,7 @@ CREATE TABLE user_session (
   auth_token  VARCHAR(32) NOT NULL,
   user_id     VARCHAR(32) NOT NULL,
   creation_ts BIGINT      NOT NULL,
+  deleted_ts  BIGINT,
   PRIMARY KEY (auth_token),
   FOREIGN KEY (user_id) REFERENCES user_credentials (user_id)
 );

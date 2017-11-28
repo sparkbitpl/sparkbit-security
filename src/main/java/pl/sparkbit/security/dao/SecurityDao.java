@@ -5,6 +5,7 @@ import pl.sparkbit.security.login.AuthnAttributes;
 import pl.sparkbit.security.login.LoginUserDetails;
 import pl.sparkbit.security.rest.RestUserDetails;
 
+import java.time.Instant;
 import java.util.Optional;
 
 public interface SecurityDao {
@@ -17,5 +18,5 @@ public interface SecurityDao {
 
     Optional<Session> selectSession(String authToken);
 
-    void deleteSession(String authToken);
+    void deleteSession(String authToken, Instant deletedTs);
 }

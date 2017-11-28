@@ -44,7 +44,9 @@ public class SecurityMapperTest extends MapperTestBase {
         assertEquals(1, countRowsInTableWhereColumnsEquals(SESSION,
                 "auth_token", quote(authToken),
                 "user_id", quote(CREDS_1_USER_ID),
-                "creation_ts", creation.toEpochMilli()));
+                "creation_ts", creation.toEpochMilli(),
+                "deleted_ts", null
+        ));
     }
 
     @Test
@@ -105,13 +107,29 @@ public class SecurityMapperTest extends MapperTestBase {
     }
 
     @Test
+    public void shouldNotSelectSessionWhenIsDeleted() {
+        String authToken = "id12345";
+        Instant creation = Instant.ofEpochSecond(31232133);
+        Instant deleted = Instant.ofEpochSecond(31232555);
+
+        insertTestData(CREDS_1, session(authToken, CREDS_1_USER_ID, creation, deleted));
+
+        Session session = securityMapper.selectSession(authToken, PREFIX);
+        assertNull(session);
+    }
+
+    @Test
     public void shouldDeleteSession() {
         String authToken = "id12345";
         Instant creation = Instant.ofEpochSecond(31232133);
+        Instant deletedTs = Instant.ofEpochSecond(31232555);
 
         insertTestData(CREDS_1, session(authToken, CREDS_1_USER_ID, creation));
 
-        securityMapper.deleteSession(authToken, PREFIX);
-        assertEquals(0, countRowsInTableWhereColumnsEquals(SESSION, "auth_token", quote(authToken)));
+        securityMapper.deleteSession(authToken, PREFIX, deletedTs);
+        assertEquals(1, countRowsInTableWhereColumnsEquals(SESSION,
+                "auth_token", quote(authToken),
+                "deleted_ts", deletedTs.toEpochMilli()
+        ));
     }
 }

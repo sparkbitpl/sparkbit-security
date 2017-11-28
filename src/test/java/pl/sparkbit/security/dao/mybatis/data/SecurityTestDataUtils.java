@@ -25,10 +25,15 @@ public class SecurityTestDataUtils {
                 .build();
     }
 
-    public static Operation session(String authToken, String user_id, Instant creation) {
+    public static Operation session(String authToken, String userId, Instant creation) {
+        return session(authToken, userId, creation, null);
+    }
+
+    public static Operation session(String authToken, String user_id, Instant creation, Instant deleted) {
+        Long deletedTs = deleted == null ? null : deleted.toEpochMilli();
         return insertInto(SESSION)
-                .columns("auth_token", "user_id", "creation_ts")
-                .values(authToken, user_id, creation.toEpochMilli())
+                .columns("auth_token", "user_id", "creation_ts", "deleted_ts")
+                .values(authToken, user_id, creation.toEpochMilli(), deletedTs)
                 .build();
     }
 }

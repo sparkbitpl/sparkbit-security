@@ -35,7 +35,14 @@ public abstract class MapperTestBase extends AbstractTransactionalJUnit4SpringCo
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < colsAndValues.length - 1; i += 2) {
-            sb.append(colsAndValues[i]).append("=").append(colsAndValues[i + 1]).append(" AND ");
+            Object key = colsAndValues[i];
+            Object value = colsAndValues[i + 1];
+
+            if (value == null) {
+                sb.append(key).append(" IS NULL ").append(" AND ");
+            } else {
+                sb.append(key).append("=").append(value).append(" AND ");
+            }
         }
         return countRowsInTableWhere(tableName, sb.substring(0, sb.length() - 5));
     }

@@ -39,7 +39,7 @@
     <select id="selectRestUserDetails" resultMap="restUserDetailsResultMap">
         SELECT s.auth_token as auth_token, s.${prefix}_id AS user_id, ur.role
         FROM ${prefix}_session s LEFT OUTER JOIN ${prefix}_role ur on s.${prefix}_id=ur.${prefix}_id
-        WHERE s.auth_token=#{authToken}
+        WHERE s.auth_token=#{authToken} AND s.deleted_ts IS NULL
     </select>
 
     <resultMap id="sessionResultMap" type="pl.sparkbit.security.domain.Session">
@@ -51,11 +51,12 @@
     </resultMap>
 
     <select id="selectSession" resultMap="sessionResultMap">
-        SELECT auth_token, ${prefix}_id AS user_id, creation_ts FROM ${prefix}_session s WHERE auth_token=#{authToken}
+        SELECT auth_token, ${prefix}_id AS user_id, creation_ts FROM ${prefix}_session s
+        WHERE auth_token=#{authToken} AND deleted_ts IS NULL
     </select>
 
     <delete id="deleteSession">
-        DELETE FROM ${prefix}_session where auth_token=#{authToken}
+        UPDATE ${prefix}_session SET deleted_ts=#{deletedTs} WHERE auth_token=#{authToken}
     </delete>
 
 </mapper>

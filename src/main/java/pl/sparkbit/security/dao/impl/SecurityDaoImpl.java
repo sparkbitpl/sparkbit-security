@@ -11,6 +11,7 @@ import pl.sparkbit.security.login.AuthnAttributes;
 import pl.sparkbit.security.login.LoginUserDetails;
 import pl.sparkbit.security.rest.RestUserDetails;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @Repository
@@ -44,7 +45,7 @@ public class SecurityDaoImpl implements SecurityDao {
     }
 
     @Override
-    public void deleteSession(String authToken) {
-        securityMapper.deleteSession(authToken, prefix);
+    public void deleteSession(String authToken, Instant deletedTs) {
+        securityMapper.deleteSession(authToken, prefix, deletedTs);
     }
 }

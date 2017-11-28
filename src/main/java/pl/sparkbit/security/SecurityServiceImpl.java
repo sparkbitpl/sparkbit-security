@@ -61,7 +61,7 @@ public class SecurityServiceImpl implements SecurityService {
                 if (oldSession.get().getUserId().equals(newSession.getUserId())) {
                     log.info("Login request with X-Sid header - should never happened for correctly implemented " +
                             "clients. Invalidating old session for user {}", newSession.getUserId());
-                    securityDao.deleteSession(oldAuthToken);
+                    securityDao.deleteSession(oldAuthToken, clock.instant());
                 } else {
                     log.info("Login request from user {} with X-Sid header from another user {}",
                             newSession.getUserId(), oldSession.get().getUserId());
@@ -83,7 +83,7 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     public void logout() {
         RestUserDetails restUserDetails = security.currentUserDetails();
-        securityDao.deleteSession(restUserDetails.getAuthToken());
+        securityDao.deleteSession(restUserDetails.getAuthToken(), clock.instant());
         SecurityContextHolder.clearContext();
     }
 }
