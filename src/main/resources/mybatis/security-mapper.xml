@@ -55,8 +55,12 @@
         WHERE auth_token=#{authToken} AND deleted_ts IS NULL
     </select>
 
-    <delete id="deleteSession">
+    <update id="deleteSession">
         UPDATE ${prefix}_session SET deleted_ts=#{deletedTs} WHERE auth_token=#{authToken}
+    </update>
+
+    <delete id="deleteSessions">
+        DELETE FROM ${prefix}_session WHERE deleted_ts &lt; #{olderThan}
     </delete>
 
 </mapper>

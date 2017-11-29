@@ -237,3 +237,15 @@
    * URL: system property/env variable _security_test_db_url_ (default _jdbc:mysql://localhost:3306/security_)
    * User system property/env variable _security_test_db_username_ (default _security_)
    * Password system property/env variable _security_test_db_password_ (default _security_)
+   
+0. Removing old sessions
+   Never delete old sessions, instead of update _delete_ts_ column.
+   If you want to run job that will remove old rows for you - add the following lines to configuration file
+   ```
+   sparkbit.security.session.deleter.removeOld=true
+   # one hour
+   sparkbit.security.session.deleter.runEveryMillis=3600000
+   # one week
+   sparkbit.security.session.deleter.olderThanMinutes=10080
+   ```
+   You have to also enable scheduling in your Spring context (_@EnableScheduling_).

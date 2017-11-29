@@ -19,6 +19,8 @@ public interface SecurityMapper {
 
     Session selectSession(@Param("authToken") String authToken, @Param("prefix") String prefix);
 
-    void deleteSession(@Param("authToken") String authToken, @Param("prefix") String prefix,
-                       @Param("deletedTs") Instant deletedTs);
+    void deleteSession(@Param("authToken") String authToken, @Param("deletedTs") Instant deletedTs,
+                       @Param("prefix") String prefix);
+
+    void deleteSessions(@Param("olderThan") Instant olderThan, @Param("prefix") String prefix);
 }

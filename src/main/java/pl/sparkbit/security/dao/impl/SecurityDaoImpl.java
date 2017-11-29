@@ -46,6 +46,11 @@ public class SecurityDaoImpl implements SecurityDao {
 
     @Override
     public void deleteSession(String authToken, Instant deletedTs) {
-        securityMapper.deleteSession(authToken, prefix, deletedTs);
+        securityMapper.deleteSession(authToken, deletedTs, prefix);
+    }
+
+    @Override
+    public void deleteSessions(Instant olderThan) {
+        securityMapper.deleteSessions(olderThan, prefix);
     }
 }

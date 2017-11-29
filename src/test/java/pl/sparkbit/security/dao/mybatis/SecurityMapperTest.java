@@ -1,5 +1,6 @@
 package pl.sparkbit.security.dao.mybatis;
 
+import com.ninja_squad.dbsetup.operation.Operation;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -126,10 +127,30 @@ public class SecurityMapperTest extends MapperTestBase {
 
         insertTestData(CREDS_1, session(authToken, CREDS_1_USER_ID, creation));
 
-        securityMapper.deleteSession(authToken, PREFIX, deletedTs);
+        securityMapper.deleteSession(authToken, deletedTs, PREFIX);
         assertEquals(1, countRowsInTableWhereColumnsEquals(SESSION,
                 "auth_token", quote(authToken),
                 "deleted_ts", deletedTs.toEpochMilli()
         ));
     }
+
+    @Test
+    public void shouldDeleteOldSessions() {
+        String authToken = "id12345";
+        String authToken2 = "id123456";
+        Instant creation = Instant.ofEpochSecond(31232133);
+        Instant deletedTs = Instant.ofEpochSecond(31232555);
+        Instant olderThan = deletedTs.plusSeconds(3600);
+
+        Operation session1 = session(authToken, CREDS_1_USER_ID, creation, deletedTs);
+        Operation session2 = session(authToken2, CREDS_1_USER_ID, creation, deletedTs);
+        insertTestData(CREDS_1, session1, session2);
+
+        securityMapper.deleteSessions(olderThan, PREFIX);
+
+        assertEquals(0, countRowsInTableWhereColumnsEquals(SESSION,
+                "user_id", quote(CREDS_1_USER_ID)
+        ));
+    }
+
 }

@@ -19,4 +19,7 @@ public interface SecurityDao {
     Optional<Session> selectSession(String authToken);
 
     void deleteSession(String authToken, Instant deletedTs);
+
+    void deleteSessions(Instant olderThan);
+
 }
