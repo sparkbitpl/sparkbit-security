@@ -3,7 +3,10 @@ package pl.sparkbit.security.social;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.scribejava.apis.TwitterApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.model.*;
+import com.github.scribejava.core.model.OAuth1AccessToken;
+import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Response;
+import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 import lombok.Data;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
@@ -17,27 +20,26 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
 import pl.sparkbit.security.domain.TwitterCredentials;
+import pl.sparkbit.security.login.AuthnAttributes;
 import pl.sparkbit.security.login.LoginPrincipal;
+import pl.sparkbit.security.social.resolver.TwitterResolver;
+import pl.sparkbit.security.social.resolver.TwitterSecrets;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class TwitterAuthenticationProvider implements AuthenticationProvider {
 
-    private final String verifyUrl;
-    private final OAuth10aService service;
     private final UserDetailsService userDetailsService;
     private final ObjectMapper objectMapper;
     private final UserDetailsChecker authenticationChecks = new AccountStatusUserDetailsChecker();
+    private final TwitterResolver resolver;
 
-    public TwitterAuthenticationProvider(String appKey, String appSecret, String verifyUrl,
-                                         UserDetailsService userDetailsService, ObjectMapper objectMapper) {
-        this.verifyUrl = verifyUrl;
+    public TwitterAuthenticationProvider(TwitterResolver resolver, UserDetailsService userDetailsService,
+                                         ObjectMapper objectMapper) {
+        this.resolver = resolver;
         this.userDetailsService = userDetailsService;
         this.objectMapper = objectMapper;
-        this.service = new ServiceBuilder(appKey)
-                .apiSecret(appSecret)
-                .build(TwitterApi.instance());
     }
 
     @Override
@@ -66,7 +68,17 @@ public class TwitterAuthenticationProvider implements AuthenticationProvider {
             TwitterCredentials credentials = (TwitterCredentials) authentication.getCredentials();
             OAuth1AccessToken accessToken = new OAuth1AccessToken(credentials.getOauthToken(),
                     credentials.getOauthTokenSecret());
+
+            AuthnAttributes authn = ((LoginPrincipal) authentication.getPrincipal()).getAuthnAttributes();
+            TwitterSecrets secrets = resolver.resolve(authn);
+            String appKey = secrets.getAppKey();
+            String appSecret = secrets.getAppSecret();
+            String verifyUrl = secrets.getVerifyUrl();
+
             OAuthRequest request = new OAuthRequest(Verb.GET, verifyUrl);
+            OAuth10aService service = new ServiceBuilder(appKey)
+                    .apiSecret(appSecret)
+                    .build(TwitterApi.instance());
             service.signRequest(accessToken, request);
             Response response = service.execute(request);
             if (!response.isSuccessful()) {

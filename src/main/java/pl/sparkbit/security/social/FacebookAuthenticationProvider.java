@@ -19,28 +19,26 @@ import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
+import pl.sparkbit.security.login.AuthnAttributes;
 import pl.sparkbit.security.login.LoginPrincipal;
+import pl.sparkbit.security.social.resolver.FacebookResolver;
+import pl.sparkbit.security.social.resolver.FacebookSecrets;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class FacebookAuthenticationProvider implements AuthenticationProvider {
 
-    private final String verifyUrl;
-    private final OAuth20Service service;
     private final UserDetailsService userDetailsService;
     private final ObjectMapper objectMapper;
     private final UserDetailsChecker authenticationChecks = new AccountStatusUserDetailsChecker();
+    private final FacebookResolver resolver;
 
-    public FacebookAuthenticationProvider(String appKey, String appSecret, String redirectUri, String verifyUrl,
-                                          UserDetailsService userDetailsService, ObjectMapper objectMapper) {
-        this.verifyUrl = verifyUrl;
+    public FacebookAuthenticationProvider(FacebookResolver resolver, UserDetailsService userDetailsService,
+                                          ObjectMapper objectMapper) {
         this.userDetailsService = userDetailsService;
         this.objectMapper = objectMapper;
-        this.service = new ServiceBuilder(appKey)
-                .apiSecret(appSecret)
-                .callback(redirectUri)
-                .build(FacebookApi.instance());
+        this.resolver = resolver;
     }
 
     @Override
@@ -64,8 +62,15 @@ public class FacebookAuthenticationProvider implements AuthenticationProvider {
     @SuppressWarnings("checkstyle:IllegalCatch")
     private UserDetails verify(FacebookAuthenticationToken authentication) throws AuthenticationException {
         try {
-            OAuth2AccessToken accessToken = getAccessToken(authentication);
-            OAuthRequest request = new OAuthRequest(Verb.GET, verifyUrl);
+            AuthnAttributes authn = ((LoginPrincipal) authentication.getPrincipal()).getAuthnAttributes();
+            FacebookSecrets secrets = resolver.resolve(authn);
+            OAuth20Service service = new ServiceBuilder(secrets.getAppKey())
+                    .apiSecret(secrets.getAppSecret())
+                    .callback(secrets.getRedirectUri())
+                    .build(FacebookApi.instance());
+
+            OAuth2AccessToken accessToken = getAccessToken(authentication, service);
+            OAuthRequest request = new OAuthRequest(Verb.GET, secrets.getVerifyUrl());
             service.signRequest(accessToken, request);
             Response response = service.execute(request);
             if (!response.isSuccessful()) {
@@ -89,7 +94,7 @@ public class FacebookAuthenticationProvider implements AuthenticationProvider {
         }
     }
 
-    private OAuth2AccessToken getAccessToken(FacebookAuthenticationToken authentication)
+    private OAuth2AccessToken getAccessToken(FacebookAuthenticationToken authentication, OAuth20Service service)
             throws IOException, InterruptedException, ExecutionException {
         if (authentication.getAccessToken() != null) {
             return new OAuth2AccessToken(authentication.getAccessToken());

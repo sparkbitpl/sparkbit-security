@@ -27,9 +27,12 @@ import pl.sparkbit.security.rest.RestAuthenticationProvider;
 import pl.sparkbit.security.social.FacebookAuthenticationProvider;
 import pl.sparkbit.security.social.GoogleAuthenticationProvider;
 import pl.sparkbit.security.social.TwitterAuthenticationProvider;
+import pl.sparkbit.security.social.resolver.FacebookResolver;
+import pl.sparkbit.security.social.resolver.GoogleResolver;
+import pl.sparkbit.security.social.resolver.TwitterResolver;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -59,26 +62,12 @@ public class SecurityConfig {
         private final AuthenticationEntryPoint authenticationEntryPoint;
         private final UserDetailsService userDetailsService;
         private final ObjectMapper objectMapper;
+        private final Optional<FacebookResolver> facebookResolver;
+        private final Optional<GoogleResolver> googleResolver;
+        private final Optional<TwitterResolver> twitterResolver;
 
         @Value("${sparkbit.security.expected-authn-attributes}")
         private String[] expectedAuthnAttributes;
-
-        @Value(value = "${sparkbit.security.social.google.clientIds:#{null}}")
-        private List<String> googleClientIds;
-        @Value("${sparkbit.security.social.twitter.appKey:#{null}}")
-        private String twitterAppKey;
-        @Value("${sparkbit.security.social.twitter.appSecret:#{null}}")
-        private String twitterAppSecret;
-        @Value("${sparkbit.security.social.twitter.verificationRequestUrl:#{null}}")
-        private String twitterVerifyUrl;
-        @Value("${sparkbit.security.social.facebook.appKey:#{null}}")
-        private String facebookAppKey;
-        @Value("${sparkbit.security.social.facebook.appSecret:#{null}}")
-        private String facebookAppSecret;
-        @Value("${sparkbit.security.social.facebook.redirectUri:#{null}}")
-        private String facebookRedirectUri;
-        @Value("${sparkbit.security.social.facebook.verificationRequestUrl:#{null}}")
-        private String facebookVerifyUrl;
 
         @Bean
         public PasswordEncoder passwordEncoder() {
@@ -113,17 +102,19 @@ public class SecurityConfig {
         @Override
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
             auth.authenticationProvider(daoAuthenticationProvider());
-            if (googleClientIds != null) {
-                auth.authenticationProvider(new GoogleAuthenticationProvider(googleClientIds, userDetailsService));
+
+            // not lambda expression because GoogleAuthenticationProvider throws exceptions
+            if (googleResolver.isPresent()) {
+                auth.authenticationProvider(new GoogleAuthenticationProvider(googleResolver.get(), userDetailsService));
             }
-            if (twitterAppKey != null) {
-                auth.authenticationProvider(new TwitterAuthenticationProvider(twitterAppKey, twitterAppSecret,
-                        twitterVerifyUrl, userDetailsService, objectMapper));
-            }
-            if (facebookAppKey != null) {
-                auth.authenticationProvider(new FacebookAuthenticationProvider(facebookAppKey, facebookAppSecret,
-                        facebookRedirectUri, facebookVerifyUrl, userDetailsService, objectMapper));
-            }
+
+            twitterResolver.ifPresent(tw ->
+                    auth.authenticationProvider(new TwitterAuthenticationProvider(tw, userDetailsService,
+                            objectMapper)));
+
+            facebookResolver.ifPresent(fr ->
+                    auth.authenticationProvider(new FacebookAuthenticationProvider(fr, userDetailsService,
+                            objectMapper)));
         }
     }
 

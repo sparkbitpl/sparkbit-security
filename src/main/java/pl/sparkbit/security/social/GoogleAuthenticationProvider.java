@@ -17,26 +17,28 @@ import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
+import pl.sparkbit.security.login.AuthnAttributes;
 import pl.sparkbit.security.login.LoginPrincipal;
+import pl.sparkbit.security.social.resolver.GoogleResolver;
+import pl.sparkbit.security.social.resolver.GoogleSecrets;
 
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.List;
 
 @Slf4j
 public class GoogleAuthenticationProvider implements AuthenticationProvider {
-    private final GoogleIdTokenVerifier verifier;
+
     private final UserDetailsService userDetailsService;
     private final UserDetailsChecker authenticationChecks = new AccountStatusUserDetailsChecker();
+    private final GoogleResolver resolver;
+    private final HttpTransport transport;
+    private final JsonFactory jsonFactory;
 
-    public GoogleAuthenticationProvider(@NotNull List<String> googleClientIds, UserDetailsService userDetailsService)
+    public GoogleAuthenticationProvider(GoogleResolver resolver, UserDetailsService userDetailsService)
             throws GeneralSecurityException, IOException {
-        HttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
-        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-        this.verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
-                .setAudience(googleClientIds)
-                .build();
+        this.transport = GoogleNetHttpTransport.newTrustedTransport();
+        this.jsonFactory = JacksonFactory.getDefaultInstance();
+        this.resolver = resolver;
         this.userDetailsService = userDetailsService;
     }
 
@@ -63,6 +65,12 @@ public class GoogleAuthenticationProvider implements AuthenticationProvider {
 
     private UserDetails verify(GoogleAuthenticationToken authentication) throws AuthenticationException {
         try {
+            AuthnAttributes authn = ((LoginPrincipal) authentication.getPrincipal()).getAuthnAttributes();
+            GoogleSecrets secrets = resolver.resolve(authn);
+
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
+                    .setAudience(secrets.getGoogleClientIds())
+                    .build();
             GoogleIdToken token = verifier.verify((String) authentication.getCredentials());
             if (token == null) {
                 throw new BadCredentialsException("Google Id Token is invalid");

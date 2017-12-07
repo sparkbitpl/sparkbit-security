@@ -139,7 +139,9 @@
       0. Social - Google
       Login with Google does not require addition columns in database.
       _email_ field in _authnAttributes_ object is mandatory.
-      You have to add _sparkbit.security.social.google.clientIds_ parameter to your _application.properties_
+      
+      To configure Google create bean of type _GoogleResolver_ (you can use DefaultGoogleResolver)
+      
       Example JSON:
       ```
       {
@@ -152,16 +154,13 @@
       }
       ```
       Where _googleIdToken_ is a Google Id Token from Google response
+      
       0. Social - Twitter
       Login with Twitter does not require addition columns in database.
       _email_ field in _authnAttributes_ object is mandatory.
-      You have to configure the following parameters in your _application.properties_
-      ```
-      sparkbit.security.social.twitter.appKey=RvmepO3iG3ZwZ1RYmlMcdngs8
-      sparkbit.security.social.twitter.appSecret=ybnUrBAwwNymdc4MqsOQjBheu1yTSeFNjMVlLBnZbytW5xXUji
-      sparkbit.security.social.twitter.verificationRequestUrl=https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true
-      ```
-      Don't forget to add _include_email=true_ part to _verificationRequestUrl_
+
+      To configure Twitter create bean of type _TwitterResolver_ (you can use DefaultTwitterResolver)
+      
       Example JSON:
       ```
       {
@@ -176,18 +175,13 @@
       ```
       Where _oauthToken_ is a Twitter access token
       _oauthTokenSecret_ is a Twitter secret
+      
       0. Social - Facebook
       Login with Facebook does not require addition columns in database.
       _email_ field in _authnAttributes_ object is mandatory.
-      You have to configure the following parameters to your _application.properties_
-      ```
-      sparkbit.security.social.facebook.appKey=994269070716344
-      sparkbit.security.social.facebook.appSecret=33e65a5e3fc3beb802ced6f7e7601d17
-      sparkbit.security.social.facebook.redirectUri=http://localhost:8080/public/facebook/
-      sparkbit.security.social.facebook.verificationRequestUrl=https://graph.facebook.com/me?fields=email
-      ```
-      Don't forget to add _fields=email_ part to _verificationRequestUrl_
-      _redirectUri_ must be the same as in frontend app.
+
+      To configure Facebook create bean of type _FacebookResolver_ (you can use DefaultFacebookResolver)
+      
       Example JSON:  
       ```
       {
@@ -213,6 +207,33 @@
       Where _accessToken_ is a Facebook auth token
       _code_ is a code that allows to fetch auth code
       Sparkbit Security supports two flows to auth with Facebook
+      
+      0. Example configuration
+      ```
+      @Configuration
+      public class SocialLoginConfiguration {
+      
+          @Bean
+          public DefaultGoogleResolver defaultGoogleResolver() {
+              // googleClientIds
+              return new DefaultGoogleResolver(Collections.singletonList("sdfdfhfgjyht54eytg5rhs"));
+          }
+      
+          @Bean
+          public DefaultFacebookResolver defaultFacebookResolver() {
+              // appKey, appSecret, redirectUri, verifyUrl
+              return new DefaultFacebookResolver("994269", "33e65a5e3fc3", "http://localhost:8080/public/facebook/", "https://graph.facebook.com/me?fields=email");
+          }
+      
+          @Bean
+          public DefaultTwitterResolver defaultTwitterResolver() {
+              // appKey, appSecret, verifyUrl
+              return new DefaultTwitterResolver("RvmepO3iG", "ybnUrBAww", "https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true");
+          }
+          
+      }
+      ```
+      
 0. Using authToken
 
    Having obtained _authToken_ you can now access REST API resources.
