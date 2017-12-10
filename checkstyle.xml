@@ -9,9 +9,9 @@
 
     <property name="fileExtensions" value="java, properties, xml"/>
 
-    <module name="SuppressWarningsFilter" />
+    <module name="SuppressWarningsFilter"/>
     <module name="TreeWalker">
-        <module name="SuppressWarningsHolder" />
+        <module name="SuppressWarningsHolder"/>
         <module name="AvoidNestedBlocks">
             <property name="allowInSwitchCase" value="true"/>
         </module>
@@ -68,7 +68,7 @@
         <module name="MethodName"/>
         <module name="MethodTypeParameterName"/>
         <module name="MissingDeprecated">
-            <property name="skipNoJavadoc" value="true" />
+            <property name="skipNoJavadoc" value="true"/>
         </module>
         <module name="ModifiedControlVariable"/>
         <module name="ModifierOrder"/>

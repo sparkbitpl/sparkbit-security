@@ -22,6 +22,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.GenericFilterBean;
 import pl.sparkbit.security.login.LoginAuthenticationFilter;
+import pl.sparkbit.security.password.PasswordEncoderType;
+import pl.sparkbit.security.password.PhpassPasswordEncoder;
 import pl.sparkbit.security.rest.RestAuthenticationFilter;
 import pl.sparkbit.security.rest.RestAuthenticationProvider;
 import pl.sparkbit.security.social.FacebookAuthenticationProvider;
@@ -68,9 +70,15 @@ public class SecurityConfig {
 
         @Value("${sparkbit.security.expected-authn-attributes}")
         private String[] expectedAuthnAttributes;
+        @Value("${sparkbit.security.passwordEncoderType:DEFAULT}")
+        private PasswordEncoderType passwordEncoderType;
 
         @Bean
         public PasswordEncoder passwordEncoder() {
+            switch (passwordEncoderType) {
+                case PHPASS:
+                    return new PhpassPasswordEncoder();
+            }
             return new StandardPasswordEncoder();
         }
 
