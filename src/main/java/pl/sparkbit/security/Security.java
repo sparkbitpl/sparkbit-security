@@ -6,7 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import pl.sparkbit.security.rest.RestUserDetails;
+import pl.sparkbit.security.rest.user.RestUserDetails;
 
 @Component
 public class Security {
@@ -15,7 +15,11 @@ public class Security {
 
     public static final String ADMIN_ROLE_NAME = "ROLE_ADMIN";
 
+    public static final String EXTERNAL_SYSTEM_ROLE_NAME = "ROLE_EXTERNAL_SYSTEM";
+
     public static final GrantedAuthority ADMIN_ROLE = new SimpleGrantedAuthority(ADMIN_ROLE_NAME);
+
+    public static final GrantedAuthority EXTERNAL_SYSTEM_ROLE = new SimpleGrantedAuthority(EXTERNAL_SYSTEM_ROLE_NAME);
 
 
     public RestUserDetails currentUserDetails() {

@@ -24,7 +24,7 @@
         </foreach>
     </select>
 
-    <resultMap id="restUserDetailsResultMap" type="pl.sparkbit.security.rest.RestUserDetails">
+    <resultMap id="restUserDetailsResultMap" type="pl.sparkbit.security.rest.user.RestUserDetails">
         <constructor>
             <idArg column="auth_token" javaType="String"/>
             <arg column="user_id" javaType="String"/>

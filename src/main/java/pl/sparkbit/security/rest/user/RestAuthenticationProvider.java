@@ -1,4 +1,4 @@
-package pl.sparkbit.security.rest;
+package pl.sparkbit.security.rest.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -6,6 +6,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.util.Assert;
 import pl.sparkbit.security.SecurityService;
+import pl.sparkbit.security.rest.AuthTokenAuthenticationToken;
+import pl.sparkbit.security.rest.RestAuthenticationToken;
 
 @RequiredArgsConstructor
 public class RestAuthenticationProvider implements AuthenticationProvider {

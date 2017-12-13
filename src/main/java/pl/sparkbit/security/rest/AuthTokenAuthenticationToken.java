@@ -10,7 +10,7 @@ public class AuthTokenAuthenticationToken extends AbstractAuthenticationToken {
     @Getter
     private final String authToken;
 
-    AuthTokenAuthenticationToken(String authToken) {
+    public AuthTokenAuthenticationToken(String authToken) {
         super(Collections.emptyList());
 
         this.authToken = authToken;

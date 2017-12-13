@@ -1,4 +1,4 @@
-package pl.sparkbit.security.rest;
+package pl.sparkbit.security.rest.user;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

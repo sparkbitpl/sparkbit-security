@@ -1,4 +1,4 @@
-package pl.sparkbit.security.rest;
+package pl.sparkbit.security.rest.user;
 
 import org.springframework.security.core.AuthenticationException;
 

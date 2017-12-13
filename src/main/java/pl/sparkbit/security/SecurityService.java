@@ -2,7 +2,7 @@ package pl.sparkbit.security;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 import pl.sparkbit.security.domain.Session;
-import pl.sparkbit.security.rest.RestUserDetails;
+import pl.sparkbit.security.rest.user.RestUserDetails;
 
 public interface SecurityService extends UserDetailsService {
 

@@ -4,11 +4,10 @@ import com.ninja_squad.dbsetup.operation.Operation;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import pl.sparkbit.security.dao.mybatis.data.SecurityDbTables;
 import pl.sparkbit.security.domain.Session;
 import pl.sparkbit.security.login.AuthnAttributes;
 import pl.sparkbit.security.login.LoginUserDetails;
-import pl.sparkbit.security.rest.RestUserDetails;
+import pl.sparkbit.security.rest.user.RestUserDetails;
 
 import java.time.Instant;
 

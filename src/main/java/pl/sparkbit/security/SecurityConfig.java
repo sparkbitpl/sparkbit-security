@@ -25,7 +25,7 @@ import pl.sparkbit.security.login.LoginAuthenticationFilter;
 import pl.sparkbit.security.password.PasswordEncoderType;
 import pl.sparkbit.security.password.PhpassPasswordEncoder;
 import pl.sparkbit.security.rest.RestAuthenticationFilter;
-import pl.sparkbit.security.rest.RestAuthenticationProvider;
+import pl.sparkbit.security.rest.user.RestAuthenticationProvider;
 import pl.sparkbit.security.social.FacebookAuthenticationProvider;
 import pl.sparkbit.security.social.GoogleAuthenticationProvider;
 import pl.sparkbit.security.social.TwitterAuthenticationProvider;

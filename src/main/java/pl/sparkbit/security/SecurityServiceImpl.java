@@ -14,8 +14,8 @@ import pl.sparkbit.security.dao.SecurityDao;
 import pl.sparkbit.security.domain.Session;
 import pl.sparkbit.security.login.LoginPrincipal;
 import pl.sparkbit.security.login.LoginUserDetails;
-import pl.sparkbit.security.rest.RestUserDetails;
-import pl.sparkbit.security.rest.SessionNotFoundException;
+import pl.sparkbit.security.rest.user.RestUserDetails;
+import pl.sparkbit.security.rest.user.SessionNotFoundException;
 
 import java.time.Clock;
 import java.util.Optional;
