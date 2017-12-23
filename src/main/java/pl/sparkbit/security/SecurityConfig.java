@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -70,16 +71,20 @@ public class SecurityConfig {
 
         @Value("${sparkbit.security.expected-authn-attributes}")
         private String[] expectedAuthnAttributes;
-        @Value("${sparkbit.security.passwordEncoderType:DEFAULT}")
+        @Value("${sparkbit.security.passwordEncoderType:BCRYPT}")
         private PasswordEncoderType passwordEncoderType;
 
         @Bean
         public PasswordEncoder passwordEncoder() {
             switch (passwordEncoderType) {
+                case STANDARD:
+                    return new StandardPasswordEncoder();
+                case BCRYPT:
+                    return new BCryptPasswordEncoder();
                 case PHPASS:
                     return new PhpassPasswordEncoder();
             }
-            return new StandardPasswordEncoder();
+            return new BCryptPasswordEncoder();
         }
 
         @Bean
