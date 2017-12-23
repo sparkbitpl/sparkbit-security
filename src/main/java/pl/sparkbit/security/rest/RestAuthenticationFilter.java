@@ -8,10 +8,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.util.Assert;
 import org.springframework.web.filter.GenericFilterBean;
+import pl.sparkbit.security.Security;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -50,8 +53,16 @@ public class RestAuthenticationFilter extends GenericFilterBean {
         filterChain.doFilter(request, response);
     }
 
+
     private Optional<String> getAuthToken(HttpServletRequest request) throws AuthenticationException {
         String authToken = request.getHeader(AUTH_TOKEN_HEADER);
+        if (authToken == null && request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookie.getName().equals(Security.AUTH_TOKEN_COOKIE_NAME)) {
+                    authToken = cookie.getValue();
+                }
+            }
+        }
         return Optional.ofNullable(authToken);
     }
 }

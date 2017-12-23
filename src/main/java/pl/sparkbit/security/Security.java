@@ -9,9 +9,12 @@ import org.springframework.stereotype.Component;
 import pl.sparkbit.security.rest.user.RestUserDetails;
 
 @Component
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Security {
 
     public static final String AUTH_TOKEN_HEADER = "X-Sparkbit-Auth-Token";
+
+    public static final String AUTH_TOKEN_COOKIE_NAME = "sparkbitAuthToken";
 
     public static final String ADMIN_ROLE_NAME = "ROLE_ADMIN";
 
