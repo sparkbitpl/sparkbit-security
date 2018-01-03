@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--suppress SqlResolve -->
+<mapper namespace="pl.sparkbit.security.session.dao.mybatis.SessionMapper">
+
+    <insert id="insertSession">
+        INSERT INTO ${prefix}_session (auth_token,${prefix}_id,creation_ts)
+        VALUES (#{session.authToken},#{session.userId},#{session.creation})
+    </insert>
+
+    <resultMap id="loginUserDetailsResultMap" type="pl.sparkbit.security.session.auth.LoginUserDetails">
+        <constructor>
+            <idArg column="user_id" javaType="String"/>
+            <arg column="password" javaType="String"/>
+            <arg column="enabled" javaType="Boolean"/>
+            <arg column="deleted" javaType="Boolean"/>
+        </constructor>
+    </resultMap>
+
+    <select id="selectLoginUserDetails" resultMap="loginUserDetailsResultMap">
+        SELECT ${prefix}_id AS user_id, password, enabled, deleted FROM ${prefix}_credentials WHERE
+        <foreach collection="authnAttributes" index="key" item="value" open="" separator="and" close="">
+            ${key}=#{value}
+        </foreach>
+    </select>
+
+    <resultMap id="sessionResultMap" type="pl.sparkbit.security.session.domain.Session">
+        <constructor>
+            <idArg column="auth_token" javaType="String"/>
+            <arg column="user_id" javaType="String"/>
+            <arg column="creation_ts" javaType="java.time.Instant"/>
+        </constructor>
+    </resultMap>
+
+    <select id="selectSession" resultMap="sessionResultMap">
+        SELECT auth_token, ${prefix}_id AS user_id, creation_ts FROM ${prefix}_session s
+        WHERE auth_token=#{authToken} AND deleted_ts IS NULL
+    </select>
+
+    <update id="deleteSession">
+        UPDATE ${prefix}_session SET deleted_ts=#{deletedTs} WHERE auth_token=#{authToken}
+    </update>
+
+    <delete id="deleteSessions">
+        DELETE FROM ${prefix}_session WHERE deleted_ts &lt; #{olderThan}
+    </delete>
+
+</mapper>

@@ -22,28 +22,29 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.GenericFilterBean;
-import pl.sparkbit.security.login.LoginAuthenticationFilter;
 import pl.sparkbit.security.password.PasswordEncoderType;
 import pl.sparkbit.security.password.PhpassPasswordEncoder;
 import pl.sparkbit.security.rest.RestAuthenticationFilter;
 import pl.sparkbit.security.rest.user.RestAuthenticationProvider;
-import pl.sparkbit.security.social.FacebookAuthenticationProvider;
-import pl.sparkbit.security.social.GoogleAuthenticationProvider;
-import pl.sparkbit.security.social.TwitterAuthenticationProvider;
-import pl.sparkbit.security.social.resolver.FacebookResolver;
-import pl.sparkbit.security.social.resolver.GoogleResolver;
-import pl.sparkbit.security.social.resolver.TwitterResolver;
+import pl.sparkbit.security.session.auth.LoginAuthenticationFilter;
+import pl.sparkbit.security.session.auth.social.FacebookAuthenticationProvider;
+import pl.sparkbit.security.session.auth.social.GoogleAuthenticationProvider;
+import pl.sparkbit.security.session.auth.social.TwitterAuthenticationProvider;
+import pl.sparkbit.security.session.auth.social.resolver.FacebookResolver;
+import pl.sparkbit.security.session.auth.social.resolver.GoogleResolver;
+import pl.sparkbit.security.session.auth.social.resolver.TwitterResolver;
+import pl.sparkbit.security.session.service.SessionService;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-import static pl.sparkbit.security.login.LoginController.LOGIN;
+import static pl.sparkbit.security.session.mvc.controller.SessionController.LOGIN;
 
 @Configuration
 @EnableWebSecurity
-@MapperScan("pl.sparkbit.security.dao.mybatis")
+@MapperScan({"pl.sparkbit.security.dao.mybatis", "pl.sparkbit.security.session.dao.mybatis"})
 public class SecurityConfig {
 
     @Bean
@@ -61,7 +62,7 @@ public class SecurityConfig {
     @RequiredArgsConstructor
     public static class LoginConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
-        private final SecurityService securityService;
+        private final SessionService sessionService;
         private final AuthenticationEntryPoint authenticationEntryPoint;
         private final UserDetailsService userDetailsService;
         private final ObjectMapper objectMapper;
@@ -90,7 +91,7 @@ public class SecurityConfig {
         @Bean
         public DaoAuthenticationProvider daoAuthenticationProvider() {
             DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-            daoAuthenticationProvider.setUserDetailsService(securityService);
+            daoAuthenticationProvider.setUserDetailsService(sessionService);
             daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
             return daoAuthenticationProvider;
         }

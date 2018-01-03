@@ -23,10 +23,10 @@ import java.sql.Driver;
 import java.time.Instant;
 
 @Configuration
-@MapperScan("pl.sparkbit.security.dao.mybatis")
+@MapperScan({"pl.sparkbit.security.dao.mybatis", "pl.sparkbit.security.session.dao.mybatis"})
 public class SecurityMapperTestConfig {
 
-    @Value("classpath:mybatis/security-mapper.xml")
+    @Value("#{'${classpath:mybatis/security-mapper.xml,classpath:mybatis/session-mapper.xml}'.split(',')}")
     private Resource[] mappers;
 
     @Value("${security_test_db_url:jdbc:mysql://localhost:3306/security}")

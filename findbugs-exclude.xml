@@ -5,7 +5,7 @@
     </Match>
 
     <Match>
-        <Class name="pl.sparkbit.security.login.AuthTokenDTO"/>
+        <Class name="pl.sparkbit.security.session.mvc.dto.out.AuthTokenDTO"/>
         <Field name="authToken"/>
         <Bug pattern="URF_UNREAD_FIELD"/>
     </Match>
@@ -17,19 +17,19 @@
     </Match>
 
     <Match>
-        <Class name="pl.sparkbit.security.social.GoogleAuthenticationProvider"/>
+        <Class name="pl.sparkbit.security.session.auth.social.GoogleAuthenticationProvider"/>
         <Method name="authenticate"/>
         <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
     <Match>
-        <Class name="pl.sparkbit.security.social.TwitterAuthenticationProvider"/>
+        <Class name="pl.sparkbit.security.session.auth.social.TwitterAuthenticationProvider"/>
         <Method name="authenticate"/>
         <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
     <Match>
-        <Class name="pl.sparkbit.security.social.FacebookAuthenticationProvider"/>
+        <Class name="pl.sparkbit.security.session.auth.social.FacebookAuthenticationProvider"/>
         <Method name="authenticate"/>
         <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>

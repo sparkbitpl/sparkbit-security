@@ -1,0 +1,48 @@
+package pl.sparkbit.security.session.dao.impl;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
+import pl.sparkbit.security.session.auth.AuthnAttributes;
+import pl.sparkbit.security.session.auth.LoginUserDetails;
+import pl.sparkbit.security.session.dao.SessionDao;
+import pl.sparkbit.security.session.dao.mybatis.SessionMapper;
+import pl.sparkbit.security.session.domain.Session;
+
+import java.time.Instant;
+import java.util.Optional;
+
+@Repository
+@RequiredArgsConstructor
+public class SessionDaoImpl implements SessionDao {
+
+    private final SessionMapper sessionMapper;
+
+    @Value("${sparkbit.security.user-entity-name:user}")
+    private String prefix;
+
+    @Override
+    public void insertSession(Session session) {
+        sessionMapper.insertSession(session, prefix);
+    }
+
+    @Override
+    public Optional<Session> selectSession(String authToken) {
+        return Optional.ofNullable(sessionMapper.selectSession(authToken, prefix));
+    }
+
+    @Override
+    public Optional<LoginUserDetails> selectLoginUserDetails(AuthnAttributes authnAttributes) {
+        return Optional.ofNullable(sessionMapper.selectLoginUserDetails(authnAttributes, prefix));
+    }
+
+    @Override
+    public void deleteSession(String authToken, Instant deletedTs) {
+        sessionMapper.deleteSession(authToken, deletedTs, prefix);
+    }
+
+    @Override
+    public void deleteSessions(Instant olderThan) {
+        sessionMapper.deleteSessions(olderThan, prefix);
+    }
+}
