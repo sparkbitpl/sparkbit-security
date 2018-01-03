@@ -3,6 +3,7 @@ package pl.sparkbit.security.login;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static pl.sparkbit.security.Security.AUTH_TOKEN_COOKIE_NAME;
 import static pl.sparkbit.security.Security.AUTH_TOKEN_HEADER;
 
 @RequiredArgsConstructor
@@ -28,8 +30,10 @@ public class LoginController {
     private boolean allowUnsecuredCookie;
 
     @PostMapping(LOGIN)
-    public AuthTokenDTO login(@RequestHeader(name = AUTH_TOKEN_HEADER, required = false) String oldAuthToken,
+    public AuthTokenDTO login(@RequestHeader(name = AUTH_TOKEN_HEADER, required = false) String oldAuthTokenHeader,
+            @CookieValue(name = AUTH_TOKEN_COOKIE_NAME, required = false) String oldAuthTokenCookie,
             HttpServletResponse response) {
+        String oldAuthToken = oldAuthTokenHeader != null ? oldAuthTokenHeader : oldAuthTokenCookie;
         Session session = securityService.startNewSession(oldAuthToken);
 
         Cookie cookie = getAuthCookie(session.getAuthToken());

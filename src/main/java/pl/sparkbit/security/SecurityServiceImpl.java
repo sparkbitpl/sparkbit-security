@@ -59,15 +59,15 @@ public class SecurityServiceImpl implements SecurityService {
             Optional<Session> oldSession = securityDao.selectSession(oldAuthToken);
             if (oldSession.isPresent()) {
                 if (oldSession.get().getUserId().equals(newSession.getUserId())) {
-                    log.info("Login request with X-Sid header - should never happened for correctly implemented " +
-                            "clients. Invalidating old session for user {}", newSession.getUserId());
+                    log.info("Login request with auth token provided - should never happened for correctly " +
+                            "implemented clients. Invalidating old session for user {}", newSession.getUserId());
                     securityDao.deleteSession(oldAuthToken, clock.instant());
                 } else {
-                    log.info("Login request from user {} with X-Sid header from another user {}",
+                    log.info("Login request from user {} with auth token from another user {}",
                             newSession.getUserId(), oldSession.get().getUserId());
                 }
             } else {
-                log.info("Login request with X-Sid header that is not present in database");
+                log.info("Login request with auth token that is not present in database");
             }
         }
 
