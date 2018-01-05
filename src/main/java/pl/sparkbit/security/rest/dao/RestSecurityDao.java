@@ -7,4 +7,8 @@ import java.util.Optional;
 public interface RestSecurityDao {
 
     Optional<RestUserDetails> selectRestUserDetails(String authToken);
+
+    String selectPasswordHashForUser(String userId);
+
+    void updatePassword(String userId, String password);
 }

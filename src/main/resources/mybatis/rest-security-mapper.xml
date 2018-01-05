@@ -22,4 +22,12 @@
         WHERE s.auth_token=#{authToken} AND s.deleted_ts IS NULL
     </select>
 
+    <select id="selectPasswordHashForUser" resultType="String">
+        SELECT password from ${prefix}_credentials where ${prefix}_id=#{userId}
+    </select>
+
+    <update id="updatePassword">
+        UPDATE ${prefix}_credentials SET password=#{password} where ${prefix}_id=#{userId}
+    </update>
+
 </mapper>

@@ -41,7 +41,7 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-import static pl.sparkbit.security.session.mvc.controller.SessionController.LOGIN;
+import static pl.sparkbit.security.Paths.LOGIN;
 
 @Configuration
 @EnableWebSecurity

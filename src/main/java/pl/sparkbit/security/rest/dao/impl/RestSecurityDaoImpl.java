@@ -23,4 +23,14 @@ public class RestSecurityDaoImpl implements RestSecurityDao {
     public Optional<RestUserDetails> selectRestUserDetails(String authToken) {
         return Optional.ofNullable(restSecurityMapper.selectRestUserDetails(authToken, prefix));
     }
+
+    @Override
+    public String selectPasswordHashForUser(String userId) {
+        return restSecurityMapper.selectPasswordHashForUser(userId, prefix);
+    }
+
+    @Override
+    public void updatePassword(String userId, String password) {
+        restSecurityMapper.updatePassword(userId, password, prefix);
+    }
 }

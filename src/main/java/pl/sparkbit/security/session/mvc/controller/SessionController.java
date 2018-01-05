@@ -16,15 +16,14 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static pl.sparkbit.security.Paths.LOGIN;
+import static pl.sparkbit.security.Paths.LOGOUT;
 import static pl.sparkbit.security.Security.AUTH_TOKEN_COOKIE_NAME;
 import static pl.sparkbit.security.Security.AUTH_TOKEN_HEADER;
 
 @RequiredArgsConstructor
 @RestController
 public class SessionController {
-
-    public static final String LOGIN = "/login";
-    private static final String LOGOUT = "/logout";
 
     private final SessionService sessionService;
 
@@ -33,8 +32,8 @@ public class SessionController {
 
     @PostMapping(LOGIN)
     public AuthTokenDTO login(@RequestHeader(name = AUTH_TOKEN_HEADER, required = false) String oldAuthTokenHeader,
-            @CookieValue(name = AUTH_TOKEN_COOKIE_NAME, required = false) String oldAuthTokenCookie,
-            HttpServletResponse response) {
+                              @CookieValue(name = AUTH_TOKEN_COOKIE_NAME, required = false) String oldAuthTokenCookie,
+                              HttpServletResponse response) {
         String oldAuthToken = oldAuthTokenHeader != null ? oldAuthTokenHeader : oldAuthTokenCookie;
         Session session = sessionService.startNewSession(oldAuthToken);
 

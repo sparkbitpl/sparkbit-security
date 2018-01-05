@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 import static com.ninja_squad.dbsetup.Operations.sequenceOf;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = SecurityMapperTestConfig.class)
+@ContextConfiguration(classes = SecurityMappersTestConfig.class)
 public abstract class MapperTestBase extends AbstractTransactionalJUnit4SpringContextTests {
 
     @Autowired

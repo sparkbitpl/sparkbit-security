@@ -10,11 +10,9 @@ import java.time.Instant;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables.CREDENTIALS;
 import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables.PREFIX;
-import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestData.CREDS_1;
-import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestData.CREDS_1_USER_ID;
-import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestData.ROLE_ADMIN;
-import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestData.ROLE_USER;
+import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestData.*;
 import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestDataUtils.session;
 
 @SuppressWarnings("SpringJavaAutowiringInspection")
@@ -38,5 +36,26 @@ public class RestSecurityMapperTest extends MapperTestBase {
         assertEquals(2, restUserDetails.getRoles().size());
         assertTrue(restUserDetails.getRoles().contains(new SimpleGrantedAuthority(ROLE_ADMIN)));
         assertTrue(restUserDetails.getRoles().contains(new SimpleGrantedAuthority(ROLE_USER)));
+    }
+
+    @Test
+    public void shouldSelectPassword() {
+        insertTestData(CREDS_1);
+
+        String password = restSecurityMapper.selectPasswordHashForUser(CREDS_1_USER_ID, PREFIX);
+        assertEquals(CREDS_1_PASSWORD, password);
+    }
+
+    @Test
+    public void shouldUpdatePassword() {
+        insertTestData(CREDS_1);
+
+        String newPassword = "xdasdasd";
+
+        restSecurityMapper.updatePassword(CREDS_1_USER_ID, newPassword, PREFIX);
+
+        assertEquals(1, countRowsInTableWhereColumnsEquals(CREDENTIALS,
+                "user_id", quote(CREDS_1_USER_ID),
+                "password", quote(newPassword)));
     }
 }
