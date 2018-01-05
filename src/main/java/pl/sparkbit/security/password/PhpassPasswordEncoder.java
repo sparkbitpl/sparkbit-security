@@ -4,7 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class PhpassPasswordEncoder implements PasswordEncoder {
 
-    public static final int NUMBER_OF_HASH_ITERATIONS = 8;
+    private static final int NUMBER_OF_HASH_ITERATIONS = 8;
 
     private PHPass phpass;
 

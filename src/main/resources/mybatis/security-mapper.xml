@@ -2,9 +2,9 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!--suppress SqlResolve -->
-<mapper namespace="pl.sparkbit.security.dao.mybatis.SecurityMapper">
+<mapper namespace="pl.sparkbit.security.rest.dao.mybatis.RestSecurityMapper">
 
-    <resultMap id="restUserDetailsResultMap" type="pl.sparkbit.security.rest.user.RestUserDetails">
+    <resultMap id="restUserDetailsResultMap" type="pl.sparkbit.security.rest.domain.RestUserDetails">
         <constructor>
             <idArg column="auth_token" javaType="String"/>
             <arg column="user_id" javaType="String"/>

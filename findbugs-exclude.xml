@@ -1,6 +1,6 @@
 <FindBugsFilter>
     <Match>
-        <Class name="pl.sparkbit.security.rest.user.RestAuthenticationProvider"/>
+        <Class name="pl.sparkbit.security.rest.authn.user.UserAuthenticationProvider"/>
         <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
@@ -11,7 +11,7 @@
     </Match>
 
     <Match>
-        <Class name="pl.sparkbit.security.rest.user.RestUserDetails"/>
+        <Class name="pl.sparkbit.security.rest.domain.RestUserDetails"/>
         <Field name="roles"/>
         <Bug pattern="UWF_UNWRITTEN_FIELD"/>
     </Match>

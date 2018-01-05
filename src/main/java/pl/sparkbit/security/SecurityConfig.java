@@ -24,8 +24,9 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.web.filter.GenericFilterBean;
 import pl.sparkbit.security.password.PasswordEncoderType;
 import pl.sparkbit.security.password.PhpassPasswordEncoder;
-import pl.sparkbit.security.rest.RestAuthenticationFilter;
-import pl.sparkbit.security.rest.user.RestAuthenticationProvider;
+import pl.sparkbit.security.rest.authn.RestAuthenticationFilter;
+import pl.sparkbit.security.rest.authn.user.UserAuthenticationProvider;
+import pl.sparkbit.security.rest.service.RestSecurityService;
 import pl.sparkbit.security.session.auth.LoginAuthenticationFilter;
 import pl.sparkbit.security.session.auth.social.FacebookAuthenticationProvider;
 import pl.sparkbit.security.session.auth.social.GoogleAuthenticationProvider;
@@ -44,7 +45,8 @@ import static pl.sparkbit.security.session.mvc.controller.SessionController.LOGI
 
 @Configuration
 @EnableWebSecurity
-@MapperScan({"pl.sparkbit.security.dao.mybatis", "pl.sparkbit.security.session.dao.mybatis"})
+@MapperScan({"pl.sparkbit.security.rest.dao.mybatis", "pl.sparkbit.security.session.dao.mybatis"})
+@SuppressWarnings("SpringFacetCodeInspection")
 public class SecurityConfig {
 
     @Bean
@@ -60,6 +62,7 @@ public class SecurityConfig {
     @Configuration
     @Order(1)
     @RequiredArgsConstructor
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static class LoginConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
         private final SessionService sessionService;
@@ -156,12 +159,12 @@ public class SecurityConfig {
 
         private static final String ADMIN_PATTERN = "/admin/**";
 
-        private final SecurityService securityService;
+        private final RestSecurityService restSecurityService;
         private final AuthenticationEntryPoint authenticationEntryPoint;
 
         @Bean
-        public RestAuthenticationProvider restAuthenticationProvider() {
-            return new RestAuthenticationProvider(securityService);
+        public UserAuthenticationProvider restAuthenticationProvider() {
+            return new UserAuthenticationProvider(restSecurityService);
         }
 
         @Override

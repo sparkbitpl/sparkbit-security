@@ -6,7 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import pl.sparkbit.security.rest.user.RestUserDetails;
+import pl.sparkbit.security.rest.domain.RestUserDetails;
 
 @Component
 @SuppressWarnings({"unused", "WeakerAccess"})

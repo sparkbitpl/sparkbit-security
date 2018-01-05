@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import pl.sparkbit.commons.util.IdGenerator;
 import pl.sparkbit.security.Security;
-import pl.sparkbit.security.rest.user.RestUserDetails;
+import pl.sparkbit.security.rest.domain.RestUserDetails;
 import pl.sparkbit.security.session.auth.LoginPrincipal;
 import pl.sparkbit.security.session.auth.LoginUserDetails;
 import pl.sparkbit.security.session.dao.SessionDao;
