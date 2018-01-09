@@ -14,4 +14,7 @@ public class Paths {
 
     //password
     public static final String PASSWORD = "/profile/password";
+
+    //challenge
+    public static final String PUBLIC_EMAIL = "/public/profile/email";
 }

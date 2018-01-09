@@ -1,7 +1,6 @@
 package pl.sparkbit.security.rest.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +16,6 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-@Slf4j
 @SuppressWarnings("unused")
 public class RestSecurityServiceImpl implements RestSecurityService {
 

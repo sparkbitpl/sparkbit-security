@@ -45,7 +45,8 @@ import static pl.sparkbit.security.Paths.LOGIN;
 
 @Configuration
 @EnableWebSecurity
-@MapperScan({"pl.sparkbit.security.rest.dao.mybatis", "pl.sparkbit.security.session.dao.mybatis"})
+@MapperScan({"pl.sparkbit.security.rest.dao.mybatis", "pl.sparkbit.security.session.dao.mybatis",
+        "pl.sparkbit.security.challenge.dao.mybatis"})
 @SuppressWarnings("SpringFacetCodeInspection")
 public class SecurityConfig {
 

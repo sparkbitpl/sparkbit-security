@@ -23,6 +23,7 @@ import static pl.sparkbit.security.Security.AUTH_TOKEN_HEADER;
 
 @RequiredArgsConstructor
 @RestController
+@SuppressWarnings("unused")
 public class SessionController {
 
     private final SessionService sessionService;

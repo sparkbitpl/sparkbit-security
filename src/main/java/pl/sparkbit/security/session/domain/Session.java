@@ -1,12 +1,12 @@
 package pl.sparkbit.security.session.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Builder(toBuilder = true)
 @Getter
 public class Session {

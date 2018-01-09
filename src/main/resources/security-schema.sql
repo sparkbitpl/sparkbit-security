@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS security_challenge;
 DROP TABLE IF EXISTS user_session;
 DROP TABLE IF EXISTS user_role;
 DROP TABLE IF EXISTS user_credentials;
@@ -24,5 +25,16 @@ CREATE TABLE user_session (
   creation_ts BIGINT      NOT NULL,
   deleted_ts  BIGINT,
   PRIMARY KEY (auth_token),
+  FOREIGN KEY (user_id) REFERENCES user_credentials (user_id)
+);
+
+CREATE TABLE security_challenge (
+  id             VARCHAR(32) NOT NULL,
+  user_id        VARCHAR(32) NOT NULL,
+  challenge_type VARCHAR(32) NOT NULL,
+  expiration_ts  BIGINT      NOT NULL,
+  token          VARCHAR(32) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (token, challenge_type),
   FOREIGN KEY (user_id) REFERENCES user_credentials (user_id)
 );

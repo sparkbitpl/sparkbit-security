@@ -1,13 +1,12 @@
 package pl.sparkbit.security.rest.dao.mybatis.data;
 
 import com.ninja_squad.dbsetup.operation.Operation;
+import pl.sparkbit.security.challenge.domain.SecurityChallengeType;
 
 import java.time.Instant;
 
 import static com.ninja_squad.dbsetup.Operations.insertInto;
-import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables.SESSION;
-import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables.CREDENTIALS;
-import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables.USER_ROLE;
+import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables.*;
 
 public class SecurityTestDataUtils {
 
@@ -34,6 +33,14 @@ public class SecurityTestDataUtils {
         return insertInto(SESSION)
                 .columns("auth_token", "user_id", "creation_ts", "deleted_ts")
                 .values(authToken, user_id, creation.toEpochMilli(), deletedTs)
+                .build();
+    }
+
+    public static Operation securityChallenge(String id, String userId, SecurityChallengeType type,
+                                              Instant expirationTimestamp, String token) {
+        return insertInto(SECURITY_CHALLENGE)
+                .columns("id", "user_id", "challenge_type", "expiration_ts", "token")
+                .values(id, userId, type, expirationTimestamp.toEpochMilli(), token)
                 .build();
     }
 }

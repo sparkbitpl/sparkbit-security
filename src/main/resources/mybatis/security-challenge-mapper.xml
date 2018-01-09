@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--suppress SqlResolve -->
+<mapper namespace="pl.sparkbit.security.challenge.dao.mybatis.SecurityChallengeMapper">
+
+    <insert id="insertChallenge">
+        INSERT INTO security_challenge (id, ${prefix}_id, challenge_type, expiration_ts, token)
+        VALUES (#{challenge.id}, #{challenge.userId}, #{challenge.type}, #{challenge.expirationTimestamp},
+                #{challenge.token})
+    </insert>
+
+    <resultMap id="securityChallengeResultMap" type="pl.sparkbit.security.challenge.domain.SecurityChallenge">
+        <constructor>
+            <idArg column="id" javaType="String"/>
+            <arg column="user_id" javaType="String"/>
+            <arg column="challenge_type" javaType="pl.sparkbit.security.challenge.domain.SecurityChallengeType"/>
+            <arg column="expiration_ts" javaType="java.time.Instant"/>
+            <arg column="token" javaType="String"/>
+        </constructor>
+    </resultMap>
+
+    <select id="selectChallengeByToken" resultMap="securityChallengeResultMap">
+        SELECT id, ${prefix}_id AS user_id, challenge_type, expiration_ts, token FROM security_challenge WHERE token=#{token}
+    </select>
+
+    <delete id="deleteChallengeById">
+        DELETE FROM security_challenge WHERE id=#{id}
+    </delete>
+
+    <delete id="deleteChallengeByUserIdAndType">
+        DELETE FROM security_challenge WHERE ${prefix}_id=#{userId} AND challenge_type=#{type}
+    </delete>
+
+</mapper>
