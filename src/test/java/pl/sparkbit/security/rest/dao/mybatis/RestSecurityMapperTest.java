@@ -4,8 +4,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import pl.sparkbit.security.rest.domain.RestUserDetails;
+import pl.sparkbit.security.session.auth.AuthnAttributes;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -21,6 +24,27 @@ public class RestSecurityMapperTest extends MapperTestBase {
 
     @Autowired
     private RestSecurityMapper restSecurityMapper;
+
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void shouldInsertCredentials() {
+        String userId = "userid";
+        String email = "email";
+        String password = "passwd";
+        Boolean enabled = false;
+        Boolean deleted = true;
+
+        Map<String, String> authnAttributes = new HashMap<>();
+        authnAttributes.put("username", email);
+        restSecurityMapper.insertCredentials(userId, password, enabled, deleted, authnAttributes, PREFIX);
+
+        assertEquals(1, countRowsInTableWhereColumnsEquals(CREDENTIALS,
+                "user_id", quote(userId),
+                "username", quote(email),
+                "password", quote(password),
+                "enabled", enabled,
+                "deleted", deleted));
+    }
 
     @Test
     public void shouldInsertRoleForUser() {

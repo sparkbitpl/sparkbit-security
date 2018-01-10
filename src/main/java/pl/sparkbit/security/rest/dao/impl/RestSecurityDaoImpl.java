@@ -7,6 +7,7 @@ import pl.sparkbit.security.rest.dao.RestSecurityDao;
 import pl.sparkbit.security.rest.dao.mybatis.RestSecurityMapper;
 import pl.sparkbit.security.rest.domain.RestUserDetails;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -18,6 +19,12 @@ public class RestSecurityDaoImpl implements RestSecurityDao {
 
     @Value("${sparkbit.security.user-entity-name:user}")
     private String prefix;
+
+    @Override
+    public void insertCredentials(String userId, String password, boolean enabled, boolean deleted,
+                                  Map authnAttributes) {
+        restSecurityMapper.insertCredentials(userId, password, enabled, deleted, authnAttributes, prefix);
+    }
 
     @Override
     public void insertUserRole(String userId, String role) {

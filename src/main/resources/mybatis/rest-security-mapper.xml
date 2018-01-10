@@ -4,6 +4,14 @@
 <!--suppress SqlResolve -->
 <mapper namespace="pl.sparkbit.security.rest.dao.mybatis.RestSecurityMapper">
 
+    <insert id="insertCredentials">
+        INSERT INTO ${prefix}_credentials (user_id, password, enabled, deleted,
+        <foreach collection="authnAttributes" index="key" item="value" open="" separator=", " close="">${key}</foreach>
+        ) VALUES (#{userId}, #{password}, #{enabled}, #{deleted},
+        <foreach collection="authnAttributes" index="key" item="value" open="" separator=", " close="">#{value}</foreach>
+        );
+    </insert>
+
     <insert id="insertUserRole">
         INSERT INTO user_role (user_id, role) VALUES (#{userId}, #{role})
     </insert>
