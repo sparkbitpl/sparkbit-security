@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables.CREDENTIALS;
 import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables.PREFIX;
+import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables.USER_ROLE;
 import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestData.*;
 import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestDataUtils.session;
 
@@ -20,6 +21,19 @@ public class RestSecurityMapperTest extends MapperTestBase {
 
     @Autowired
     private RestSecurityMapper restSecurityMapper;
+
+    @Test
+    public void shouldInsertRoleForUser() {
+        insertTestData(CREDS_1);
+
+        String role = "ROLE_XXX";
+
+        restSecurityMapper.insertUserRole(CREDS_1_USER_ID, role);
+
+        assertEquals(1, countRowsInTableWhereColumnsEquals(USER_ROLE,
+                "user_id", quote(CREDS_1_USER_ID),
+                "role", quote(role)));
+    }
 
     @Test
     public void shouldSelectRestUserDetails() {

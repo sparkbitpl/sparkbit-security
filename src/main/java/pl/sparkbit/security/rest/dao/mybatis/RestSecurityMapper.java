@@ -5,6 +5,8 @@ import pl.sparkbit.security.rest.domain.RestUserDetails;
 
 public interface RestSecurityMapper {
 
+    void insertUserRole(@Param("userId") String userId, @Param("role") String role);
+
     RestUserDetails selectRestUserDetails(@Param("authToken") String authToken, @Param("prefix") String prefix);
 
     String selectPasswordHashForUser(@Param("userId") String userId, @Param("prefix") String prefix);

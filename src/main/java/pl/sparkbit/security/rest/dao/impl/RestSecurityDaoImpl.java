@@ -20,6 +20,11 @@ public class RestSecurityDaoImpl implements RestSecurityDao {
     private String prefix;
 
     @Override
+    public void insertUserRole(String userId, String role) {
+        restSecurityMapper.insertUserRole(userId, role);
+    }
+
+    @Override
     public Optional<RestUserDetails> selectRestUserDetails(String authToken) {
         return Optional.ofNullable(restSecurityMapper.selectRestUserDetails(authToken, prefix));
     }

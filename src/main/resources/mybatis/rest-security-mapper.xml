@@ -4,6 +4,10 @@
 <!--suppress SqlResolve -->
 <mapper namespace="pl.sparkbit.security.rest.dao.mybatis.RestSecurityMapper">
 
+    <insert id="insertUserRole">
+        INSERT INTO user_role (user_id, role) VALUES (#{userId}, #{role})
+    </insert>
+
     <resultMap id="restUserDetailsResultMap" type="pl.sparkbit.security.rest.domain.RestUserDetails">
         <constructor>
             <idArg column="auth_token" javaType="String"/>
