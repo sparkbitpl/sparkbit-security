@@ -3,14 +3,18 @@ package pl.sparkbit.security.challenge.dao.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import pl.sparkbit.security.challenge.dao.SecurityChallengeDao;
 import pl.sparkbit.security.challenge.dao.mybatis.SecurityChallengeMapper;
 import pl.sparkbit.security.challenge.domain.SecurityChallenge;
 import pl.sparkbit.security.challenge.domain.SecurityChallengeType;
 
+import static org.springframework.transaction.annotation.Propagation.MANDATORY;
+
 @Repository
 @RequiredArgsConstructor
 @SuppressWarnings("unused")
+@Transactional(propagation = MANDATORY)
 public class SecurityChallengeDaoImpl implements SecurityChallengeDao {
 
     private final SecurityChallengeMapper securityChallengeMapper;

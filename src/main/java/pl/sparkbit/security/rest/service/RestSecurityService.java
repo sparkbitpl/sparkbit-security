@@ -1,6 +1,7 @@
 package pl.sparkbit.security.rest.service;
 
-import pl.sparkbit.security.challenge.domain.Credentials;
+import org.springframework.security.core.GrantedAuthority;
+import pl.sparkbit.security.rest.domain.Credentials;
 import pl.sparkbit.security.rest.domain.RestUserDetails;
 import pl.sparkbit.security.rest.mvc.dto.in.ChangePasswordDTO;
 
@@ -9,7 +10,9 @@ import java.util.Collection;
 @SuppressWarnings("unused")
 public interface RestSecurityService {
 
-    void insertCredentialsAndRoles(Credentials credentials, Collection<String> roles);
+    void insertCredentialsAndRole(Credentials credentials, GrantedAuthority role);
+
+    void insertCredentialsAndRoles(Credentials credentials, Collection<GrantedAuthority> roles);
 
     RestUserDetails retrieveRestUserDetails(String authToken);
 

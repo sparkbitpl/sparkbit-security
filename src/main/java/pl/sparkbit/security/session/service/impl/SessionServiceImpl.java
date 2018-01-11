@@ -45,6 +45,7 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    @Transactional
     public Session startNewSession(String oldAuthToken) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -80,6 +81,7 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    @Transactional
     public void logout() {
         RestUserDetails restUserDetails = security.currentUserDetails();
         sessionDao.deleteSession(restUserDetails.getAuthToken(), clock.instant());

@@ -10,7 +10,7 @@
     </insert>
 
     <insert id="insertUserRole">
-        INSERT INTO user_role (user_id, role) VALUES (#{userId}, #{role})
+        INSERT INTO user_role (user_id, role) VALUES (#{userId}, #{role.authority})
     </insert>
 
     <resultMap id="restUserDetailsResultMap" type="pl.sparkbit.security.rest.domain.RestUserDetails">

@@ -1,4 +1,4 @@
-package pl.sparkbit.security.challenge.domain;
+package pl.sparkbit.security.rest.domain;
 
 import lombok.Builder;
 import lombok.Getter;

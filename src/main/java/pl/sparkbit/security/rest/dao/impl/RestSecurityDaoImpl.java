@@ -2,17 +2,22 @@ package pl.sparkbit.security.rest.dao.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Repository;
-import pl.sparkbit.security.challenge.domain.Credentials;
+import org.springframework.transaction.annotation.Transactional;
 import pl.sparkbit.security.rest.dao.RestSecurityDao;
 import pl.sparkbit.security.rest.dao.mybatis.RestSecurityMapper;
+import pl.sparkbit.security.rest.domain.Credentials;
 import pl.sparkbit.security.rest.domain.RestUserDetails;
 
 import java.util.Optional;
 
+import static org.springframework.transaction.annotation.Propagation.MANDATORY;
+
 @Repository
 @RequiredArgsConstructor
 @SuppressWarnings("unused")
+@Transactional(propagation = MANDATORY)
 public class RestSecurityDaoImpl implements RestSecurityDao {
 
     private final RestSecurityMapper restSecurityMapper;
@@ -26,7 +31,7 @@ public class RestSecurityDaoImpl implements RestSecurityDao {
     }
 
     @Override
-    public void insertUserRole(String userId, String role) {
+    public void insertUserRole(String userId, GrantedAuthority role) {
         restSecurityMapper.insertUserRole(userId, role);
     }
 

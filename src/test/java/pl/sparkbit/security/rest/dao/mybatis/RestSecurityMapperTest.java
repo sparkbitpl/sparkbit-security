@@ -2,8 +2,9 @@ package pl.sparkbit.security.rest.dao.mybatis;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import pl.sparkbit.security.challenge.domain.Credentials;
+import pl.sparkbit.security.rest.domain.Credentials;
 import pl.sparkbit.security.rest.domain.RestUserDetails;
 
 import java.time.Instant;
@@ -42,7 +43,7 @@ public class RestSecurityMapperTest extends MapperTestBase {
     public void shouldInsertRoleForUser() {
         insertTestData(CREDS_1);
 
-        String role = "ROLE_XXX";
+        GrantedAuthority role = new SimpleGrantedAuthority("ROLE_XXX");
 
         restSecurityMapper.insertUserRole(CREDS_1_USER_ID, role);
 

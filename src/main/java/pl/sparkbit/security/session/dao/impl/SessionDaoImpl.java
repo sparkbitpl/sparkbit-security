@@ -3,6 +3,7 @@ package pl.sparkbit.security.session.dao.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import pl.sparkbit.security.session.auth.AuthnAttributes;
 import pl.sparkbit.security.session.auth.LoginUserDetails;
 import pl.sparkbit.security.session.dao.SessionDao;
@@ -12,8 +13,12 @@ import pl.sparkbit.security.session.domain.Session;
 import java.time.Instant;
 import java.util.Optional;
 
+import static org.springframework.transaction.annotation.Propagation.MANDATORY;
+
 @Repository
 @RequiredArgsConstructor
+@SuppressWarnings("unused")
+@Transactional(propagation = MANDATORY)
 public class SessionDaoImpl implements SessionDao {
 
     private final SessionMapper sessionMapper;

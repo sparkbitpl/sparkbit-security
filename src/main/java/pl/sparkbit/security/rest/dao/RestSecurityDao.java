@@ -1,6 +1,7 @@
 package pl.sparkbit.security.rest.dao;
 
-import pl.sparkbit.security.challenge.domain.Credentials;
+import org.springframework.security.core.GrantedAuthority;
+import pl.sparkbit.security.rest.domain.Credentials;
 import pl.sparkbit.security.rest.domain.RestUserDetails;
 
 import java.util.Optional;
@@ -10,7 +11,7 @@ public interface RestSecurityDao {
 
     void insertCredentials(Credentials credentials);
 
-    void insertUserRole(String userId, String role);
+    void insertUserRole(String userId, GrantedAuthority role);
 
     Optional<RestUserDetails> selectRestUserDetails(String authToken);
 
