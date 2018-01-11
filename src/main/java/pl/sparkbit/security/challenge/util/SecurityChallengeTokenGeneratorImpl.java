@@ -7,7 +7,7 @@ import java.security.SecureRandom;
 
 @Component
 @SuppressWarnings("unused")
-public class ChallengeTokenGeneratorImpl implements SecurityChallengeTokenGenerator {
+public class SecurityChallengeTokenGeneratorImpl implements SecurityChallengeTokenGenerator {
 
     private static final SecureRandom RND = new SecureRandom();
 
