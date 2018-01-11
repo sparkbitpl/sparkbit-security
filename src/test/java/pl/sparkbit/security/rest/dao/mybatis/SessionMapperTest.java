@@ -1,8 +1,11 @@
 package pl.sparkbit.security.rest.dao.mybatis;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.ninja_squad.dbsetup.operation.Operation;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables;
 import pl.sparkbit.security.session.domain.Session;
 import pl.sparkbit.security.session.auth.LoginUserDetails;
 import pl.sparkbit.security.session.auth.AuthnAttributes;
@@ -10,19 +13,14 @@ import pl.sparkbit.security.session.dao.mybatis.SessionMapper;
 
 import java.time.Instant;
 
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables.PREFIX;
-import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables.SESSION;
-import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestData.CREDS_1;
-import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestData.CREDS_1_DELETED;
-import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestData.CREDS_1_ENABLED;
-import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestData.CREDS_1_PASSWORD;
-import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestData.CREDS_1_USERNAME;
-import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestData.CREDS_1_USER_ID;
+import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables.*;
+import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestData.*;
 import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestDataUtils.session;
 
 @SuppressWarnings("SpringJavaAutowiringInspection")
@@ -67,6 +65,27 @@ public class SessionMapperTest extends MapperTestBase {
     }
 
     @Test
+    public void shouldSelectUserIdForSimpleLogin() {
+        insertTestData(CREDS_1, SIMPLE_LOGIN_USER_1);
+
+        AuthnAttributes authnAttributes =
+                new AuthnAttributes(singletonMap("username", USER_1_USERNAME), singleton("username"));
+        String userId = sessionMapper.selectUserId(SIMPLE_LOGIN_USER, authnAttributes, PREFIX);
+        assertEquals(USER_1_ID, userId);
+    }
+
+    @Test
+    public void shouldSelectUserIdForCompositeLogin() {
+        insertTestData(CREDS_1, COMPOSITE_LOGIN_USER_1);
+
+        AuthnAttributes authnAttributes = new AuthnAttributes(
+                ImmutableMap.of("username", USER_1_USERNAME, "context", USER_1_CONTEXT),
+                ImmutableSet.of("username", "context"));
+        String userId = sessionMapper.selectUserId(COMPOSITE_LOGIN_USER, authnAttributes, PREFIX);
+        assertEquals(USER_1_ID, userId);
+    }
+
+    @Test
     public void shouldNotSelectSessionWhenIsDeleted() {
         String authToken = "id12345";
         Instant creation = Instant.ofEpochSecond(31232133);
@@ -81,10 +100,7 @@ public class SessionMapperTest extends MapperTestBase {
     @Test
     public void shouldSelectLoginUserDetails() {
         insertTestData(CREDS_1);
-
-        AuthnAttributes authnAttributes =
-                new AuthnAttributes(singletonMap("username", CREDS_1_USERNAME), singleton("username"));
-        LoginUserDetails loginUserDetails = sessionMapper.selectLoginUserDetails(authnAttributes, PREFIX);
+        LoginUserDetails loginUserDetails = sessionMapper.selectLoginUserDetails(CREDS_1_USER_ID, PREFIX);
 
         assertNotNull(loginUserDetails);
         assertEquals(CREDS_1_USER_ID, loginUserDetails.getUserId());
@@ -97,10 +113,7 @@ public class SessionMapperTest extends MapperTestBase {
 
     @Test
     public void shouldReturnNullWhenUserNotFound() {
-        AuthnAttributes authnAttributes =
-                new AuthnAttributes(singletonMap("username", CREDS_1_USERNAME), singleton("username"));
-        LoginUserDetails loginUserDetails = sessionMapper.selectLoginUserDetails(authnAttributes, PREFIX);
-
+        LoginUserDetails loginUserDetails = sessionMapper.selectLoginUserDetails(CREDS_1_USER_ID, PREFIX);
         assertNull(loginUserDetails);
     }
 

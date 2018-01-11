@@ -24,6 +24,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 @Slf4j
+@SuppressWarnings("unused")
 public class SessionServiceImpl implements SessionService {
 
     private final SessionDao sessionDao;
@@ -35,8 +36,11 @@ public class SessionServiceImpl implements SessionService {
     @Transactional
     public UserDetails loadUserByUsername(String principalData) throws UsernameNotFoundException {
         LoginPrincipal principal = new LoginPrincipal(principalData);
-        Optional<LoginUserDetails> userDetails =
-                sessionDao.selectLoginUserDetails(principal.getAuthnAttributes());
+
+        String userId = sessionDao.selectUserId(principal.getAuthnAttributes())
+                .orElseThrow((() -> new UsernameNotFoundException(principal + " not found")));
+
+        Optional<LoginUserDetails> userDetails = sessionDao.selectLoginUserDetails(userId);
         return userDetails.orElseThrow(() -> new UsernameNotFoundException(principal + " not found"));
     }
 

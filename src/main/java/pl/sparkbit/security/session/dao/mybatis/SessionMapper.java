@@ -13,8 +13,10 @@ public interface SessionMapper {
 
     Session selectSession(@Param("authToken") String authToken, @Param("prefix") String prefix);
 
-    LoginUserDetails selectLoginUserDetails(@Param("authnAttributes") AuthnAttributes authnAttributes,
-            @Param("prefix") String prefix);
+    String selectUserId(@Param("userTableName") String userTableName,
+                        @Param("authnAttributes") AuthnAttributes authnAttributes, @Param("prefix") String prefix);
+
+    LoginUserDetails selectLoginUserDetails(@Param("userId") String userId, @Param("prefix") String prefix);
 
     void deleteSession(@Param("authToken") String authToken, @Param("deletedTs") Instant deletedTs,
             @Param("prefix") String prefix);

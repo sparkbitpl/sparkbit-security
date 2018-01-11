@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 
-@RequiredArgsConstructor
 @Builder(toBuilder = true)
 @Getter
+@RequiredArgsConstructor
 public class SecurityChallenge {
 
     private final String id;

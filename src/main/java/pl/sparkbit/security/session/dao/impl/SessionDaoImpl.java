@@ -20,6 +20,8 @@ public class SessionDaoImpl implements SessionDao {
 
     @Value("${sparkbit.security.user-entity-name:user}")
     private String prefix;
+    @Value("${sparkbit.security.userTableName:uzer}")
+    private String userTableName;
 
     @Override
     public void insertSession(Session session) {
@@ -32,8 +34,13 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public Optional<LoginUserDetails> selectLoginUserDetails(AuthnAttributes authnAttributes) {
-        return Optional.ofNullable(sessionMapper.selectLoginUserDetails(authnAttributes, prefix));
+    public Optional<String> selectUserId(AuthnAttributes authnAttributes) {
+        return Optional.ofNullable(sessionMapper.selectUserId(userTableName, authnAttributes, prefix));
+    }
+
+    @Override
+    public Optional<LoginUserDetails> selectLoginUserDetails(String userId) {
+        return Optional.ofNullable(sessionMapper.selectLoginUserDetails(userId, prefix));
     }
 
     @Override

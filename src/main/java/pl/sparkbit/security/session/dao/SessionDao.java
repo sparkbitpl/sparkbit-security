@@ -13,7 +13,9 @@ public interface SessionDao {
 
     Optional<Session> selectSession(String authToken);
 
-    Optional<LoginUserDetails> selectLoginUserDetails(AuthnAttributes authnAttributes);
+    Optional<String> selectUserId(AuthnAttributes authnAttributes);
+
+    Optional<LoginUserDetails> selectLoginUserDetails(String userId);
 
     void deleteSession(String authToken, Instant deletedTs);
 

@@ -3,11 +3,11 @@ package pl.sparkbit.security.rest.dao.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+import pl.sparkbit.security.challenge.domain.Credentials;
 import pl.sparkbit.security.rest.dao.RestSecurityDao;
 import pl.sparkbit.security.rest.dao.mybatis.RestSecurityMapper;
 import pl.sparkbit.security.rest.domain.RestUserDetails;
 
-import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -21,9 +21,8 @@ public class RestSecurityDaoImpl implements RestSecurityDao {
     private String prefix;
 
     @Override
-    public void insertCredentials(String userId, String password, boolean enabled, boolean deleted,
-                                  Map authnAttributes) {
-        restSecurityMapper.insertCredentials(userId, password, enabled, deleted, authnAttributes, prefix);
+    public void insertCredentials(Credentials credentials) {
+        restSecurityMapper.insertCredentials(credentials, prefix);
     }
 
     @Override

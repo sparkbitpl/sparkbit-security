@@ -63,6 +63,7 @@ public class SecurityMappersTestConfig {
     private DatabasePopulator databasePopulator() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("security-schema.sql"));
+        populator.addScript(new ClassPathResource("test-schema.sql"));
         return populator;
     }
 

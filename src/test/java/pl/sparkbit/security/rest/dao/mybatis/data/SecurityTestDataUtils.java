@@ -8,12 +8,13 @@ import java.time.Instant;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables.*;
 
+@SuppressWarnings("WeakerAccess")
 public class SecurityTestDataUtils {
 
     static Operation user(Credentials u) {
         return insertInto(CREDENTIALS)
-                .columns("user_id", "username", "password", "enabled", "deleted")
-                .values(u.getUserId(), u.getUsername(), u.getPassword(), u.getEnabled(), u.getDeleted())
+                .columns("user_id", "password", "enabled", "deleted")
+                .values(u.getUserId(), u.getPassword(), u.getEnabled(), u.getDeleted())
                 .build();
     }
 
@@ -41,6 +42,20 @@ public class SecurityTestDataUtils {
         return insertInto(SECURITY_CHALLENGE)
                 .columns("id", "user_id", "challenge_type", "expiration_ts", "token")
                 .values(id, userId, type, expirationTimestamp.toEpochMilli(), token)
+                .build();
+    }
+
+    public static Operation simpleLoginUser(String id, String username) {
+        return insertInto(SIMPLE_LOGIN_USER)
+                .columns("id", "username")
+                .values(id, username)
+                .build();
+    }
+
+    public static Operation compositeLoginUser(String id, String username, String context) {
+        return insertInto(COMPOSITE_LOGIN_USER)
+                .columns("id", "username", "context")
+                .values(id, username, context)
                 .build();
     }
 }

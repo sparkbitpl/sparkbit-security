@@ -5,7 +5,6 @@ DROP TABLE IF EXISTS user_credentials;
 
 CREATE TABLE user_credentials (
   user_id  VARCHAR(32) NOT NULL,
-  username VARCHAR(50) NOT NULL,
   password VARCHAR(82) NOT NULL,
   enabled  BOOLEAN     NOT NULL,
   deleted  BOOLEAN     NOT NULL,

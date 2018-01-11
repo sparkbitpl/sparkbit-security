@@ -1,15 +1,12 @@
 package pl.sparkbit.security.rest.dao.mybatis;
 
 import org.apache.ibatis.annotations.Param;
+import pl.sparkbit.security.challenge.domain.Credentials;
 import pl.sparkbit.security.rest.domain.RestUserDetails;
-
-import java.util.Map;
 
 public interface RestSecurityMapper {
 
-    void insertCredentials(@Param("userId") String userId, @Param("password") String password,
-                           @Param("enabled") boolean enabled, @Param("deleted") boolean deleted,
-                           @Param("authnAttributes") Map authnAttributes, @Param("prefix") String prefix);
+    void insertCredentials(@Param("credentials") Credentials credentials, @Param("prefix") String prefix);
 
     void insertUserRole(@Param("userId") String userId, @Param("role") String role);
 
