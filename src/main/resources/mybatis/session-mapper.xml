@@ -47,8 +47,12 @@
         UPDATE ${prefix}_session SET deleted_ts=#{deletedTs} WHERE auth_token=#{authToken}
     </update>
 
-    <delete id="deleteSessions">
+    <delete id="deleteExpiredSessions">
         DELETE FROM ${prefix}_session WHERE deleted_ts &lt; #{olderThan}
     </delete>
+
+    <update id="deleteSessionsForUser">
+        UPDATE ${prefix}_session SET deleted_ts=#{deletedTs} WHERE ${prefix}_id = #{userId}
+    </update>
 
 </mapper>

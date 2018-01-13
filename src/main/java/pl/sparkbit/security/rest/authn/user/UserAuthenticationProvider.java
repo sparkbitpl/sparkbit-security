@@ -16,8 +16,7 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        Assert.isInstanceOf(RestAuthenticationToken.class, authentication,
-                "Only RestAuthenticationToken is supported");
+        Assert.isInstanceOf(RestAuthenticationToken.class, authentication, "Only RestAuthenticationToken is supported");
 
         String authToken = ((RestAuthenticationToken) authentication).getAuthToken();
         RestUserDetails restUserDetails = restSecurityService.retrieveRestUserDetails(authToken);
@@ -29,6 +28,6 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return (RestAuthenticationToken.class.isAssignableFrom(authentication));
+        return RestAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

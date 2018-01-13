@@ -5,20 +5,16 @@ import com.google.common.collect.ImmutableSet;
 import com.ninja_squad.dbsetup.operation.Operation;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables;
-import pl.sparkbit.security.session.domain.Session;
-import pl.sparkbit.security.session.auth.LoginUserDetails;
 import pl.sparkbit.security.session.auth.AuthnAttributes;
+import pl.sparkbit.security.session.auth.LoginUserDetails;
 import pl.sparkbit.security.session.dao.mybatis.SessionMapper;
+import pl.sparkbit.security.session.domain.Session;
 
 import java.time.Instant;
 
-import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonMap;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityDbTables.*;
 import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestData.*;
 import static pl.sparkbit.security.rest.dao.mybatis.data.SecurityTestDataUtils.session;
@@ -133,22 +129,40 @@ public class SessionMapperTest extends MapperTestBase {
     }
 
     @Test
-    public void shouldDeleteOldSessions() {
+    public void shouldDeleteExpiredSessions() {
+        String authToken = "id12345";
+        String authToken2 = "id123456";
+        Instant creation = Instant.ofEpochSecond(31232133);
+        Instant deletedTs1 = Instant.ofEpochSecond(31232555);
+        Instant deletedTs2 = deletedTs1.plusSeconds(5000);
+        Instant olderThan = deletedTs1.plusSeconds(3600);
+
+        Operation session1 = session(authToken, CREDS_1_USER_ID, creation, deletedTs1);
+        Operation session2 = session(authToken2, CREDS_1_USER_ID, creation, deletedTs2);
+        insertTestData(CREDS_1, session1, session2);
+
+        sessionMapper.deleteExpiredSessions(olderThan, PREFIX);
+
+        assertEquals(1, countRowsInTableWhereColumnsEquals(SESSION, "user_id", quote(CREDS_1_USER_ID)));
+    }
+
+    @Test
+    public void shouldDeleteSessionsForUser() {
         String authToken = "id12345";
         String authToken2 = "id123456";
         Instant creation = Instant.ofEpochSecond(31232133);
         Instant deletedTs = Instant.ofEpochSecond(31232555);
-        Instant olderThan = deletedTs.plusSeconds(3600);
 
-        Operation session1 = session(authToken, CREDS_1_USER_ID, creation, deletedTs);
-        Operation session2 = session(authToken2, CREDS_1_USER_ID, creation, deletedTs);
+        Operation session1 = session(authToken, CREDS_1_USER_ID, creation);
+        Operation session2 = session(authToken2, CREDS_1_USER_ID, creation);
         insertTestData(CREDS_1, session1, session2);
 
-        sessionMapper.deleteSessions(olderThan, PREFIX);
+        sessionMapper.deleteSessionsForUser(CREDS_1_USER_ID, deletedTs, PREFIX);
 
-        assertEquals(0, countRowsInTableWhereColumnsEquals(SESSION,
-                "user_id", quote(CREDS_1_USER_ID)
-        ));
+        assertEquals(2, countRowsInTableWhereColumnsEquals(SESSION,
+                "user_id", quote(CREDS_1_USER_ID),
+                "deleted_ts", deletedTs.toEpochMilli())
+        );
     }
 
 }

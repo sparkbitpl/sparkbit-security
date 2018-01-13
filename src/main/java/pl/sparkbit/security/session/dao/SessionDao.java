@@ -20,4 +20,6 @@ public interface SessionDao {
     void deleteSession(String authToken, Instant deletedTs);
 
     void deleteSessions(Instant olderThan);
+
+    void deleteSessions(String userId, Instant deletedTs);
 }

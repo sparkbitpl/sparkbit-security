@@ -13,7 +13,9 @@ import pl.sparkbit.security.rest.exception.InvalidCurrentPasswordException;
 import pl.sparkbit.security.rest.exception.SessionNotFoundException;
 import pl.sparkbit.security.rest.mvc.dto.in.ChangePasswordDTO;
 import pl.sparkbit.security.rest.service.RestSecurityService;
+import pl.sparkbit.security.session.dao.SessionDao;
 
+import java.time.Clock;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -24,8 +26,10 @@ import java.util.Optional;
 public class RestSecurityServiceImpl implements RestSecurityService {
 
     private final RestSecurityDao restSecurityDao;
+    private final SessionDao sessionDao;
     private final PasswordEncoder passwordEncoder;
     private final Security security;
+    private final Clock clock;
 
     @Override
     @Transactional
@@ -75,6 +79,7 @@ public class RestSecurityServiceImpl implements RestSecurityService {
     public void disableUser(String userId) {
         Credentials credentials = Credentials.builder().userId(userId).enabled(false).build();
         restSecurityDao.updateCredentials(credentials);
+        sessionDao.deleteSessions(userId, clock.instant());
     }
 
     @Override
@@ -87,5 +92,6 @@ public class RestSecurityServiceImpl implements RestSecurityService {
     public void deleteUser(String userId) {
         Credentials credentials = Credentials.builder().userId(userId).deleted(true).build();
         restSecurityDao.updateCredentials(credentials);
+        sessionDao.deleteSessions(userId, clock.instant());
     }
 }

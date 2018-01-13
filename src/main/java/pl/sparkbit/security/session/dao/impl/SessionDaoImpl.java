@@ -55,6 +55,11 @@ public class SessionDaoImpl implements SessionDao {
 
     @Override
     public void deleteSessions(Instant olderThan) {
-        sessionMapper.deleteSessions(olderThan, prefix);
+        sessionMapper.deleteExpiredSessions(olderThan, prefix);
+    }
+
+    @Override
+    public void deleteSessions(String userId, Instant deletedTs) {
+        sessionMapper.deleteSessionsForUser(userId, deletedTs, prefix);
     }
 }

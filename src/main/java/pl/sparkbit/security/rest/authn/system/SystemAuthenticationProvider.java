@@ -26,6 +26,6 @@ public class SystemAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return (RestAuthenticationToken.class.isAssignableFrom(authentication));
+        return RestAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }
