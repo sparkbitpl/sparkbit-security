@@ -78,15 +78,19 @@ public class RestSecurityMapperTest extends MapperTestBase {
     }
 
     @Test
-    public void shouldUpdatePassword() {
+    public void shouldUpdateCredentials() {
         insertTestData(CREDS_1);
 
         String newPassword = "xdasdasd";
+        Credentials credentials = Credentials.builder().userId(CREDS_1_USER_ID).password(newPassword)
+                .enabled(!CREDS_1_ENABLED).deleted(!CREDS_1_DELETED).build();
 
-        restSecurityMapper.updatePassword(CREDS_1_USER_ID, newPassword, PREFIX);
+        restSecurityMapper.updateCredentials(credentials, PREFIX);
 
         assertEquals(1, countRowsInTableWhereColumnsEquals(CREDENTIALS,
                 "user_id", quote(CREDS_1_USER_ID),
-                "password", quote(newPassword)));
+                "password", quote(newPassword),
+                "enabled", !CREDS_1_ENABLED,
+                "deleted", !CREDS_1_DELETED));
     }
 }

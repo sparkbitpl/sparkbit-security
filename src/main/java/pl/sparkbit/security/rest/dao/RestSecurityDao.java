@@ -17,5 +17,5 @@ public interface RestSecurityDao {
 
     String selectPasswordHashForUser(String userId);
 
-    void updatePassword(String userId, String password);
+    void updateCredentials(Credentials credentials);
 }

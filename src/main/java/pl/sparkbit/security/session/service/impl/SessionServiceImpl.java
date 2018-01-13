@@ -82,7 +82,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     @Transactional
-    public void logout() {
+    public void endSession() {
         RestUserDetails restUserDetails = security.currentUserDetails();
         sessionDao.deleteSession(restUserDetails.getAuthToken(), clock.instant());
         SecurityContextHolder.clearContext();

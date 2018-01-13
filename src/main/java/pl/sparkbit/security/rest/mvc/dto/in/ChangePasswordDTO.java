@@ -2,6 +2,7 @@ package pl.sparkbit.security.rest.mvc.dto.in;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 
@@ -10,7 +11,7 @@ public class ChangePasswordDTO {
 
     private static final int MINIMAL_PASSWORD_LENGTH = 8;
 
-    @NotNull
+    @NotEmpty
     private final String currentPassword;
 
     @NotNull

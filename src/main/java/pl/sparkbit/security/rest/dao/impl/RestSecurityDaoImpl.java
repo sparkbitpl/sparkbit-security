@@ -46,7 +46,7 @@ public class RestSecurityDaoImpl implements RestSecurityDao {
     }
 
     @Override
-    public void updatePassword(String userId, String password) {
-        restSecurityMapper.updatePassword(userId, password, prefix);
+    public void updateCredentials(Credentials credentials) {
+        restSecurityMapper.updateCredentials(credentials, prefix);
     }
 }

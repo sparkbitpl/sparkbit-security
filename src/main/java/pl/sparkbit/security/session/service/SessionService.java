@@ -7,5 +7,5 @@ public interface SessionService extends UserDetailsService {
 
     Session startNewSession(String oldAuthToken);
 
-    void logout();
+    void endSession();
 }

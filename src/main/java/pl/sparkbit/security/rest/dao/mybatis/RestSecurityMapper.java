@@ -15,6 +15,5 @@ public interface RestSecurityMapper {
 
     String selectPasswordHashForUser(@Param("userId") String userId, @Param("prefix") String prefix);
 
-    void updatePassword(@Param("userId") String userId, @Param("password") String password,
-                        @Param("prefix") String prefix);
+    void updateCredentials(@Param("credentials") Credentials credentials, @Param("prefix") String prefix);
 }

@@ -29,13 +29,13 @@ public class RestSecurityServiceImpl implements RestSecurityService {
 
     @Override
     @Transactional
-    public void insertCredentialsAndRole(Credentials credentials, GrantedAuthority role) {
-        insertCredentialsAndRoles(credentials, Collections.singleton(role));
+    public void insertCredentials(Credentials credentials, GrantedAuthority role) {
+        insertCredentials(credentials, Collections.singleton(role));
     }
 
     @Override
     @Transactional
-    public void insertCredentialsAndRoles(Credentials credentials, Collection<GrantedAuthority> roles) {
+    public void insertCredentials(Credentials credentials, Collection<GrantedAuthority> roles) {
         String encodedPassword = passwordEncoder.encode(credentials.getPassword());
         Credentials encodedCredentials = credentials.toBuilder().password(encodedPassword).build();
         restSecurityDao.insertCredentials(encodedCredentials);
@@ -59,7 +59,8 @@ public class RestSecurityServiceImpl implements RestSecurityService {
         verifyCurrentPassword(userId, dto.getCurrentPassword());
 
         String encodedPassword = passwordEncoder.encode(dto.getNewPassword());
-        restSecurityDao.updatePassword(userId, encodedPassword);
+        Credentials credentials = Credentials.builder().userId(userId).password(encodedPassword).build();
+        restSecurityDao.updateCredentials(credentials);
     }
 
     private void verifyCurrentPassword(String userId, String receivedCurrentPassword) {
@@ -68,5 +69,23 @@ public class RestSecurityServiceImpl implements RestSecurityService {
         if (!matches) {
             throw new InvalidCurrentPasswordException("Invalid current password");
         }
+    }
+
+    @Override
+    public void disableUser(String userId) {
+        Credentials credentials = Credentials.builder().userId(userId).enabled(false).build();
+        restSecurityDao.updateCredentials(credentials);
+    }
+
+    @Override
+    public void enableUser(String userId) {
+        Credentials credentials = Credentials.builder().userId(userId).enabled(true).build();
+        restSecurityDao.updateCredentials(credentials);
+    }
+
+    @Override
+    public void deleteUser(String userId) {
+        Credentials credentials = Credentials.builder().userId(userId).deleted(true).build();
+        restSecurityDao.updateCredentials(credentials);
     }
 }

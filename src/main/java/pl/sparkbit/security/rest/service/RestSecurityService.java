@@ -10,11 +10,17 @@ import java.util.Collection;
 @SuppressWarnings("unused")
 public interface RestSecurityService {
 
-    void insertCredentialsAndRole(Credentials credentials, GrantedAuthority role);
+    void insertCredentials(Credentials credentials, GrantedAuthority role);
 
-    void insertCredentialsAndRoles(Credentials credentials, Collection<GrantedAuthority> roles);
+    void insertCredentials(Credentials credentials, Collection<GrantedAuthority> roles);
 
     RestUserDetails retrieveRestUserDetails(String authToken);
 
     void changeCurrentUserPassword(ChangePasswordDTO dto);
+
+    void disableUser(String userId);
+
+    void enableUser(String userId);
+
+    void deleteUser(String userId);
 }

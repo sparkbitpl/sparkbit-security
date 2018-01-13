@@ -46,7 +46,7 @@ public class SessionController {
 
     @PostMapping(LOGOUT)
     public ResponseEntity<Object> logout(HttpServletResponse response) {
-        sessionService.logout();
+        sessionService.endSession();
 
         Cookie cookie = getAuthCookie(null);
         cookie.setMaxAge(0);
