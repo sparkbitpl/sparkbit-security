@@ -16,7 +16,7 @@ import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.PlatformTransactionManager;
-import pl.sparkbit.commons.mybatis.InstantAsIntegerTypeHandler;
+import pl.sparkbit.commons.mybatis.handlers.InstantAsIntegerTypeHandler;
 
 import javax.sql.DataSource;
 import java.sql.Driver;
