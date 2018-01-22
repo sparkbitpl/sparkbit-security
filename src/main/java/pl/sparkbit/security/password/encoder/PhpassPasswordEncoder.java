@@ -1,4 +1,4 @@
-package pl.sparkbit.security.password;
+package pl.sparkbit.security.password.encoder;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 

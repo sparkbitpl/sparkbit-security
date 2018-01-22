@@ -1,4 +1,4 @@
-package pl.sparkbit.security.password;
+package pl.sparkbit.security.password.encoder;
 
 @SuppressWarnings("unused")
 public enum PasswordEncoderType {

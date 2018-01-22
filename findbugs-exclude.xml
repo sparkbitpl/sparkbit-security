@@ -39,7 +39,7 @@
     </Match>
 
     <Match>
-        <Class name="pl.sparkbit.security.password.PHPass"/>
+        <Class name="pl.sparkbit.security.password.encoder.PHPass"/>
         <Bug pattern="DM_DEFAULT_ENCODING"/>
     </Match>
 </FindBugsFilter>
