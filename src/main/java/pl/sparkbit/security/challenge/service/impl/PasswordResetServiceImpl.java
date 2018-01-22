@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.sparkbit.commons.util.IdGenerator;
 import pl.sparkbit.security.challenge.callbacks.PasswordResetChallengeCallback;
 import pl.sparkbit.security.challenge.dao.SecurityChallengeDao;
@@ -12,6 +14,8 @@ import pl.sparkbit.security.challenge.domain.SecurityChallenge;
 import pl.sparkbit.security.challenge.exception.NoValidTokenFoundException;
 import pl.sparkbit.security.challenge.service.PasswordResetService;
 import pl.sparkbit.security.challenge.util.SecurityChallengeTokenGenerator;
+import pl.sparkbit.security.rest.dao.RestSecurityDao;
+import pl.sparkbit.security.rest.domain.Credentials;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -32,12 +36,15 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     private final SecurityChallengeTokenGenerator securityChallengeTokenGenerator;
     private final Clock clock;
     private final SecurityChallengeDao securityChallengeDao;
+    private final RestSecurityDao restSecurityDao;
     private final PasswordResetChallengeCallback callback;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${sparkbit.security.emailVerification.challengeValidityHours:1}")
     private int challengeValidityHours;
 
     @Override
+    @Transactional
     public void initiatePasswordReset(String email) {
         String id = idGenerator.generate();
         String userId = callback.getUserIdForEmail(email);
@@ -61,7 +68,8 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     }
 
     @Override
-    public void resetPassword(String token, String email) {
+    @Transactional
+    public void resetPassword(String token, String password) {
         SecurityChallenge challenge = securityChallengeDao.selectChallengeByTokenAndType(token, PASSWORD_RESET);
         if (challenge == null) {
             log.debug("Security challenge with token {} not found", token);
@@ -76,6 +84,10 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
         securityChallengeDao.deleteChallenge(challenge.getId());
         log.debug("Password for user {} changed", challenge.getUserId());
+
+        String encodedPassword = passwordEncoder.encode(password);
+        Credentials credentials = Credentials.builder().userId(challenge.getUserId()).password(encodedPassword).build();
+        restSecurityDao.updateCredentials(credentials);
 
         callback.notifyOfSuccess(challenge);
     }

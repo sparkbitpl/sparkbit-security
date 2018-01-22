@@ -4,5 +4,5 @@ public interface PasswordResetService {
 
     void initiatePasswordReset(String email);
 
-    void resetPassword(String token, String email);
+    void resetPassword(String token, String password);
 }
