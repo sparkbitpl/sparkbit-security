@@ -5,65 +5,64 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import pl.sparkbit.commons.util.IdGenerator;
-import pl.sparkbit.security.challenge.callbacks.EmailVerificationChallengeCallback;
+import pl.sparkbit.security.challenge.callbacks.PasswordResetChallengeCallback;
 import pl.sparkbit.security.challenge.dao.SecurityChallengeDao;
 import pl.sparkbit.security.challenge.domain.SecurityChallenge;
 import pl.sparkbit.security.challenge.exception.NoValidTokenFoundException;
-import pl.sparkbit.security.challenge.service.EmailVerificationService;
+import pl.sparkbit.security.challenge.service.PasswordResetService;
 import pl.sparkbit.security.challenge.util.SecurityChallengeTokenGenerator;
 
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import static pl.sparkbit.security.challenge.domain.SecurityChallengeType.EMAIL_VERIFICATION;
+import static pl.sparkbit.security.challenge.domain.SecurityChallengeType.PASSWORD_RESET;
 import static pl.sparkbit.security.challenge.exception.NoValidTokenFoundException.FailureReason.TOKEN_EXPIRED;
 import static pl.sparkbit.security.challenge.exception.NoValidTokenFoundException.FailureReason.TOKEN_NOT_FOUND;
 
-@ConditionalOnProperty(value = "sparkbit.security.emailVerification.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "sparkbit.security.passwordReset.enabled", havingValue = "true")
 @RequiredArgsConstructor
 @Service
 @Slf4j
 @SuppressWarnings("unused")
-public class EmailVerificationServiceImpl implements EmailVerificationService {
+public class PasswordResetServiceImpl implements PasswordResetService {
 
     private final IdGenerator idGenerator;
     private final SecurityChallengeTokenGenerator securityChallengeTokenGenerator;
     private final Clock clock;
     private final SecurityChallengeDao securityChallengeDao;
-    private final EmailVerificationChallengeCallback callback;
+    private final PasswordResetChallengeCallback callback;
 
     @Value("${sparkbit.security.emailVerification.challengeValidityHours:1}")
     private int challengeValidityHours;
 
     @Override
-    @Transactional
-    public void initiateEmailVerification(String userId) {
+    public void initiatePasswordReset(String email) {
         String id = idGenerator.generate();
+        String userId = callback.getUserIdForEmail(email);
         String token = securityChallengeTokenGenerator.generateChallengeToken();
         Instant expirationTimestamp = clock.instant().plus(challengeValidityHours, ChronoUnit.HOURS);
 
         SecurityChallenge challenge = SecurityChallenge.builder()
                 .id(id)
                 .userId(userId)
-                .type(EMAIL_VERIFICATION)
+                .type(PASSWORD_RESET)
                 .token(token)
                 .expirationTimestamp(expirationTimestamp)
                 .build();
 
-        securityChallengeDao.deleteChallenge(userId, EMAIL_VERIFICATION);
+        securityChallengeDao.deleteChallenge(userId, PASSWORD_RESET);
         securityChallengeDao.insertChallenge(challenge);
-        log.debug("User {} initiated email verification", userId);
+        log.debug("User {} initiated password reset", userId);
 
         callback.transmitToUser(challenge);
+
     }
 
     @Override
-    @Transactional
-    public void verifyEmail(String token) {
-        SecurityChallenge challenge = securityChallengeDao.selectChallengeByTokenAndType(token, EMAIL_VERIFICATION);
+    public void resetPassword(String token, String email) {
+        SecurityChallenge challenge = securityChallengeDao.selectChallengeByTokenAndType(token, PASSWORD_RESET);
         if (challenge == null) {
             log.debug("Security challenge with token {} not found", token);
             throw new NoValidTokenFoundException("Valid token not found", TOKEN_NOT_FOUND);
@@ -76,7 +75,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         }
 
         securityChallengeDao.deleteChallenge(challenge.getId());
-        log.debug("Email for user {} verified", challenge.getUserId());
+        log.debug("Password for user {} changed", challenge.getUserId());
 
         callback.notifyOfSuccess(challenge);
     }

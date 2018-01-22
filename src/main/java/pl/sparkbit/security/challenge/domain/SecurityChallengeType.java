@@ -2,5 +2,5 @@ package pl.sparkbit.security.challenge.domain;
 
 public enum SecurityChallengeType {
 
-    EMAIL_VERIFICATION
+    EMAIL_VERIFICATION, PASSWORD_RESET
 }

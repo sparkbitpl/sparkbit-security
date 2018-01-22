@@ -17,4 +17,6 @@ public class Paths {
 
     //challenge
     public static final String PUBLIC_EMAIL = "/public/profile/email";
+    public static final String PUBLIC_PASSWORD_RESET_TOKEN = "/public/profile/passwordResetToken";
+    public static final String PUBLIC_PASSWORD = "/public/profile/password";
 }
