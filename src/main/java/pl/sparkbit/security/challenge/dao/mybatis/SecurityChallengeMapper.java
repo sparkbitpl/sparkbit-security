@@ -4,6 +4,8 @@ import org.apache.ibatis.annotations.Param;
 import pl.sparkbit.security.challenge.domain.SecurityChallenge;
 import pl.sparkbit.security.challenge.domain.SecurityChallengeType;
 
+import java.time.Instant;
+
 public interface SecurityChallengeMapper {
 
     void insertChallenge(@Param("challenge") SecurityChallenge challenge, @Param("prefix") String prefix);
@@ -15,4 +17,6 @@ public interface SecurityChallengeMapper {
 
     void deleteChallengeByUserIdAndType(@Param("userId") String userId, @Param("type") SecurityChallengeType type,
                                         @Param("prefix") String prefix);
+
+    void deleteExpiredChallenges(@Param("now") Instant now);
 }

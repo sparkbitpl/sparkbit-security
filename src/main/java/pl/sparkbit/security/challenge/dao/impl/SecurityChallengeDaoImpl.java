@@ -9,6 +9,8 @@ import pl.sparkbit.security.challenge.dao.mybatis.SecurityChallengeMapper;
 import pl.sparkbit.security.challenge.domain.SecurityChallenge;
 import pl.sparkbit.security.challenge.domain.SecurityChallengeType;
 
+import java.time.Instant;
+
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
 
 @Repository
@@ -40,5 +42,10 @@ public class SecurityChallengeDaoImpl implements SecurityChallengeDao {
     @Override
     public void deleteChallenge(String userId, SecurityChallengeType type) {
         securityChallengeMapper.deleteChallengeByUserIdAndType(userId, type, prefix);
+    }
+
+    @Override
+    public void deleteExpiredChallenges(Instant now) {
+        securityChallengeMapper.deleteExpiredChallenges(now);
     }
 }

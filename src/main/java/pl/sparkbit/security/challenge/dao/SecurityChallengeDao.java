@@ -3,6 +3,8 @@ package pl.sparkbit.security.challenge.dao;
 import pl.sparkbit.security.challenge.domain.SecurityChallenge;
 import pl.sparkbit.security.challenge.domain.SecurityChallengeType;
 
+import java.time.Instant;
+
 public interface SecurityChallengeDao {
 
     void insertChallenge(SecurityChallenge securityChallenge);
@@ -12,4 +14,6 @@ public interface SecurityChallengeDao {
     void deleteChallenge(String id);
 
     void deleteChallenge(String userId, SecurityChallengeType type);
+
+    void deleteExpiredChallenges(Instant now);
 }

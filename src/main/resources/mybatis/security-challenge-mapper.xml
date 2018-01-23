@@ -32,4 +32,8 @@
         DELETE FROM security_challenge WHERE ${prefix}_id=#{userId} AND challenge_type=#{type}
     </delete>
 
+    <delete id="deleteExpiredChallenges">
+        DELETE FROM security_challenge WHERE expiration_ts &lt; #{now}
+    </delete>
+
 </mapper>
