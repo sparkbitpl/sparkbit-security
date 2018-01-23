@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import pl.sparkbit.commons.util.IdGenerator;
+import pl.sparkbit.commons.util.RandomStringGenerator;
 import pl.sparkbit.security.Security;
 import pl.sparkbit.security.rest.domain.RestUserDetails;
 import pl.sparkbit.security.session.auth.LoginPrincipal;
@@ -27,8 +27,9 @@ import java.util.Optional;
 @SuppressWarnings("unused")
 public class SessionServiceImpl implements SessionService {
 
+    private static final int AUTH_TOKEN_LENGTH = 32;
+
     private final SessionDao sessionDao;
-    private final IdGenerator idGenerator;
     private final Clock clock;
     private final Security security;
 
@@ -55,7 +56,7 @@ public class SessionServiceImpl implements SessionService {
         LoginUserDetails loginUserDetails = (LoginUserDetails) auth.getPrincipal();
 
         Session newSession = Session.builder()
-                .authToken(idGenerator.generate())
+                .authToken(RandomStringGenerator.base58String(AUTH_TOKEN_LENGTH))
                 .userId(loginUserDetails.getUserId())
                 .creation(clock.instant())
                 .build();
