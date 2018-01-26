@@ -1,11 +1,12 @@
 package pl.sparkbit.security.service;
 
-import org.springframework.security.core.userdetails.UserDetailsService;
 import pl.sparkbit.security.domain.Session;
 
-public interface SessionService extends UserDetailsService {
+public interface SessionService {
 
     Session startNewSession(String oldAuthToken);
 
     void endSession();
+
+    void endAllSessionsForUser(String userId);
 }

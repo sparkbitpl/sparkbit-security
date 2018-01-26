@@ -10,9 +10,10 @@ import pl.sparkbit.security.domain.SecurityChallenge;
 import pl.sparkbit.security.domain.SecurityChallengeType;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
-import static pl.sparkbit.security.Properties.USER_ENTITY_NAME;
+import static pl.sparkbit.security.config.Properties.USER_ENTITY_NAME;
 
 @Repository
 @RequiredArgsConstructor
@@ -31,8 +32,8 @@ public class SecurityChallengeDaoImpl implements SecurityChallengeDao {
     }
 
     @Override
-    public SecurityChallenge selectChallengeByTokenAndType(String token, SecurityChallengeType type) {
-        return securityChallengeMapper.selectChallengeByToken(token, type, prefix);
+    public Optional<SecurityChallenge> selectChallengeByTokenAndType(String token, SecurityChallengeType type) {
+        return Optional.ofNullable(securityChallengeMapper.selectChallengeByToken(token, type, prefix));
     }
 
     @Override

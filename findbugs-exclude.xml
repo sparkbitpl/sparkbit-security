@@ -42,4 +42,9 @@
         <Class name="pl.sparkbit.security.password.encoder.PHPass"/>
         <Bug pattern="DM_DEFAULT_ENCODING"/>
     </Match>
+
+    <Match>
+        <Class name="pl.sparkbit.security.service.UserDetailsService"/>
+        <Bug pattern="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
+    </Match>
 </FindBugsFilter>

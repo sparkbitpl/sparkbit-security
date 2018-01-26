@@ -9,7 +9,7 @@ import pl.sparkbit.security.dao.SecurityChallengeDao;
 
 import java.time.Clock;
 
-import static pl.sparkbit.security.Properties.CHALLENGE_DELETER_RUN_EVERY_MILLIS;
+import static pl.sparkbit.security.config.Properties.CHALLENGE_DELETER_RUN_EVERY_MILLIS;
 
 @Component
 @RequiredArgsConstructor

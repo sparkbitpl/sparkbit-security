@@ -7,20 +7,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import pl.sparkbit.security.dao.mybatis.data.SecurityDbTables;
 import pl.sparkbit.security.dao.mybatis.data.SecurityTestData;
-import pl.sparkbit.security.dao.mybatis.data.SecurityTestDataUtils;
 import pl.sparkbit.security.domain.Credentials;
-import pl.sparkbit.security.domain.RestUserDetails;
 
-import java.time.Instant;
+import static org.junit.Assert.assertEquals;
 
-import static org.junit.Assert.*;
-import static pl.sparkbit.security.dao.mybatis.data.SecurityTestDataUtils.session;
-
-@SuppressWarnings("SpringJavaAutowiringInspection")
-public class RestSecurityMapperTest extends MapperTestBase {
+public class CredentialsMapperTest extends MapperTestBase {
 
     @Autowired
-    private RestSecurityMapper restSecurityMapper;
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    private CredentialsMapper credentialsMapper;
 
     @SuppressWarnings("ConstantConditions")
     @Test
@@ -32,7 +27,7 @@ public class RestSecurityMapperTest extends MapperTestBase {
         Credentials credentials =
                 Credentials.builder().userId(userId).password(password).enabled(enabled).deleted(deleted).build();
 
-        restSecurityMapper.insertCredentials(credentials, SecurityDbTables.PREFIX);
+        credentialsMapper.insertCredentials(credentials, SecurityDbTables.PREFIX);
 
         assertEquals(1, countRowsInTableWhereColumnsEquals(SecurityDbTables.CREDENTIALS,
                 "user_id", quote(userId),
@@ -47,7 +42,7 @@ public class RestSecurityMapperTest extends MapperTestBase {
 
         GrantedAuthority role = new SimpleGrantedAuthority("ROLE_XXX");
 
-        restSecurityMapper.insertUserRole(SecurityTestData.CREDS_1_USER_ID, role);
+        credentialsMapper.insertUserRole(SecurityTestData.CREDS_1_USER_ID, role);
 
         assertEquals(1, countRowsInTableWhereColumnsEquals(SecurityDbTables.USER_ROLE,
                 "user_id", quote(SecurityTestData.CREDS_1_USER_ID),
@@ -55,27 +50,10 @@ public class RestSecurityMapperTest extends MapperTestBase {
     }
 
     @Test
-    public void shouldSelectRestUserDetails() {
-        String authToken = "id12345";
-        Instant creation = Instant.ofEpochSecond(31232133);
-
-        insertTestData(SecurityTestData.CREDS_1, SecurityTestDataUtils.session(authToken, SecurityTestData.CREDS_1_USER_ID, creation));
-
-        RestUserDetails restUserDetails = restSecurityMapper.selectRestUserDetails(authToken, SecurityDbTables.PREFIX);
-        assertNotNull(restUserDetails);
-        assertEquals(authToken, restUserDetails.getAuthToken());
-        Assert.assertEquals(SecurityTestData.CREDS_1_USER_ID, restUserDetails.getUserId());
-        assertTrue(restUserDetails.getRoles() == restUserDetails.getAuthorities());
-        assertEquals(2, restUserDetails.getRoles().size());
-        assertTrue(restUserDetails.getRoles().contains(new SimpleGrantedAuthority(SecurityTestData.ROLE_ADMIN)));
-        assertTrue(restUserDetails.getRoles().contains(new SimpleGrantedAuthority(SecurityTestData.ROLE_USER)));
-    }
-
-    @Test
     public void shouldSelectPassword() {
         insertTestData(SecurityTestData.CREDS_1);
 
-        String password = restSecurityMapper.selectPasswordHashForUser(SecurityTestData.CREDS_1_USER_ID, SecurityDbTables.PREFIX);
+        String password = credentialsMapper.selectPasswordHashForUser(SecurityTestData.CREDS_1_USER_ID, SecurityDbTables.PREFIX);
         Assert.assertEquals(SecurityTestData.CREDS_1_PASSWORD, password);
     }
 
@@ -87,7 +65,7 @@ public class RestSecurityMapperTest extends MapperTestBase {
         Credentials credentials = Credentials.builder().userId(SecurityTestData.CREDS_1_USER_ID).password(newPassword)
                 .enabled(!SecurityTestData.CREDS_1_ENABLED).deleted(!SecurityTestData.CREDS_1_DELETED).build();
 
-        restSecurityMapper.updateCredentials(credentials, SecurityDbTables.PREFIX);
+        credentialsMapper.updateCredentials(credentials, SecurityDbTables.PREFIX);
 
         assertEquals(1, countRowsInTableWhereColumnsEquals(SecurityDbTables.CREDENTIALS,
                 "user_id", quote(SecurityTestData.CREDS_1_USER_ID),

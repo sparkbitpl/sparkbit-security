@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.sparkbit.commons.util.IdGenerator;
 import pl.sparkbit.security.callbacks.PasswordResetChallengeCallback;
-import pl.sparkbit.security.dao.RestSecurityDao;
+import pl.sparkbit.security.dao.CredentialsDao;
 import pl.sparkbit.security.dao.SecurityChallengeDao;
 import pl.sparkbit.security.domain.Credentials;
 import pl.sparkbit.security.domain.SecurityChallenge;
@@ -20,9 +20,10 @@ import pl.sparkbit.security.util.SecurityChallengeTokenGenerator;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
-import static pl.sparkbit.security.Properties.PASSWORD_RESET_CHALLENGE_VALIDITY_HOURS;
-import static pl.sparkbit.security.Properties.PASSWORD_RESET_ENABLED;
+import static pl.sparkbit.security.config.Properties.PASSWORD_RESET_CHALLENGE_VALIDITY_HOURS;
+import static pl.sparkbit.security.config.Properties.PASSWORD_RESET_ENABLED;
 import static pl.sparkbit.security.domain.SecurityChallengeType.PASSWORD_RESET;
 import static pl.sparkbit.security.exception.NoValidTokenFoundException.FailureReason.TOKEN_EXPIRED;
 import static pl.sparkbit.security.exception.NoValidTokenFoundException.FailureReason.TOKEN_NOT_FOUND;
@@ -38,7 +39,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     private final SecurityChallengeTokenGenerator securityChallengeTokenGenerator;
     private final Clock clock;
     private final SecurityChallengeDao securityChallengeDao;
-    private final RestSecurityDao restSecurityDao;
+    private final CredentialsDao credentialsDao;
     private final PasswordResetChallengeCallback callback;
     private final PasswordEncoder passwordEncoder;
 
@@ -72,11 +73,13 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     @Override
     @Transactional
     public void resetPassword(String token, String password) {
-        SecurityChallenge challenge = securityChallengeDao.selectChallengeByTokenAndType(token, PASSWORD_RESET);
-        if (challenge == null) {
+        Optional<SecurityChallenge> challengeOpt =
+                securityChallengeDao.selectChallengeByTokenAndType(token, PASSWORD_RESET);
+        if (!challengeOpt.isPresent()) {
             log.debug("Security challenge with token {} not found", token);
             throw new NoValidTokenFoundException("Valid token not found", TOKEN_NOT_FOUND);
         }
+        SecurityChallenge challenge = challengeOpt.get();
 
         if (challenge.getExpirationTimestamp().isBefore(clock.instant())) {
             log.debug("Security challenge with token {} expired on {}", token,
@@ -89,7 +92,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
         String encodedPassword = passwordEncoder.encode(password);
         Credentials credentials = Credentials.builder().userId(challenge.getUserId()).password(encodedPassword).build();
-        restSecurityDao.updateCredentials(credentials);
+        credentialsDao.updateCredentials(credentials);
 
         callback.notifyOfSuccess(challenge);
     }

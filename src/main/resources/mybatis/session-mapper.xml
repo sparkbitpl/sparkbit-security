@@ -9,27 +9,6 @@
         VALUES (#{session.authToken},#{session.userId},#{session.creation})
     </insert>
 
-    <select id="selectUserId" resultType="String">
-        SELECT id FROM ${userTableName} WHERE
-        <foreach collection="authnAttributes" index="key" item="value" open="" separator="and" close="">
-            ${key}=#{value}
-        </foreach>
-    </select>
-
-    <resultMap id="loginUserDetailsResultMap" type="pl.sparkbit.security.login.LoginUserDetails">
-        <constructor>
-            <idArg column="user_id" javaType="String"/>
-            <arg column="password" javaType="String"/>
-            <arg column="enabled" javaType="Boolean"/>
-            <arg column="deleted" javaType="Boolean"/>
-        </constructor>
-    </resultMap>
-
-    <select id="selectLoginUserDetails" resultMap="loginUserDetailsResultMap">
-        SELECT ${prefix}_id AS user_id, password, enabled, deleted FROM ${prefix}_credentials
-        WHERE ${prefix}_id=#{userId}
-    </select>
-
     <resultMap id="sessionResultMap" type="pl.sparkbit.security.domain.Session">
         <constructor>
             <idArg column="auth_token" javaType="String"/>

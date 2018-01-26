@@ -15,8 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static pl.sparkbit.security.Paths.LOGIN;
-import static pl.sparkbit.security.Paths.LOGOUT;
+import static pl.sparkbit.security.mvc.controller.Paths.LOGIN;
+import static pl.sparkbit.security.mvc.controller.Paths.LOGOUT;
 
 @RequiredArgsConstructor
 @RestController

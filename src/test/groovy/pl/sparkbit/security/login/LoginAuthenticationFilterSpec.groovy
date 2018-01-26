@@ -1,4 +1,4 @@
-package pl.sparkbit.security.session
+package pl.sparkbit.security.login
 
 import groovy.json.JsonOutput
 import org.springframework.mock.web.MockHttpServletRequest
@@ -7,9 +7,6 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.AuthenticationEntryPoint
-import pl.sparkbit.security.login.AuthnAttributes
-import pl.sparkbit.security.login.LoginAuthenticationFilter
-import pl.sparkbit.security.login.LoginPrincipal
 import spock.lang.Specification
 
 import javax.servlet.FilterChain

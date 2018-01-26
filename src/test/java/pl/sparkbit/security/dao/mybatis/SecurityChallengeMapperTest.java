@@ -15,10 +15,10 @@ import static pl.sparkbit.security.domain.SecurityChallengeType.EMAIL_VERIFICATI
 import static pl.sparkbit.security.domain.SecurityChallengeType.PASSWORD_RESET;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.*;
 
-@SuppressWarnings("SpringJavaAutowiringInspection")
 public class SecurityChallengeMapperTest extends MapperTestBase {
 
     @Autowired
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     private SecurityChallengeMapper securityChallengeMapper;
 
     @Test

@@ -1,7 +1,5 @@
-package pl.sparkbit.security.session
+package pl.sparkbit.security.login
 
-import pl.sparkbit.security.login.AuthnAttributes
-import pl.sparkbit.security.login.InvalidJsonAuthenticationException
 import spock.lang.Specification
 
 class AuthnAttributesSpec extends Specification {

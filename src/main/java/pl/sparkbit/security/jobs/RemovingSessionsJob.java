@@ -13,9 +13,9 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import static pl.sparkbit.security.Properties.SESSION_DELETER_OLDER_THAN_MINUTES;
-import static pl.sparkbit.security.Properties.SESSION_DELETER_REMOVE_OLD;
-import static pl.sparkbit.security.Properties.SESSION_DELETER_RUN_EVERY_MILLIS;
+import static pl.sparkbit.security.config.Properties.SESSION_DELETER_OLDER_THAN_MINUTES;
+import static pl.sparkbit.security.config.Properties.SESSION_DELETER_REMOVE_OLD;
+import static pl.sparkbit.security.config.Properties.SESSION_DELETER_RUN_EVERY_MILLIS;
 
 @Component
 @ConditionalOnProperty(value = SESSION_DELETER_REMOVE_OLD, havingValue = "true")

@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import pl.sparkbit.commons.util.RandomStringGenerator;
 
-import static pl.sparkbit.security.Properties.CHALLENGE_TOKEN_ALLOWED_CHARACTERS;
-import static pl.sparkbit.security.Properties.CHALLENGE_TOKEN_LENGTH;
+import static pl.sparkbit.security.config.Properties.CHALLENGE_TOKEN_ALLOWED_CHARACTERS;
+import static pl.sparkbit.security.config.Properties.CHALLENGE_TOKEN_LENGTH;
 
 @Component
 @SuppressWarnings("unused")

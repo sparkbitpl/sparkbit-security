@@ -1,11 +1,11 @@
-package pl.sparkbit.security;
+package pl.sparkbit.security.mvc.controller;
 
 import lombok.NoArgsConstructor;
 
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
-@SuppressWarnings("checkstyle:hideutilityclassconstructor")
+@SuppressWarnings({"checkstyle:hideutilityclassconstructor", "WeakerAccess"})
 public class Paths {
 
     //session

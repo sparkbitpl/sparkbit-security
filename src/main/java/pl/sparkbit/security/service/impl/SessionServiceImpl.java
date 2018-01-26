@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -14,7 +12,6 @@ import pl.sparkbit.security.Security;
 import pl.sparkbit.security.dao.SessionDao;
 import pl.sparkbit.security.domain.RestUserDetails;
 import pl.sparkbit.security.domain.Session;
-import pl.sparkbit.security.login.LoginPrincipal;
 import pl.sparkbit.security.login.LoginUserDetails;
 import pl.sparkbit.security.service.SessionService;
 
@@ -32,18 +29,6 @@ public class SessionServiceImpl implements SessionService {
     private final SessionDao sessionDao;
     private final Clock clock;
     private final Security security;
-
-    @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String principalData) throws UsernameNotFoundException {
-        LoginPrincipal principal = new LoginPrincipal(principalData);
-
-        String userId = sessionDao.selectUserId(principal.getAuthnAttributes())
-                .orElseThrow((() -> new UsernameNotFoundException(principal + " not found")));
-
-        Optional<LoginUserDetails> userDetails = sessionDao.selectLoginUserDetails(userId);
-        return userDetails.orElseThrow(() -> new UsernameNotFoundException(principal + " not found"));
-    }
 
     @Override
     @Transactional
@@ -87,5 +72,11 @@ public class SessionServiceImpl implements SessionService {
         RestUserDetails restUserDetails = security.currentUserDetails();
         sessionDao.deleteSession(restUserDetails.getAuthToken(), clock.instant());
         SecurityContextHolder.clearContext();
+    }
+
+    @Override
+    @Transactional
+    public void endAllSessionsForUser(String userId) {
+        sessionDao.deleteSessions(userId, clock.instant());
     }
 }

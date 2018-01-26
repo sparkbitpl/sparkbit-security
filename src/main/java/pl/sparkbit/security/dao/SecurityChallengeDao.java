@@ -4,12 +4,13 @@ import pl.sparkbit.security.domain.SecurityChallenge;
 import pl.sparkbit.security.domain.SecurityChallengeType;
 
 import java.time.Instant;
+import java.util.Optional;
 
 public interface SecurityChallengeDao {
 
     void insertChallenge(SecurityChallenge securityChallenge);
 
-    SecurityChallenge selectChallengeByTokenAndType(String token, SecurityChallengeType type);
+    Optional<SecurityChallenge> selectChallengeByTokenAndType(String token, SecurityChallengeType type);
 
     void deleteChallenge(String id);
 

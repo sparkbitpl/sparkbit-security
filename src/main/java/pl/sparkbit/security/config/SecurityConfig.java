@@ -1,4 +1,4 @@
-package pl.sparkbit.security;
+package pl.sparkbit.security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
@@ -35,16 +34,15 @@ import pl.sparkbit.security.password.encoder.PhpassPasswordEncoder;
 import pl.sparkbit.security.restauthn.AuthenticationTokenHelper;
 import pl.sparkbit.security.restauthn.RestAuthenticationFilter;
 import pl.sparkbit.security.restauthn.user.UserAuthenticationProvider;
-import pl.sparkbit.security.service.RestSecurityService;
-import pl.sparkbit.security.service.SessionService;
+import pl.sparkbit.security.service.UserDetailsService;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-import static pl.sparkbit.security.Paths.LOGIN;
-import static pl.sparkbit.security.Properties.PASSWORD_ENCODER_TYPE;
+import static pl.sparkbit.security.config.Properties.PASSWORD_ENCODER_TYPE;
+import static pl.sparkbit.security.mvc.controller.Paths.LOGIN;
 
 @Configuration
 @EnableWebSecurity
@@ -68,7 +66,6 @@ public class SecurityConfig {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static class LoginConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
-        private final SessionService sessionService;
         private final AuthenticationEntryPoint authenticationEntryPoint;
         private final UserDetailsService userDetailsService;
         private final ObjectMapper objectMapper;
@@ -97,7 +94,7 @@ public class SecurityConfig {
         @Bean
         public DaoAuthenticationProvider daoAuthenticationProvider() {
             DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-            daoAuthenticationProvider.setUserDetailsService(sessionService);
+            daoAuthenticationProvider.setUserDetailsService(userDetailsService);
             daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
             return daoAuthenticationProvider;
         }
@@ -162,13 +159,13 @@ public class SecurityConfig {
 
         private static final String ADMIN_PATTERN = "/admin/**";
 
-        private final RestSecurityService restSecurityService;
+        private final UserDetailsService userDetailsService;
         private final AuthenticationEntryPoint authenticationEntryPoint;
         private final AuthenticationTokenHelper authenticationTokenHelper;
 
         @Bean
         public UserAuthenticationProvider restAuthenticationProvider() {
-            return new UserAuthenticationProvider(restSecurityService);
+            return new UserAuthenticationProvider(userDetailsService);
         }
 
         @Override

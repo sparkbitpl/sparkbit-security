@@ -13,9 +13,9 @@ import pl.sparkbit.security.service.PasswordResetService;
 import javax.validation.Valid;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static pl.sparkbit.security.Paths.PUBLIC_PASSWORD;
-import static pl.sparkbit.security.Paths.PUBLIC_PASSWORD_RESET_TOKEN;
-import static pl.sparkbit.security.Properties.PASSWORD_RESET_ENABLED;
+import static pl.sparkbit.security.config.Properties.PASSWORD_RESET_ENABLED;
+import static pl.sparkbit.security.mvc.controller.Paths.PUBLIC_PASSWORD;
+import static pl.sparkbit.security.mvc.controller.Paths.PUBLIC_PASSWORD_RESET_TOKEN;
 
 @ConditionalOnProperty(value = PASSWORD_RESET_ENABLED, havingValue = "true")
 @RequiredArgsConstructor

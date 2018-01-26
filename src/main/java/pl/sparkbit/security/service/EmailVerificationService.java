@@ -1,8 +1,8 @@
 package pl.sparkbit.security.service;
 
-@SuppressWarnings("unused")
 public interface EmailVerificationService {
 
+    @SuppressWarnings("unused")
     void initiateEmailVerification(String userId);
 
     void verifyEmail(String token);

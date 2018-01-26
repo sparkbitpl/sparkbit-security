@@ -26,8 +26,8 @@ import java.time.Instant;
 @MapperScan("pl.sparkbit.security")
 public class SecurityMappersTestConfig {
 
-    @Value("#{'${classpath:mybatis/rest-security-mapper.xml,classpath:mybatis/session-mapper.xml," +
-            "classpath:mybatis/security-challenge-mapper.xml}'.split(',')}")
+    @Value("#{'${classpath:mybatis/credentials-mapper.xml, classpath:mybatis/security-challenge-mapper.xml," +
+            "classpath:mybatis/session-mapper.xml, classpath:mybatis/user-details-mapper.xml}'.split(',')}")
     private Resource[] mappers;
 
     @Value("${security_test_db_url:jdbc:mysql://localhost:3306/security}")

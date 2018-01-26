@@ -5,49 +5,43 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import pl.sparkbit.security.dao.RestSecurityDao;
-import pl.sparkbit.security.dao.mybatis.RestSecurityMapper;
+import pl.sparkbit.security.dao.CredentialsDao;
+import pl.sparkbit.security.dao.mybatis.CredentialsMapper;
 import pl.sparkbit.security.domain.Credentials;
-import pl.sparkbit.security.domain.RestUserDetails;
 
 import java.util.Optional;
 
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
-import static pl.sparkbit.security.Properties.USER_ENTITY_NAME;
+import static pl.sparkbit.security.config.Properties.USER_ENTITY_NAME;
 
 @Repository
 @RequiredArgsConstructor
 @SuppressWarnings("unused")
 @Transactional(propagation = MANDATORY)
-public class RestSecurityDaoImpl implements RestSecurityDao {
+public class CredentialsDaoImpl implements CredentialsDao {
 
-    private final RestSecurityMapper restSecurityMapper;
+    private final CredentialsMapper credentialsMapper;
 
     @Value("${" + USER_ENTITY_NAME + ":user}")
     private String prefix;
 
     @Override
     public void insertCredentials(Credentials credentials) {
-        restSecurityMapper.insertCredentials(credentials, prefix);
+        credentialsMapper.insertCredentials(credentials, prefix);
     }
 
     @Override
     public void insertUserRole(String userId, GrantedAuthority role) {
-        restSecurityMapper.insertUserRole(userId, role);
+        credentialsMapper.insertUserRole(userId, role);
     }
 
     @Override
-    public Optional<RestUserDetails> selectRestUserDetails(String authToken) {
-        return Optional.ofNullable(restSecurityMapper.selectRestUserDetails(authToken, prefix));
-    }
-
-    @Override
-    public String selectPasswordHashForUser(String userId) {
-        return restSecurityMapper.selectPasswordHashForUser(userId, prefix);
+    public Optional<String> selectPasswordHashForUser(String userId) {
+        return Optional.ofNullable(credentialsMapper.selectPasswordHashForUser(userId, prefix));
     }
 
     @Override
     public void updateCredentials(Credentials credentials) {
-        restSecurityMapper.updateCredentials(credentials, prefix);
+        credentialsMapper.updateCredentials(credentials, prefix);
     }
 }

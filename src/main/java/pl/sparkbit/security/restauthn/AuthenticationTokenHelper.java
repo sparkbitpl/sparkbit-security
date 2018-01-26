@@ -8,11 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static pl.sparkbit.security.Properties.ALLOW_UNSECURED_COOKIE;
-import static pl.sparkbit.security.Properties.AUTH_TOKEN_COOKIE_NAME;
-import static pl.sparkbit.security.Properties.AUTH_TOKEN_HEADER_NAME;
 import static pl.sparkbit.security.Security.DEFAULT_AUTH_TOKEN_COOKIE_NAME;
 import static pl.sparkbit.security.Security.DEFAULT_AUTH_TOKEN_HEADER_NAME;
+import static pl.sparkbit.security.config.Properties.*;
 
 @Component
 public class AuthenticationTokenHelper {

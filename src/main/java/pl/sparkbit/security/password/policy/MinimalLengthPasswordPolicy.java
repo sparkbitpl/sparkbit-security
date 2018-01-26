@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import static pl.sparkbit.security.Properties.DEFAULT_PASSWORD_POLICY_ENABLED;
-import static pl.sparkbit.security.Properties.MINIMAL_PASSWORD_LENGTH;
+import static pl.sparkbit.security.config.Properties.DEFAULT_PASSWORD_POLICY_ENABLED;
+import static pl.sparkbit.security.config.Properties.MINIMAL_PASSWORD_LENGTH;
 
 @Component
 @ConditionalOnProperty(value = DEFAULT_PASSWORD_POLICY_ENABLED, havingValue = "true", matchIfMissing = true)

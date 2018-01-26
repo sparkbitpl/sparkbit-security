@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * Based on https://gist.github.com/arey/6453086
@@ -25,7 +24,6 @@ import java.sql.SQLException;
 public class TransactionAwareDataSourceDestination implements Destination {
 
     private final DataSource dataSource;
-
     private final PlatformTransactionManager transactionManager;
 
     public TransactionAwareDataSourceDestination(DataSource dataSource, PlatformTransactionManager transactionManager) {
@@ -34,7 +32,7 @@ public class TransactionAwareDataSourceDestination implements Destination {
     }
 
     @Override
-    public Connection getConnection() throws SQLException {
+    public Connection getConnection() {
         return (Connection) Proxy.newProxyInstance(ConnectionProxy.class.getClassLoader(),
                 new Class[]{ConnectionProxy.class}, new TransactionAwareInvocationHandler(dataSource));
     }

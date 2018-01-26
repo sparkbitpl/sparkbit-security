@@ -1,27 +1,23 @@
 package pl.sparkbit.security.dao.mybatis;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.ninja_squad.dbsetup.operation.Operation;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import pl.sparkbit.security.login.AuthnAttributes;
-import pl.sparkbit.security.login.LoginUserDetails;
 import pl.sparkbit.security.domain.Session;
 
 import java.time.Instant;
 
-import static java.util.Collections.singleton;
-import static java.util.Collections.singletonMap;
 import static org.junit.Assert.*;
-import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.*;
-import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.*;
+import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.PREFIX;
+import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.SESSION;
+import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.CREDS_1;
+import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.CREDS_1_USER_ID;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityTestDataUtils.session;
 
-@SuppressWarnings("SpringJavaAutowiringInspection")
 public class SessionMapperTest extends MapperTestBase {
 
     @Autowired
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     private SessionMapper sessionMapper;
 
     @Test
@@ -60,27 +56,6 @@ public class SessionMapperTest extends MapperTestBase {
     }
 
     @Test
-    public void shouldSelectUserIdForSimpleLogin() {
-        insertTestData(CREDS_1, SIMPLE_LOGIN_USER_1);
-
-        AuthnAttributes authnAttributes =
-                new AuthnAttributes(singletonMap("username", USER_1_USERNAME), singleton("username"));
-        String userId = sessionMapper.selectUserId(SIMPLE_LOGIN_USER, authnAttributes, PREFIX);
-        assertEquals(USER_1_ID, userId);
-    }
-
-    @Test
-    public void shouldSelectUserIdForCompositeLogin() {
-        insertTestData(CREDS_1, COMPOSITE_LOGIN_USER_1);
-
-        AuthnAttributes authnAttributes = new AuthnAttributes(
-                ImmutableMap.of("username", USER_1_USERNAME, "context", USER_1_CONTEXT),
-                ImmutableSet.of("username", "context"));
-        String userId = sessionMapper.selectUserId(COMPOSITE_LOGIN_USER, authnAttributes, PREFIX);
-        assertEquals(USER_1_ID, userId);
-    }
-
-    @Test
     public void shouldNotSelectSessionWhenIsDeleted() {
         String authToken = "id12345";
         Instant creation = Instant.ofEpochSecond(31232133);
@@ -90,26 +65,6 @@ public class SessionMapperTest extends MapperTestBase {
 
         Session session = sessionMapper.selectSession(authToken, PREFIX);
         assertNull(session);
-    }
-
-    @Test
-    public void shouldSelectLoginUserDetails() {
-        insertTestData(CREDS_1);
-        LoginUserDetails loginUserDetails = sessionMapper.selectLoginUserDetails(CREDS_1_USER_ID, PREFIX);
-
-        assertNotNull(loginUserDetails);
-        assertEquals(CREDS_1_USER_ID, loginUserDetails.getUserId());
-        assertEquals(CREDS_1_USER_ID, loginUserDetails.getUsername());
-        assertEquals(CREDS_1_PASSWORD, loginUserDetails.getPassword());
-        assertEquals(CREDS_1_ENABLED, loginUserDetails.isEnabled());
-        assertEquals(CREDS_1_DELETED, loginUserDetails.getDeleted());
-        assertNull(loginUserDetails.getAuthorities());
-    }
-
-    @Test
-    public void shouldReturnNullWhenUserNotFound() {
-        LoginUserDetails loginUserDetails = sessionMapper.selectLoginUserDetails(CREDS_1_USER_ID, PREFIX);
-        assertNull(loginUserDetails);
     }
 
     @Test

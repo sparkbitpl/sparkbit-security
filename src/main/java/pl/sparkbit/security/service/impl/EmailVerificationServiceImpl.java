@@ -17,9 +17,10 @@ import pl.sparkbit.security.util.SecurityChallengeTokenGenerator;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
-import static pl.sparkbit.security.Properties.EMAIL_VERIFICATION_CHALLENGE_VALIDITY_HOURS;
-import static pl.sparkbit.security.Properties.EMAIL_VERIFICATION_ENABLED;
+import static pl.sparkbit.security.config.Properties.EMAIL_VERIFICATION_CHALLENGE_VALIDITY_HOURS;
+import static pl.sparkbit.security.config.Properties.EMAIL_VERIFICATION_ENABLED;
 import static pl.sparkbit.security.domain.SecurityChallengeType.EMAIL_VERIFICATION;
 import static pl.sparkbit.security.exception.NoValidTokenFoundException.FailureReason.TOKEN_EXPIRED;
 import static pl.sparkbit.security.exception.NoValidTokenFoundException.FailureReason.TOKEN_NOT_FOUND;
@@ -65,11 +66,13 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     @Override
     @Transactional
     public void verifyEmail(String token) {
-        SecurityChallenge challenge = securityChallengeDao.selectChallengeByTokenAndType(token, EMAIL_VERIFICATION);
-        if (challenge == null) {
+        Optional<SecurityChallenge> challengeOpt =
+                securityChallengeDao.selectChallengeByTokenAndType(token, EMAIL_VERIFICATION);
+        if (!challengeOpt.isPresent()) {
             log.debug("Security challenge with token {} not found", token);
             throw new NoValidTokenFoundException("Valid token not found", TOKEN_NOT_FOUND);
         }
+        SecurityChallenge challenge = challengeOpt.get();
 
         if (challenge.getExpirationTimestamp().isBefore(clock.instant())) {
             log.debug("Security challenge with token {} expired on {}", token,
