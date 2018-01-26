@@ -23,20 +23,20 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.GenericFilterBean;
+import pl.sparkbit.security.login.LoginAuthenticationFilter;
+import pl.sparkbit.security.login.social.FacebookAuthenticationProvider;
+import pl.sparkbit.security.login.social.GoogleAuthenticationProvider;
+import pl.sparkbit.security.login.social.TwitterAuthenticationProvider;
+import pl.sparkbit.security.login.social.resolver.FacebookResolver;
+import pl.sparkbit.security.login.social.resolver.GoogleResolver;
+import pl.sparkbit.security.login.social.resolver.TwitterResolver;
 import pl.sparkbit.security.password.encoder.PasswordEncoderType;
 import pl.sparkbit.security.password.encoder.PhpassPasswordEncoder;
-import pl.sparkbit.security.rest.authn.AuthenticationTokenHelper;
-import pl.sparkbit.security.rest.authn.RestAuthenticationFilter;
-import pl.sparkbit.security.rest.authn.user.UserAuthenticationProvider;
-import pl.sparkbit.security.rest.service.RestSecurityService;
-import pl.sparkbit.security.session.auth.LoginAuthenticationFilter;
-import pl.sparkbit.security.session.auth.social.FacebookAuthenticationProvider;
-import pl.sparkbit.security.session.auth.social.GoogleAuthenticationProvider;
-import pl.sparkbit.security.session.auth.social.TwitterAuthenticationProvider;
-import pl.sparkbit.security.session.auth.social.resolver.FacebookResolver;
-import pl.sparkbit.security.session.auth.social.resolver.GoogleResolver;
-import pl.sparkbit.security.session.auth.social.resolver.TwitterResolver;
-import pl.sparkbit.security.session.service.SessionService;
+import pl.sparkbit.security.restauthn.AuthenticationTokenHelper;
+import pl.sparkbit.security.restauthn.RestAuthenticationFilter;
+import pl.sparkbit.security.restauthn.user.UserAuthenticationProvider;
+import pl.sparkbit.security.service.RestSecurityService;
+import pl.sparkbit.security.service.SessionService;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -48,8 +48,7 @@ import static pl.sparkbit.security.Properties.PASSWORD_ENCODER_TYPE;
 
 @Configuration
 @EnableWebSecurity
-@MapperScan({"pl.sparkbit.security.rest.dao.mybatis", "pl.sparkbit.security.session.dao.mybatis",
-        "pl.sparkbit.security.challenge.dao.mybatis"})
+@MapperScan("pl.sparkbit.security.dao.mybatis")
 @SuppressWarnings("SpringFacetCodeInspection")
 public class SecurityConfig {
 

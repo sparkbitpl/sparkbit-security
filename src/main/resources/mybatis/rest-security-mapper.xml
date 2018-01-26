@@ -2,7 +2,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!--suppress SqlResolve -->
-<mapper namespace="pl.sparkbit.security.rest.dao.mybatis.RestSecurityMapper">
+<mapper namespace="pl.sparkbit.security.dao.mybatis.RestSecurityMapper">
 
     <insert id="insertCredentials">
         INSERT INTO ${prefix}_credentials (user_id, password, enabled, deleted)
@@ -13,7 +13,7 @@
         INSERT INTO user_role (user_id, role) VALUES (#{userId}, #{role.authority})
     </insert>
 
-    <resultMap id="restUserDetailsResultMap" type="pl.sparkbit.security.rest.domain.RestUserDetails">
+    <resultMap id="restUserDetailsResultMap" type="pl.sparkbit.security.domain.RestUserDetails">
         <constructor>
             <idArg column="auth_token" javaType="String"/>
             <arg column="user_id" javaType="String"/>

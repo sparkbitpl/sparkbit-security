@@ -1,35 +1,35 @@
 <FindBugsFilter>
     <Match>
-        <Class name="pl.sparkbit.security.rest.authn.user.UserAuthenticationProvider"/>
+        <Class name="pl.sparkbit.security.restauthn.user.UserAuthenticationProvider"/>
         <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
     <Match>
-        <Class name="pl.sparkbit.security.session.mvc.dto.out.AuthTokenDTO"/>
+        <Class name="pl.sparkbit.security.mvc.dto.out.AuthTokenDTO"/>
         <Field name="authToken"/>
         <Bug pattern="URF_UNREAD_FIELD"/>
     </Match>
 
     <Match>
-        <Class name="pl.sparkbit.security.rest.domain.RestUserDetails"/>
+        <Class name="pl.sparkbit.security.domain.RestUserDetails"/>
         <Field name="roles"/>
         <Bug pattern="UWF_UNWRITTEN_FIELD"/>
     </Match>
 
     <Match>
-        <Class name="pl.sparkbit.security.session.auth.social.GoogleAuthenticationProvider"/>
+        <Class name="pl.sparkbit.security.login.social.GoogleAuthenticationProvider"/>
         <Method name="authenticate"/>
         <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
     <Match>
-        <Class name="pl.sparkbit.security.session.auth.social.TwitterAuthenticationProvider"/>
+        <Class name="pl.sparkbit.security.login.social.TwitterAuthenticationProvider"/>
         <Method name="authenticate"/>
         <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
     <Match>
-        <Class name="pl.sparkbit.security.session.auth.social.FacebookAuthenticationProvider"/>
+        <Class name="pl.sparkbit.security.login.social.FacebookAuthenticationProvider"/>
         <Method name="authenticate"/>
         <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>

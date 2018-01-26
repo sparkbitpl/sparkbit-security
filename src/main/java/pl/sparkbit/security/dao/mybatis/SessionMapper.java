@@ -1,0 +1,28 @@
+package pl.sparkbit.security.dao.mybatis;
+
+import org.apache.ibatis.annotations.Param;
+import pl.sparkbit.security.domain.Session;
+import pl.sparkbit.security.login.AuthnAttributes;
+import pl.sparkbit.security.login.LoginUserDetails;
+
+import java.time.Instant;
+
+public interface SessionMapper {
+
+    void insertSession(@Param("session") Session session, @Param("prefix") String prefix);
+
+    Session selectSession(@Param("authToken") String authToken, @Param("prefix") String prefix);
+
+    String selectUserId(@Param("userTableName") String userTableName,
+                        @Param("authnAttributes") AuthnAttributes authnAttributes, @Param("prefix") String prefix);
+
+    LoginUserDetails selectLoginUserDetails(@Param("userId") String userId, @Param("prefix") String prefix);
+
+    void deleteSession(@Param("authToken") String authToken, @Param("deletedTs") Instant deletedTs,
+                       @Param("prefix") String prefix);
+
+    void deleteExpiredSessions(@Param("olderThan") Instant olderThan, @Param("prefix") String prefix);
+
+    void deleteSessionsForUser(@Param("userId") String userId, @Param("deletedTs") Instant deletedTs,
+                               @Param("prefix") String prefix);
+}

@@ -2,7 +2,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!--suppress SqlResolve -->
-<mapper namespace="pl.sparkbit.security.session.dao.mybatis.SessionMapper">
+<mapper namespace="pl.sparkbit.security.dao.mybatis.SessionMapper">
 
     <insert id="insertSession">
         INSERT INTO ${prefix}_session (auth_token,${prefix}_id,creation_ts)
@@ -16,7 +16,7 @@
         </foreach>
     </select>
 
-    <resultMap id="loginUserDetailsResultMap" type="pl.sparkbit.security.session.auth.LoginUserDetails">
+    <resultMap id="loginUserDetailsResultMap" type="pl.sparkbit.security.login.LoginUserDetails">
         <constructor>
             <idArg column="user_id" javaType="String"/>
             <arg column="password" javaType="String"/>
@@ -30,7 +30,7 @@
         WHERE ${prefix}_id=#{userId}
     </select>
 
-    <resultMap id="sessionResultMap" type="pl.sparkbit.security.session.domain.Session">
+    <resultMap id="sessionResultMap" type="pl.sparkbit.security.domain.Session">
         <constructor>
             <idArg column="auth_token" javaType="String"/>
             <arg column="user_id" javaType="String"/>
