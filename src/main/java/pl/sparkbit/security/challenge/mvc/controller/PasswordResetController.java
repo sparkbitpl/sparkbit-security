@@ -15,8 +15,9 @@ import javax.validation.Valid;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static pl.sparkbit.security.Paths.PUBLIC_PASSWORD;
 import static pl.sparkbit.security.Paths.PUBLIC_PASSWORD_RESET_TOKEN;
+import static pl.sparkbit.security.Properties.PASSWORD_RESET_ENABLED;
 
-@ConditionalOnProperty(value = "sparkbit.security.passwordReset.enabled", havingValue = "true")
+@ConditionalOnProperty(value = PASSWORD_RESET_ENABLED, havingValue = "true")
 @RequiredArgsConstructor
 @RestController
 @SuppressWarnings("unused")
@@ -29,7 +30,6 @@ public class PasswordResetController {
     public void initiatePasswordReset(@RequestBody @Valid InitiatePasswordResetDTO dto) {
         passwordResetService.initiatePasswordReset(dto.getEmail());
     }
-
 
     @PostMapping(PUBLIC_PASSWORD)
     @ResponseStatus(NO_CONTENT)

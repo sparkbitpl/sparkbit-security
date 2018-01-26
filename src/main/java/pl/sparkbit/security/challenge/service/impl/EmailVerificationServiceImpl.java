@@ -18,11 +18,13 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+import static pl.sparkbit.security.Properties.EMAIL_VERIFICATION_CHALLENGE_VALIDITY_HOURS;
+import static pl.sparkbit.security.Properties.EMAIL_VERIFICATION_ENABLED;
 import static pl.sparkbit.security.challenge.domain.SecurityChallengeType.EMAIL_VERIFICATION;
 import static pl.sparkbit.security.challenge.exception.NoValidTokenFoundException.FailureReason.TOKEN_EXPIRED;
 import static pl.sparkbit.security.challenge.exception.NoValidTokenFoundException.FailureReason.TOKEN_NOT_FOUND;
 
-@ConditionalOnProperty(value = "sparkbit.security.emailVerification.enabled", havingValue = "true")
+@ConditionalOnProperty(value = EMAIL_VERIFICATION_ENABLED, havingValue = "true")
 @RequiredArgsConstructor
 @Service
 @Slf4j
@@ -35,7 +37,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
     private final SecurityChallengeDao securityChallengeDao;
     private final EmailVerificationChallengeCallback callback;
 
-    @Value("${sparkbit.security.emailVerification.challengeValidityHours:1}")
+    @Value("${" + EMAIL_VERIFICATION_CHALLENGE_VALIDITY_HOURS + ":1}")
     private int challengeValidityHours;
 
     @Override

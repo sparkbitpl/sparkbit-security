@@ -21,11 +21,13 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+import static pl.sparkbit.security.Properties.PASSWORD_RESET_CHALLENGE_VALIDITY_HOURS;
+import static pl.sparkbit.security.Properties.PASSWORD_RESET_ENABLED;
 import static pl.sparkbit.security.challenge.domain.SecurityChallengeType.PASSWORD_RESET;
 import static pl.sparkbit.security.challenge.exception.NoValidTokenFoundException.FailureReason.TOKEN_EXPIRED;
 import static pl.sparkbit.security.challenge.exception.NoValidTokenFoundException.FailureReason.TOKEN_NOT_FOUND;
 
-@ConditionalOnProperty(value = "sparkbit.security.passwordReset.enabled", havingValue = "true")
+@ConditionalOnProperty(value = PASSWORD_RESET_ENABLED, havingValue = "true")
 @RequiredArgsConstructor
 @Service
 @Slf4j
@@ -40,7 +42,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     private final PasswordResetChallengeCallback callback;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${sparkbit.security.emailVerification.challengeValidityHours:1}")
+    @Value("${" + PASSWORD_RESET_CHALLENGE_VALIDITY_HOURS + ":1}")
     private int challengeValidityHours;
 
     @Override

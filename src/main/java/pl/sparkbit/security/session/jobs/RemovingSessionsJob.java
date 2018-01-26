@@ -13,19 +13,24 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+import static pl.sparkbit.security.Properties.SESSION_DELETER_OLDER_THAN_MINUTES;
+import static pl.sparkbit.security.Properties.SESSION_DELETER_REMOVE_OLD;
+import static pl.sparkbit.security.Properties.SESSION_DELETER_RUN_EVERY_MILLIS;
+
 @Component
-@ConditionalOnProperty(value = "sparkbit.security.session.deleter.removeOld", havingValue = "true")
-@Slf4j
+@ConditionalOnProperty(value = SESSION_DELETER_REMOVE_OLD, havingValue = "true")
 @RequiredArgsConstructor
+@Slf4j
+@SuppressWarnings("unused")
 public class RemovingSessionsJob {
 
     private final Clock clock;
     private final SessionDao sessionDao;
 
-    @Value("${sparkbit.security.session.deleter.olderThanMinutes}")
+    @Value("${" + SESSION_DELETER_OLDER_THAN_MINUTES + "}")
     private int olderThanMinutes;
 
-    @Scheduled(fixedDelayString = "${sparkbit.security.session.deleter.runEveryMillis}")
+    @Scheduled(fixedDelayString = "${" + SESSION_DELETER_RUN_EVERY_MILLIS + "}")
     @Transactional
     public void removeOldSessions() {
         Instant olderThan = clock.instant().minus(olderThanMinutes, ChronoUnit.MINUTES);

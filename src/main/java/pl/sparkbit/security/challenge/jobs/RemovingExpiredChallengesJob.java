@@ -9,6 +9,8 @@ import pl.sparkbit.security.challenge.dao.SecurityChallengeDao;
 
 import java.time.Clock;
 
+import static pl.sparkbit.security.Properties.CHALLENGE_DELETER_RUN_EVERY_MILLIS;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -18,7 +20,7 @@ public class RemovingExpiredChallengesJob {
     private final SecurityChallengeDao securityChallengeDao;
     private final Clock clock;
 
-    @Scheduled(fixedDelayString = "${sparkbit.security.challenge.deleter.runEveryMillis:3600000}")
+    @Scheduled(fixedDelayString = "${" + CHALLENGE_DELETER_RUN_EVERY_MILLIS + ":3600000}")
     @Transactional
     public void removeExpiredChallenges() {
         log.trace("Removing expired challenges");

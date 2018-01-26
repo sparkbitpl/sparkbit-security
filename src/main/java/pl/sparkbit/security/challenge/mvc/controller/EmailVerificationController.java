@@ -13,8 +13,9 @@ import javax.validation.Valid;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static pl.sparkbit.security.Paths.PUBLIC_EMAIL;
+import static pl.sparkbit.security.Properties.EMAIL_VERIFICATION_ENABLED;
 
-@ConditionalOnProperty(value = "sparkbit.security.emailVerification.enabled", havingValue = "true")
+@ConditionalOnProperty(value = EMAIL_VERIFICATION_ENABLED, havingValue = "true")
 @RequiredArgsConstructor
 @RestController
 @SuppressWarnings("unused")

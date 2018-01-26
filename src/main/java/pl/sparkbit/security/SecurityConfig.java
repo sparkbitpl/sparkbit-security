@@ -44,6 +44,7 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static pl.sparkbit.security.Paths.LOGIN;
+import static pl.sparkbit.security.Properties.PASSWORD_ENCODER_TYPE;
 
 @Configuration
 @EnableWebSecurity
@@ -76,9 +77,9 @@ public class SecurityConfig {
         private final Optional<GoogleResolver> googleResolver;
         private final Optional<TwitterResolver> twitterResolver;
 
-        @Value("${sparkbit.security.expected-authn-attributes}")
+        @Value("${" + Properties.EXPECTED_AUTHN_ATTRIBUTES + "}")
         private String[] expectedAuthnAttributes;
-        @Value("${sparkbit.security.passwordEncoderType:BCRYPT}")
+        @Value("${" + PASSWORD_ENCODER_TYPE + ":BCRYPT}")
         private PasswordEncoderType passwordEncoderType;
 
         @Bean

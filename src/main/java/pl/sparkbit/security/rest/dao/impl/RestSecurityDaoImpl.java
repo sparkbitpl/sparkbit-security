@@ -13,6 +13,7 @@ import pl.sparkbit.security.rest.domain.RestUserDetails;
 import java.util.Optional;
 
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
+import static pl.sparkbit.security.Properties.USER_ENTITY_NAME;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class RestSecurityDaoImpl implements RestSecurityDao {
 
     private final RestSecurityMapper restSecurityMapper;
 
-    @Value("${sparkbit.security.user-entity-name:user}")
+    @Value("${" + USER_ENTITY_NAME + ":user}")
     private String prefix;
 
     @Override

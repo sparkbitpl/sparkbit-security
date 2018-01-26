@@ -26,7 +26,6 @@ public class SessionController {
     private final AuthenticationTokenHelper authenticationTokenHelper;
     private final SessionService sessionService;
 
-
     @PostMapping(LOGIN)
     public AuthTokenDTO login(HttpServletRequest request, HttpServletResponse response) {
         Optional<String> oldAuthToken = authenticationTokenHelper.extractAuthenticationToken(request);

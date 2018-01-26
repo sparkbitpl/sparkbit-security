@@ -14,6 +14,8 @@ import java.time.Instant;
 import java.util.Optional;
 
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
+import static pl.sparkbit.security.Properties.USER_ENTITY_NAME;
+import static pl.sparkbit.security.Properties.USER_TABLE_NAME;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,9 +25,9 @@ public class SessionDaoImpl implements SessionDao {
 
     private final SessionMapper sessionMapper;
 
-    @Value("${sparkbit.security.user-entity-name:user}")
+    @Value("${" + USER_ENTITY_NAME + ":user}")
     private String prefix;
-    @Value("${sparkbit.security.userTableName:uzer}")
+    @Value("${" + USER_TABLE_NAME + ":uzer}")
     private String userTableName;
 
     @Override

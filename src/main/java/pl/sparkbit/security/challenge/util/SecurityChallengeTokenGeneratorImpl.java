@@ -4,15 +4,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import pl.sparkbit.commons.util.RandomStringGenerator;
 
+import static pl.sparkbit.security.Properties.CHALLENGE_TOKEN_ALLOWED_CHARACTERS;
+import static pl.sparkbit.security.Properties.CHALLENGE_TOKEN_LENGTH;
+
 @Component
 @SuppressWarnings("unused")
 public class SecurityChallengeTokenGeneratorImpl implements SecurityChallengeTokenGenerator {
 
-    @Value("${sparkbit.security.challengeToken.length:6}")
+    @Value("${" + CHALLENGE_TOKEN_LENGTH + ":6}")
     private int tokenLength;
 
-    @Value("${sparkbit.security.challengeToken.allowedCharacters:" +
-            "23456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz}")
+    @Value("${" + CHALLENGE_TOKEN_ALLOWED_CHARACTERS + ":23456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz}")
     private String allowedCharacters;
 
     @Override

@@ -12,6 +12,7 @@ import pl.sparkbit.security.challenge.domain.SecurityChallengeType;
 import java.time.Instant;
 
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
+import static pl.sparkbit.security.Properties.USER_ENTITY_NAME;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ public class SecurityChallengeDaoImpl implements SecurityChallengeDao {
 
     private final SecurityChallengeMapper securityChallengeMapper;
 
-    @Value("${sparkbit.security.user-entity-name:user}")
+    @Value("${" + USER_ENTITY_NAME + ":user}")
     private String prefix;
 
     @Override

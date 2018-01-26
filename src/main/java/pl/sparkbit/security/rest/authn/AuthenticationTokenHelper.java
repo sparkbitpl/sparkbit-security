@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static pl.sparkbit.security.Properties.ALLOW_UNSECURED_COOKIE;
 import static pl.sparkbit.security.Properties.AUTH_TOKEN_COOKIE_NAME;
 import static pl.sparkbit.security.Properties.AUTH_TOKEN_HEADER_NAME;
 import static pl.sparkbit.security.Security.DEFAULT_AUTH_TOKEN_COOKIE_NAME;
@@ -20,7 +21,7 @@ public class AuthenticationTokenHelper {
     private String authTokenHeaderName;
     @Value("${" + AUTH_TOKEN_COOKIE_NAME + ":" + DEFAULT_AUTH_TOKEN_COOKIE_NAME + "}")
     private String authTokenCookieName;
-    @Value("${sparkbit.security.allowUnsecuredCookie:false}")
+    @Value("${" + ALLOW_UNSECURED_COOKIE + ":false}")
     private boolean allowUnsecuredCookie;
 
     public Optional<String> extractAuthenticationToken(HttpServletRequest request) {

@@ -13,9 +13,9 @@ import javax.validation.Valid;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static pl.sparkbit.security.Paths.PASSWORD;
+import static pl.sparkbit.security.Properties.STANDARD_ENDPOINTS_ENABLED;
 
-@ConditionalOnProperty(value = "sparkbit.security.standardEndpoints.enabled", havingValue = "true",
-        matchIfMissing = true)
+@ConditionalOnProperty(value = STANDARD_ENDPOINTS_ENABLED, havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 @RestController
 @SuppressWarnings("unused")
