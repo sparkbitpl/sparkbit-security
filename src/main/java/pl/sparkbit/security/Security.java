@@ -11,8 +11,8 @@ import pl.sparkbit.security.rest.domain.RestUserDetails;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Security {
 
-    public static final String AUTH_TOKEN_HEADER = "X-Sparkbit-Auth-Token";
-    public static final String AUTH_TOKEN_COOKIE_NAME = "sparkbitAuthToken";
+    public static final String DEFAULT_AUTH_TOKEN_HEADER_NAME = "X-Sparkbit-Auth-Token";
+    public static final String DEFAULT_AUTH_TOKEN_COOKIE_NAME = "sparkbitAuthToken";
 
     public static final String USER_ROLE_NAME = "ROLE_USER";
     public static final String ADMIN_ROLE_NAME = "ROLE_ADMIN";

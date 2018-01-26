@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,6 +25,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.web.filter.GenericFilterBean;
 import pl.sparkbit.security.password.encoder.PasswordEncoderType;
 import pl.sparkbit.security.password.encoder.PhpassPasswordEncoder;
+import pl.sparkbit.security.rest.authn.AuthenticationTokenHelper;
 import pl.sparkbit.security.rest.authn.RestAuthenticationFilter;
 import pl.sparkbit.security.rest.authn.user.UserAuthenticationProvider;
 import pl.sparkbit.security.rest.service.RestSecurityService;
@@ -162,6 +164,7 @@ public class SecurityConfig {
 
         private final RestSecurityService restSecurityService;
         private final AuthenticationEntryPoint authenticationEntryPoint;
+        private final AuthenticationTokenHelper authenticationTokenHelper;
 
         @Bean
         public UserAuthenticationProvider restAuthenticationProvider() {
@@ -170,8 +173,8 @@ public class SecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            GenericFilterBean restAuthenticationFiler =
-                    new RestAuthenticationFilter(authenticationManager(), authenticationEntryPoint);
+            GenericFilterBean restAuthenticationFiler = new RestAuthenticationFilter(authenticationManager(),
+                    authenticationEntryPoint, authenticationTokenHelper);
 
             http
                     .cors().and()
@@ -192,8 +195,35 @@ public class SecurityConfig {
         }
 
         @Override
-        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        protected void configure(AuthenticationManagerBuilder auth) {
             auth.authenticationProvider(restAuthenticationProvider());
+        }
+
+        /**
+         * This method can be used when the application requires a special role for a particular antMatcher.
+         * A special ConfigurationAdapter extending WebSecurityConfigurerAdapter must be implemented that will
+         * call this method from within its configure(HttpSecurity http).
+         * The @Order for this new ConfigurationAdapter must be after login/admin but before generic "rest" config
+         * (so between 1 and 100).
+         */
+        @SuppressWarnings("unused")
+        public void configure(HttpSecurity http, AuthenticationManager authenticationManager, String antMatcher,
+                              String role) throws Exception {
+            GenericFilterBean authenticationFilter = new RestAuthenticationFilter(authenticationManager,
+                    authenticationEntryPoint, authenticationTokenHelper);
+
+            http
+                    .antMatcher(antMatcher)
+                    .addFilterBefore(authenticationFilter, BasicAuthenticationFilter.class)
+                    .authorizeRequests()
+                    .anyRequest().hasRole(role)
+                    .and()
+
+                    .sessionManagement().sessionCreationPolicy(STATELESS).and()
+                    .anonymous().disable()
+                    .logout().disable()
+                    .rememberMe().disable()
+                    .csrf().disable();
         }
     }
 }
