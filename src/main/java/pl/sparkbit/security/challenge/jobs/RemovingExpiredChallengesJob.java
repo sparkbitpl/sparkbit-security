@@ -10,8 +10,9 @@ import pl.sparkbit.security.challenge.dao.SecurityChallengeDao;
 import java.time.Clock;
 
 @Component
-@Slf4j
 @RequiredArgsConstructor
+@Slf4j
+@SuppressWarnings("unused")
 public class RemovingExpiredChallengesJob {
 
     private final SecurityChallengeDao securityChallengeDao;

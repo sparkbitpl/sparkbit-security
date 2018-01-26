@@ -6,6 +6,7 @@ import pl.sparkbit.security.session.auth.AuthnAttributes;
 import java.util.List;
 
 @RequiredArgsConstructor
+@SuppressWarnings("unused")
 public class DefaultGoogleResolver implements GoogleResolver {
 
     private final List<String> googleClientIds;
