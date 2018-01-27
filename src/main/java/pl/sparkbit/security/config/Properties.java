@@ -16,6 +16,11 @@ public class Properties {
     public static final String CHALLENGE_DELETER_RUN_EVERY_MILLIS = PREFIX + "challenge.deleter.runEveryMillis";
     public static final String CHALLENGE_TOKEN_ALLOWED_CHARACTERS = PREFIX + "challengeToken.allowedCharacters";
     public static final String CHALLENGE_TOKEN_LENGTH = PREFIX + "challengeToken.length";
+    public static final String CORS_ALLOW_CREDENTIALS = PREFIX + "cors.allowCredentials";
+    public static final String CORS_ALLOWED_HEADERS = PREFIX + "cors.allowedHeaders";
+    public static final String CORS_ALLOWED_METHODS = PREFIX + "cors.allowedMethods";
+    public static final String CORS_ALLOWED_ORIGINS = PREFIX + "cors.allowedOrigins";
+    public static final String CORS_MAX_AGE_SECONDS = PREFIX + "cors.maxAgeSeconds";
     public static final String DEFAULT_PASSWORD_POLICY_ENABLED = PREFIX + "defaultPasswordPolicy.enabled";
     public static final String EMAIL_VERIFICATION_CHALLENGE_VALIDITY_HOURS =
             PREFIX + "emailVerification.challengeValidityHours";
