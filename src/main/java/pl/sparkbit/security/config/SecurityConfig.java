@@ -56,6 +56,11 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CorsConfigurer corsConfigurer() {
+        return new CorsConfigurer();
+    }
+
+    @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return new Http401AuthenticationEntryPoint(null);
     }

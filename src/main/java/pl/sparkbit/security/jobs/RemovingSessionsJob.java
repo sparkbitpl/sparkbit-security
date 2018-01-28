@@ -33,6 +33,7 @@ public class RemovingSessionsJob {
     @Scheduled(fixedDelayString = "${" + SESSION_DELETER_RUN_EVERY_MILLIS + "}")
     @Transactional
     public void removeOldSessions() {
+        log.trace("Removing expired sessions");
         Instant olderThan = clock.instant().minus(olderThanMinutes, ChronoUnit.MINUTES);
         sessionDao.deleteSessions(olderThan);
     }

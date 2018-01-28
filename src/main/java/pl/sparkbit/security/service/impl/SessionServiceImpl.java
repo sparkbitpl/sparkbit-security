@@ -7,13 +7,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import pl.sparkbit.commons.util.RandomStringGenerator;
 import pl.sparkbit.security.Security;
 import pl.sparkbit.security.dao.SessionDao;
 import pl.sparkbit.security.domain.RestUserDetails;
 import pl.sparkbit.security.domain.Session;
 import pl.sparkbit.security.login.LoginUserDetails;
 import pl.sparkbit.security.service.SessionService;
+import pl.sparkbit.security.util.SecureRandomStringGenerator;
 
 import java.time.Clock;
 import java.util.Optional;
@@ -29,6 +29,7 @@ public class SessionServiceImpl implements SessionService {
     private final SessionDao sessionDao;
     private final Clock clock;
     private final Security security;
+    private final SecureRandomStringGenerator secureRandomStringGenerator;
 
     @Override
     @Transactional
@@ -41,7 +42,7 @@ public class SessionServiceImpl implements SessionService {
         LoginUserDetails loginUserDetails = (LoginUserDetails) auth.getPrincipal();
 
         Session newSession = Session.builder()
-                .authToken(RandomStringGenerator.base58String(AUTH_TOKEN_LENGTH))
+                .authToken(secureRandomStringGenerator.base58String(AUTH_TOKEN_LENGTH))
                 .userId(loginUserDetails.getUserId())
                 .creation(clock.instant())
                 .build();
