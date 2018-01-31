@@ -49,8 +49,14 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     @Override
     @Transactional
     public void initiatePasswordReset(String email) {
+        Optional<String> userIdOpt = callback.getUserIdForEmail(email);
+        if (!userIdOpt.isPresent()) {
+            log.debug("Initiated password reset for non-existent email {}", email);
+            return;
+        }
+
+        String userId = userIdOpt.get();
         String id = idGenerator.generate();
-        String userId = callback.getUserIdForEmail(email);
         String token = securityChallengeTokenGenerator.generateChallengeToken();
         Instant expirationTimestamp = clock.instant().plus(challengeValidityHours, ChronoUnit.HOURS);
 
@@ -64,10 +70,9 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
         securityChallengeDao.deleteChallenge(userId, PASSWORD_RESET);
         securityChallengeDao.insertChallenge(challenge);
-        log.debug("User {} initiated password reset", userId);
+        log.debug("User {} with email initiated password reset", userId, email);
 
         callback.transmitToUser(challenge);
-
     }
 
     @Override

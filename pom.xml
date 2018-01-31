@@ -185,7 +185,7 @@
         <dependency>
             <groupId>pl.sparkbit</groupId>
             <artifactId>sparkbit-commons</artifactId>
-            <version>1.12</version>
+            <version>1.13</version>
         </dependency>
 
         <dependency>
