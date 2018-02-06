@@ -37,7 +37,7 @@
     </select>
 
     <select id="selectUserId" resultType="String">
-        SELECT id FROM ${userTableName} WHERE
+        SELECT ${userTableIdColumnName} FROM ${userTableName} WHERE
         <foreach collection="authnAttributes" index="key" item="value" open="" separator="and" close="">
             ${key}=#{value}
         </foreach>

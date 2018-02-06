@@ -70,7 +70,7 @@ public class UserDetailsMapperTest extends MapperTestBase {
 
         AuthnAttributes authnAttributes =
                 new AuthnAttributes(singletonMap("username", USER_1_USERNAME), singleton("username"));
-        String userId = userDetailsMapper.selectUserId(SIMPLE_LOGIN_USER, authnAttributes, PREFIX);
+        String userId = userDetailsMapper.selectUserId(SIMPLE_LOGIN_USER, USER_ID_COLUMN_NAME, authnAttributes, PREFIX);
         assertEquals(USER_1_ID, userId);
     }
 
@@ -81,7 +81,8 @@ public class UserDetailsMapperTest extends MapperTestBase {
         AuthnAttributes authnAttributes = new AuthnAttributes(
                 ImmutableMap.of("username", USER_1_USERNAME, "context", USER_1_CONTEXT),
                 ImmutableSet.of("username", "context"));
-        String userId = userDetailsMapper.selectUserId(COMPOSITE_LOGIN_USER, authnAttributes, PREFIX);
+        String userId = userDetailsMapper.selectUserId(COMPOSITE_LOGIN_USER, USER_ID_COLUMN_NAME, authnAttributes,
+                PREFIX);
         assertEquals(USER_1_ID, userId);
     }
 }

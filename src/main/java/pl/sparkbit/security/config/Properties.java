@@ -27,7 +27,7 @@ public class Properties {
     public static final String EMAIL_VERIFICATION_ENABLED = PREFIX + "emailVerification.enabled";
     public static final String EXPECTED_AUTHN_ATTRIBUTES = PREFIX + "expected-authn-attributes";
     public static final String MINIMAL_PASSWORD_LENGTH = PREFIX + "minPasswordLength";
-    public static final String PASSWORD_CHANGE_ENABLED = PREFIX + "standardEndpoints.enabled";
+    public static final String PASSWORD_CHANGE_ENABLED = PREFIX + "passwordChange.enabled";
     public static final String PASSWORD_ENCODER_TYPE = PREFIX + "passwordEncoderType";
     public static final String PASSWORD_RESET_CHALLENGE_VALIDITY_HOURS =
             PREFIX + "passwordReset.challengeValidityHours";
@@ -37,4 +37,5 @@ public class Properties {
     public static final String SESSION_DELETER_RUN_EVERY_MILLIS = PREFIX + "session.deleter.runEveryMillis";
     public static final String USER_ENTITY_NAME = PREFIX + "user-entity-name";
     public static final String USER_TABLE_NAME = PREFIX + "userTableName";
+    public static final String USER_TABLE_ID_COLUMN_NAME = PREFIX + "userTableIdColumnName";
 }

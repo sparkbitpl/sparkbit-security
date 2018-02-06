@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
 import static pl.sparkbit.security.config.Properties.USER_ENTITY_NAME;
+import static pl.sparkbit.security.config.Properties.USER_TABLE_ID_COLUMN_NAME;
 import static pl.sparkbit.security.config.Properties.USER_TABLE_NAME;
 
 @Repository
@@ -28,6 +29,8 @@ public class UserDetailsDaoImpl implements UserDetailsDao {
     private String prefix;
     @Value("${" + USER_TABLE_NAME + ":uzer}")
     private String userTableName;
+    @Value("${" + USER_TABLE_ID_COLUMN_NAME + ":id}")
+    private String userTableIdColumnName;
 
     @Override
     public Optional<LoginUserDetails> selectLoginUserDetails(String userId) {
@@ -41,6 +44,7 @@ public class UserDetailsDaoImpl implements UserDetailsDao {
 
     @Override
     public Optional<String> selectUserId(AuthnAttributes authnAttributes) {
-        return Optional.ofNullable(userDetailsMapper.selectUserId(userTableName, authnAttributes, prefix));
+        return Optional.ofNullable(userDetailsMapper.selectUserId(userTableName, userTableIdColumnName, authnAttributes,
+                prefix));
     }
 }

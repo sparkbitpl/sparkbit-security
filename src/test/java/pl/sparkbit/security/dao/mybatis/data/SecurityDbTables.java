@@ -16,4 +16,5 @@ public final class SecurityDbTables {
 
     public static final String SIMPLE_LOGIN_USER = "simple_login_user";
     public static final String COMPOSITE_LOGIN_USER = "composite_login_user";
+    public static final String USER_ID_COLUMN_NAME = "id";
 }

@@ -12,5 +12,6 @@ public interface UserDetailsMapper {
     RestUserDetails selectRestUserDetails(@Param("authToken") String authToken, @Param("prefix") String prefix);
 
     String selectUserId(@Param("userTableName") String userTableName,
+                        @Param("userTableIdColumnName") String userTableIdColumnName,
                         @Param("authnAttributes") AuthnAttributes authnAttributes, @Param("prefix") String prefix);
 }
