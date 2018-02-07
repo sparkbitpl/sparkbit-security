@@ -95,7 +95,7 @@ public class SessionMapperTest extends MapperTestBase {
         Operation session2 = session(authToken2, CREDS_1_USER_ID, creation, deletedTs2);
         insertTestData(CREDS_1, session1, session2);
 
-        sessionMapper.deleteExpiredSessions(olderThan, PREFIX);
+        sessionMapper.deleteMarkedAsDeletedSessions(olderThan, PREFIX);
 
         assertEquals(1, countRowsInTableWhereColumnsEquals(SESSION, "user_id", quote(CREDS_1_USER_ID)));
     }

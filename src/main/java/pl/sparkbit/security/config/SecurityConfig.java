@@ -34,6 +34,7 @@ import pl.sparkbit.security.password.encoder.PhpassPasswordEncoder;
 import pl.sparkbit.security.restauthn.AuthenticationTokenHelper;
 import pl.sparkbit.security.restauthn.RestAuthenticationFilter;
 import pl.sparkbit.security.restauthn.user.UserAuthenticationProvider;
+import pl.sparkbit.security.service.SessionService;
 import pl.sparkbit.security.service.UserDetailsService;
 
 import java.util.Arrays;
@@ -41,7 +42,9 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+import static pl.sparkbit.security.Security.DEFAULT_SESSION_EXPIRES_AT_HEADER_NAME;
 import static pl.sparkbit.security.config.Properties.PASSWORD_ENCODER_TYPE;
+import static pl.sparkbit.security.config.Properties.SESSION_EXPIRES_AT_HEADER_NAME;
 import static pl.sparkbit.security.mvc.controller.Paths.LOGIN;
 
 @Configuration
@@ -167,16 +170,20 @@ public class SecurityConfig {
         private final UserDetailsService userDetailsService;
         private final AuthenticationEntryPoint authenticationEntryPoint;
         private final AuthenticationTokenHelper authenticationTokenHelper;
+        private final SessionService sessionService;
+
+        @Value("${" + SESSION_EXPIRES_AT_HEADER_NAME + ":" + DEFAULT_SESSION_EXPIRES_AT_HEADER_NAME + "}")
+        private String sessionValidTimeHeaderName;
 
         @Bean
         public UserAuthenticationProvider restAuthenticationProvider() {
-            return new UserAuthenticationProvider(userDetailsService);
+            return new UserAuthenticationProvider(userDetailsService, sessionService);
         }
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             GenericFilterBean restAuthenticationFiler = new RestAuthenticationFilter(authenticationManager(),
-                    authenticationEntryPoint, authenticationTokenHelper);
+                    authenticationEntryPoint, authenticationTokenHelper, sessionValidTimeHeaderName);
 
             http
                     .cors().and()
@@ -212,7 +219,7 @@ public class SecurityConfig {
         public void configure(HttpSecurity http, AuthenticationManager authenticationManager, String antMatcher,
                               String role) throws Exception {
             GenericFilterBean authenticationFilter = new RestAuthenticationFilter(authenticationManager,
-                    authenticationEntryPoint, authenticationTokenHelper);
+                    authenticationEntryPoint, authenticationTokenHelper, sessionValidTimeHeaderName);
 
             http
                     .antMatcher(antMatcher)

@@ -14,4 +14,5 @@ public class Session {
     private final String authToken;
     private final String userId;
     private final Instant creation;
+    private final Instant expiresAt;
 }

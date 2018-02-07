@@ -23,6 +23,7 @@ CREATE TABLE user_session (
   user_id     VARCHAR(32) NOT NULL,
   creation_ts BIGINT      NOT NULL,
   deleted_ts  BIGINT,
+  expires_at  BIGINT,
   PRIMARY KEY (auth_token),
   FOREIGN KEY (user_id) REFERENCES user_credentials (user_id)
 );

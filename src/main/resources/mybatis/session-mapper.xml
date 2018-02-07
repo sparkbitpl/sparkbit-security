@@ -5,20 +5,25 @@
 <mapper namespace="pl.sparkbit.security.dao.mybatis.SessionMapper">
 
     <insert id="insertSession">
-        INSERT INTO ${prefix}_session (auth_token,${prefix}_id,creation_ts)
-        VALUES (#{session.authToken},#{session.userId},#{session.creation})
+        INSERT INTO ${prefix}_session (auth_token,${prefix}_id,creation_ts,expires_at)
+        VALUES (#{session.authToken},#{session.userId},#{session.creation},#{session.expiresAt})
     </insert>
+
+    <update id="updateSessionExpiryTs">
+        UPDATE ${prefix}_session SET expires_at = #{expiresAt} WHERE auth_token = #{authToken}
+    </update>
 
     <resultMap id="sessionResultMap" type="pl.sparkbit.security.domain.Session">
         <constructor>
             <idArg column="auth_token" javaType="String"/>
             <arg column="user_id" javaType="String"/>
             <arg column="creation_ts" javaType="java.time.Instant"/>
+            <arg column="expires_at" javaType="java.time.Instant"/>
         </constructor>
     </resultMap>
 
     <select id="selectSession" resultMap="sessionResultMap">
-        SELECT auth_token, ${prefix}_id AS user_id, creation_ts FROM ${prefix}_session s
+        SELECT auth_token, ${prefix}_id AS user_id, creation_ts, expires_at FROM ${prefix}_session s
         WHERE auth_token=#{authToken} AND deleted_ts IS NULL
     </select>
 
@@ -26,12 +31,18 @@
         UPDATE ${prefix}_session SET deleted_ts=#{deletedTs} WHERE auth_token=#{authToken}
     </update>
 
-    <delete id="deleteExpiredSessions">
+    <delete id="deleteMarkedAsDeletedSessions">
         DELETE FROM ${prefix}_session WHERE deleted_ts &lt; #{olderThan}
     </delete>
 
     <update id="deleteSessionsForUser">
         UPDATE ${prefix}_session SET deleted_ts=#{deletedTs} WHERE ${prefix}_id = #{userId}
     </update>
+
+    <update id="deleteExpiredSessions">
+        UPDATE ${prefix}_session SET deleted_ts=#{now} WHERE expires_at &lt; #{now} AND deleted_ts IS NULL
+    </update>
+
+
 
 </mapper>

@@ -33,9 +33,12 @@ public class Properties {
             PREFIX + "passwordReset.challengeValidityHours";
     public static final String PASSWORD_RESET_ENABLED = PREFIX + "passwordReset.enabled";
     public static final String SESSION_DELETER_OLDER_THAN_MINUTES = PREFIX + "session.deleter.olderThanMinutes";
-    public static final String SESSION_DELETER_REMOVE_OLD = PREFIX + "session.deleter.removeOld";
+    public static final String SESSION_DELETER_REMOVE_OLD = PREFIX + "session.deleter.removeExpired";
     public static final String SESSION_DELETER_RUN_EVERY_MILLIS = PREFIX + "session.deleter.runEveryMillis";
+    public static final String SESSION_EXPIRATION_MINUTES = PREFIX + "session.expirationMinutes";
+    public static final String SESSION_EXPIRES_AT_HEADER_NAME = PREFIX + "sessionExpiresAtHeader.name";
     public static final String USER_ENTITY_NAME = PREFIX + "user-entity-name";
     public static final String USER_TABLE_NAME = PREFIX + "userTableName";
     public static final String USER_TABLE_ID_COLUMN_NAME = PREFIX + "userTableIdColumnName";
+
 }

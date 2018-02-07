@@ -2,6 +2,7 @@ package pl.sparkbit.security.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,11 @@ import pl.sparkbit.security.service.SessionService;
 import pl.sparkbit.security.util.SecureRandomStringGenerator;
 
 import java.time.Clock;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+
+import static pl.sparkbit.security.config.Properties.SESSION_EXPIRATION_MINUTES;
 
 @RequiredArgsConstructor
 @Service
@@ -30,6 +35,9 @@ public class SessionServiceImpl implements SessionService {
     private final Clock clock;
     private final Security security;
     private final SecureRandomStringGenerator secureRandomStringGenerator;
+
+    @Value("${" + SESSION_EXPIRATION_MINUTES + ":#{null}}")
+    private Integer sessionExpirationMinutes;
 
     @Override
     @Transactional
@@ -45,6 +53,7 @@ public class SessionServiceImpl implements SessionService {
                 .authToken(secureRandomStringGenerator.base58String(AUTH_TOKEN_LENGTH))
                 .userId(loginUserDetails.getUserId())
                 .creation(clock.instant())
+                .expiresAt(getExpirationTime())
                 .build();
         sessionDao.insertSession(newSession);
 
@@ -78,6 +87,26 @@ public class SessionServiceImpl implements SessionService {
     @Override
     @Transactional
     public void endAllSessionsForUser(String userId) {
-        sessionDao.deleteSessions(userId, clock.instant());
+        sessionDao.deleteMarkedAsDeletedSessions(userId, clock.instant());
     }
+
+    @Override
+    @Transactional
+    public void updateExpirationTime(String authToken) {
+        sessionDao.updateSessionExpiryTs(authToken, getExpirationTime());
+    }
+
+    @Override
+    public boolean areSessionsImmortal() {
+        return sessionExpirationMinutes == null;
+    }
+
+    private Instant getExpirationTime() {
+        if (areSessionsImmortal()) {
+            return null;
+        }
+
+        return clock.instant().plus(sessionExpirationMinutes, ChronoUnit.MINUTES);
+    }
+
 }

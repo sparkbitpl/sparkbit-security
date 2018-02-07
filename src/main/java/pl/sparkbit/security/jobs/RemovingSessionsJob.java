@@ -35,6 +35,6 @@ public class RemovingSessionsJob {
     public void removeOldSessions() {
         log.trace("Removing expired sessions");
         Instant olderThan = clock.instant().minus(olderThanMinutes, ChronoUnit.MINUTES);
-        sessionDao.deleteSessions(olderThan);
+        sessionDao.deleteMarkedAsDeletedSessions(olderThan);
     }
 }

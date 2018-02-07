@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.Instant;
 import java.util.Collection;
 
 @Getter
@@ -13,6 +14,7 @@ public class RestUserDetails implements UserDetails {
 
     private final String authToken;
     private final String userId;
+    private final Instant expiresAt;
     @SuppressWarnings("unused")
     private Collection<GrantedAuthority> roles;
 
@@ -43,7 +45,7 @@ public class RestUserDetails implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return expiresAt == null || expiresAt.isAfter(Instant.now());
     }
 
     @Override
