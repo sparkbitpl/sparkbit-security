@@ -30,7 +30,7 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
         authenticationChecks.check(restUserDetails);
 
         if (!sessionService.areSessionsImmortal()) {
-            sessionService.updateExpirationTime(authToken);
+            sessionService.updateSessionExpiryTs(authToken);
         }
 
         return new UserAuthenticationToken(restUserDetails);

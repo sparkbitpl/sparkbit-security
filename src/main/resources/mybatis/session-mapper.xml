@@ -31,11 +31,11 @@
         UPDATE ${prefix}_session SET deleted_ts=#{deletedTs} WHERE auth_token=#{authToken}
     </update>
 
-    <delete id="deleteMarkedAsDeletedSessions">
+    <delete id="deleteSessionsMarkedAsDeleted">
         DELETE FROM ${prefix}_session WHERE deleted_ts &lt; #{olderThan}
     </delete>
 
-    <update id="deleteSessionsForUser">
+    <update id="markSessionsAsDeleted">
         UPDATE ${prefix}_session SET deleted_ts=#{deletedTs} WHERE ${prefix}_id = #{userId}
     </update>
 

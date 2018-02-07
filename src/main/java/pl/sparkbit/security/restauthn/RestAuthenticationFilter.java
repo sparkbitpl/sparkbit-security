@@ -25,7 +25,7 @@ public class RestAuthenticationFilter extends GenericFilterBean {
     private final AuthenticationManager authenticationManager;
     private final AuthenticationEntryPoint entryPoint;
     private final AuthenticationTokenHelper authenticationTokenHelper;
-    private final String sessionValidTimeHeaderName;
+    private final String sessionExpiresAtHeaderName;
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain)
@@ -44,8 +44,9 @@ public class RestAuthenticationFilter extends GenericFilterBean {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 RestUserDetails restUserDetails = (RestUserDetails) authentication.getPrincipal();
-                String validTsAsString = getValidTsAsString(restUserDetails);
-                response.setHeader(sessionValidTimeHeaderName, validTsAsString);
+                if (restUserDetails.getExpiresAt() != null) {
+                    response.setHeader(sessionExpiresAtHeaderName, getValidTsAsString(restUserDetails));
+                }
             } catch (AuthenticationException failed) {
                 SecurityContextHolder.clearContext();
                 entryPoint.commence(request, response, failed);
@@ -57,10 +58,6 @@ public class RestAuthenticationFilter extends GenericFilterBean {
     }
 
     private String getValidTsAsString(RestUserDetails restUserDetails) {
-        if (restUserDetails.getExpiresAt() == null) {
-            return null;
-        }
-
         return String.valueOf(restUserDetails.getExpiresAt().toEpochMilli());
     }
 }

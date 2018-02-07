@@ -15,9 +15,9 @@ public interface SessionDao {
 
     void deleteSession(String authToken, Instant deletedTs);
 
-    void deleteMarkedAsDeletedSessions(Instant olderThan);
+    void deleteSessionsMarkedAsDeleted(Instant olderThan);
 
-    void deleteMarkedAsDeletedSessions(String userId, Instant deletedTs);
+    void markSessionsAsDeleted(String userId, Instant deletedTs);
 
     void deleteExpiredSessions(Instant now);
 }

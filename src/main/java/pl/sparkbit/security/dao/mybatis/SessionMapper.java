@@ -17,9 +17,9 @@ public interface SessionMapper {
     void deleteSession(@Param("authToken") String authToken, @Param("deletedTs") Instant deletedTs,
                        @Param("prefix") String prefix);
 
-    void deleteMarkedAsDeletedSessions(@Param("olderThan") Instant olderThan, @Param("prefix") String prefix);
+    void deleteSessionsMarkedAsDeleted(@Param("olderThan") Instant olderThan, @Param("prefix") String prefix);
 
-    void deleteSessionsForUser(@Param("userId") String userId, @Param("deletedTs") Instant deletedTs,
+    void markSessionsAsDeleted(@Param("userId") String userId, @Param("deletedTs") Instant deletedTs,
                                @Param("prefix") String prefix);
 
     void deleteExpiredSessions(@Param("now") Instant now, @Param("prefix") String prefix);

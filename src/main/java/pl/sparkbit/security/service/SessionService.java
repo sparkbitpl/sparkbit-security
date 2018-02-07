@@ -10,7 +10,7 @@ public interface SessionService {
 
     void endAllSessionsForUser(String userId);
 
-    void updateExpirationTime(String authToken);
+    void updateSessionExpiryTs(String authToken);
 
     boolean areSessionsImmortal();
 

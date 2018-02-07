@@ -173,7 +173,7 @@ public class SecurityConfig {
         private final SessionService sessionService;
 
         @Value("${" + SESSION_EXPIRES_AT_HEADER_NAME + ":" + DEFAULT_SESSION_EXPIRES_AT_HEADER_NAME + "}")
-        private String sessionValidTimeHeaderName;
+        private String sessionExpiresAtHeaderName;
 
         @Bean
         public UserAuthenticationProvider restAuthenticationProvider() {
@@ -183,7 +183,7 @@ public class SecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             GenericFilterBean restAuthenticationFiler = new RestAuthenticationFilter(authenticationManager(),
-                    authenticationEntryPoint, authenticationTokenHelper, sessionValidTimeHeaderName);
+                    authenticationEntryPoint, authenticationTokenHelper, sessionExpiresAtHeaderName);
 
             http
                     .cors().and()
@@ -219,7 +219,7 @@ public class SecurityConfig {
         public void configure(HttpSecurity http, AuthenticationManager authenticationManager, String antMatcher,
                               String role) throws Exception {
             GenericFilterBean authenticationFilter = new RestAuthenticationFilter(authenticationManager,
-                    authenticationEntryPoint, authenticationTokenHelper, sessionValidTimeHeaderName);
+                    authenticationEntryPoint, authenticationTokenHelper, sessionExpiresAtHeaderName);
 
             http
                     .antMatcher(antMatcher)

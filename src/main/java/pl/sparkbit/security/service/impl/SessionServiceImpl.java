@@ -53,7 +53,7 @@ public class SessionServiceImpl implements SessionService {
                 .authToken(secureRandomStringGenerator.base58String(AUTH_TOKEN_LENGTH))
                 .userId(loginUserDetails.getUserId())
                 .creation(clock.instant())
-                .expiresAt(getExpirationTime())
+                .expiresAt(getExpiryTs())
                 .build();
         sessionDao.insertSession(newSession);
 
@@ -87,13 +87,13 @@ public class SessionServiceImpl implements SessionService {
     @Override
     @Transactional
     public void endAllSessionsForUser(String userId) {
-        sessionDao.deleteMarkedAsDeletedSessions(userId, clock.instant());
+        sessionDao.markSessionsAsDeleted(userId, clock.instant());
     }
 
     @Override
     @Transactional
-    public void updateExpirationTime(String authToken) {
-        sessionDao.updateSessionExpiryTs(authToken, getExpirationTime());
+    public void updateSessionExpiryTs(String authToken) {
+        sessionDao.updateSessionExpiryTs(authToken, getExpiryTs());
     }
 
     @Override
@@ -101,7 +101,7 @@ public class SessionServiceImpl implements SessionService {
         return sessionExpirationMinutes == null;
     }
 
-    private Instant getExpirationTime() {
+    private Instant getExpiryTs() {
         if (areSessionsImmortal()) {
             return null;
         }
