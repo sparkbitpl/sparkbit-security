@@ -21,6 +21,7 @@ public class Properties {
     public static final String CORS_ALLOWED_METHODS = PREFIX + "cors.allowedMethods";
     public static final String CORS_ALLOWED_ORIGINS = PREFIX + "cors.allowedOrigins";
     public static final String CORS_MAX_AGE_SECONDS = PREFIX + "cors.maxAgeSeconds";
+    public static final String CORS_EXPOSED_HEADERS = PREFIX + "cors.exposedHeaders";
     public static final String DEFAULT_PASSWORD_POLICY_ENABLED = PREFIX + "defaultPasswordPolicy.enabled";
     public static final String EMAIL_VERIFICATION_CHALLENGE_VALIDITY_HOURS =
             PREFIX + "emailVerification.challengeValidityHours";
