@@ -26,10 +26,12 @@ public class SessionMapperTest extends MapperTestBase {
 
         String authToken = "id54321";
         Instant creation = Instant.ofEpochSecond(31232133);
+        Instant expiresAt = Instant.ofEpochSecond(756756756);
         Session session = Session.builder()
                 .authToken(authToken)
                 .userId(CREDS_1_USER_ID)
                 .creation(creation)
+                .expiresAt(expiresAt)
                 .build();
         sessionMapper.insertSession(session, PREFIX);
 
@@ -37,7 +39,8 @@ public class SessionMapperTest extends MapperTestBase {
                 "auth_token", quote(authToken),
                 "user_id", quote(CREDS_1_USER_ID),
                 "creation_ts", creation.toEpochMilli(),
-                "deleted_ts", null
+                "deleted_ts", null,
+                "expires_at", expiresAt.toEpochMilli()
         ));
     }
 

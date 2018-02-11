@@ -1,6 +1,7 @@
 package pl.sparkbit.security.dao.mybatis.data;
 
 import com.ninja_squad.dbsetup.operation.Operation;
+import pl.sparkbit.security.domain.Credentials;
 import pl.sparkbit.security.domain.SecurityChallengeType;
 
 import java.time.Instant;
