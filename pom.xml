@@ -185,7 +185,7 @@
         <dependency>
             <groupId>pl.sparkbit</groupId>
             <artifactId>sparkbit-commons</artifactId>
-            <version>1.13</version>
+            <version>1.16</version>
         </dependency>
 
         <dependency>
@@ -219,11 +219,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
         </dependency>
 
         <dependency>
