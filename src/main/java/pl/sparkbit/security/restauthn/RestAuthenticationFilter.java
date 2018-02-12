@@ -43,9 +43,11 @@ public class RestAuthenticationFilter extends GenericFilterBean {
                         "Authentication is not authenticated after successful authentication");
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                RestUserDetails restUserDetails = (RestUserDetails) authentication.getPrincipal();
-                if (restUserDetails.getExpiresAt() != null) {
-                    response.setHeader(sessionExpiresAtHeaderName, getValidTsAsString(restUserDetails));
+                if (authentication.getPrincipal() instanceof RestUserDetails) {
+                    RestUserDetails restUserDetails = (RestUserDetails) authentication.getPrincipal();
+                    if (restUserDetails.getExpiresAt() != null) {
+                        response.setHeader(sessionExpiresAtHeaderName, getValidTsAsString(restUserDetails));
+                    }
                 }
             } catch (AuthenticationException failed) {
                 SecurityContextHolder.clearContext();
