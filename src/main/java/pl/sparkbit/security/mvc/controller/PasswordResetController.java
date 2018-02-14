@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import pl.sparkbit.security.mvc.dto.in.InitiatePasswordResetDTO;
+import pl.sparkbit.security.login.AuthnAttributes;
 import pl.sparkbit.security.mvc.dto.in.ResetPasswordDTO;
 import pl.sparkbit.security.service.PasswordResetService;
 
@@ -27,8 +27,8 @@ public class PasswordResetController {
 
     @PostMapping(PUBLIC_PASSWORD_RESET_TOKEN)
     @ResponseStatus(NO_CONTENT)
-    public void initiatePasswordReset(@RequestBody @Valid InitiatePasswordResetDTO dto) {
-        passwordResetService.initiatePasswordReset(dto.getEmail());
+    public void initiatePasswordReset(@RequestBody AuthnAttributes authnAttributes) {
+        passwordResetService.initiatePasswordReset(authnAttributes);
     }
 
     @PostMapping(PUBLIC_PASSWORD)

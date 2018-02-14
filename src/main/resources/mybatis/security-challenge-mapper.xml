@@ -5,7 +5,7 @@
 <mapper namespace="pl.sparkbit.security.dao.mybatis.SecurityChallengeMapper">
 
     <insert id="insertChallenge">
-        INSERT INTO security_challenge (id, ${prefix}_id, challenge_type, expiration_ts, token)
+        INSERT INTO ${prefix}_security_challenge (id, ${prefix}_id, challenge_type, expiration_ts, token)
         VALUES (#{challenge.id}, #{challenge.userId}, #{challenge.type}, #{challenge.expirationTimestamp},
                 #{challenge.token})
     </insert>
@@ -21,19 +21,19 @@
     </resultMap>
 
     <select id="selectChallengeByToken" resultMap="securityChallengeResultMap">
-        SELECT id, ${prefix}_id AS user_id, challenge_type, expiration_ts, token FROM security_challenge WHERE token=#{token}
+        SELECT id, ${prefix}_id AS user_id, challenge_type, expiration_ts, token FROM ${prefix}_security_challenge WHERE token=#{token}
     </select>
 
     <delete id="deleteChallengeById">
-        DELETE FROM security_challenge WHERE id=#{id}
+        DELETE FROM ${prefix}_security_challenge WHERE id=#{id}
     </delete>
 
     <delete id="deleteChallengeByUserIdAndType">
-        DELETE FROM security_challenge WHERE ${prefix}_id=#{userId} AND challenge_type=#{type}
+        DELETE FROM ${prefix}_security_challenge WHERE ${prefix}_id=#{userId} AND challenge_type=#{type}
     </delete>
 
     <delete id="deleteExpiredChallenges">
-        DELETE FROM security_challenge WHERE expiration_ts &lt; #{now}
+        DELETE FROM ${prefix}_security_challenge WHERE expiration_ts &lt; #{now}
     </delete>
 
 </mapper>

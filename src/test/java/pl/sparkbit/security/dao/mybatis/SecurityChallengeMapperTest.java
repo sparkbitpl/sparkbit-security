@@ -67,7 +67,7 @@ public class SecurityChallengeMapperTest extends MapperTestBase {
     @Test
     public void shouldDeleteSecurityChallengeById() {
         insertTestData(CREDS_1, CHALLENGE_1);
-        securityChallengeMapper.deleteChallengeById(CHALLENGE_1_ID);
+        securityChallengeMapper.deleteChallengeById(CHALLENGE_1_ID, SecurityDbTables.PREFIX);
         assertEquals(0, countRowsInTable(SecurityDbTables.SECURITY_CHALLENGE));
     }
 
@@ -86,7 +86,7 @@ public class SecurityChallengeMapperTest extends MapperTestBase {
         insertTestData(CREDS_1, SecurityTestDataUtils.securityChallenge("1", CREDS_1_USER_ID, PASSWORD_RESET, past, "1"),
                 SecurityTestDataUtils.securityChallenge("2", CREDS_1_USER_ID, EMAIL_VERIFICATION, future, "2"));
 
-        securityChallengeMapper.deleteExpiredChallenges(now);
+        securityChallengeMapper.deleteExpiredChallenges(now, SecurityDbTables.PREFIX);
         assertEquals(1, countRowsInTable(SecurityDbTables.SECURITY_CHALLENGE));
     }
 }

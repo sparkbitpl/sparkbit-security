@@ -38,7 +38,7 @@ public class SecurityChallengeDaoImpl implements SecurityChallengeDao {
 
     @Override
     public void deleteChallenge(String id) {
-        securityChallengeMapper.deleteChallengeById(id);
+        securityChallengeMapper.deleteChallengeById(id, prefix);
     }
 
     @Override
@@ -48,6 +48,6 @@ public class SecurityChallengeDaoImpl implements SecurityChallengeDao {
 
     @Override
     public void deleteExpiredChallenges(Instant now) {
-        securityChallengeMapper.deleteExpiredChallenges(now);
+        securityChallengeMapper.deleteExpiredChallenges(now, prefix);
     }
 }

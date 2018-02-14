@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS security_challenge;
+DROP TABLE IF EXISTS user_security_challenge;
 DROP TABLE IF EXISTS user_session;
 DROP TABLE IF EXISTS user_role;
 DROP TABLE IF EXISTS user_credentials;
@@ -28,7 +28,7 @@ CREATE TABLE user_session (
   FOREIGN KEY (user_id) REFERENCES user_credentials (user_id)
 );
 
-CREATE TABLE security_challenge (
+CREATE TABLE user_security_challenge (
   id             VARCHAR(32) NOT NULL,
   user_id        VARCHAR(32) NOT NULL,
   challenge_type VARCHAR(32) NOT NULL,

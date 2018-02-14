@@ -7,13 +7,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.sparkbit.commons.exception.NotFoundException;
 import pl.sparkbit.commons.util.IdGenerator;
 import pl.sparkbit.security.callbacks.PasswordResetChallengeCallback;
 import pl.sparkbit.security.dao.CredentialsDao;
 import pl.sparkbit.security.dao.SecurityChallengeDao;
+import pl.sparkbit.security.dao.UserDetailsDao;
 import pl.sparkbit.security.domain.Credentials;
 import pl.sparkbit.security.domain.SecurityChallenge;
 import pl.sparkbit.security.exception.NoValidTokenFoundException;
+import pl.sparkbit.security.login.AuthnAttributes;
 import pl.sparkbit.security.service.PasswordResetService;
 import pl.sparkbit.security.util.SecurityChallengeTokenGenerator;
 
@@ -22,6 +25,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
+import static pl.sparkbit.security.config.Properties.PASSWORD_RESET_CHALLENGE_INFORM_NOT_FOUND;
 import static pl.sparkbit.security.config.Properties.PASSWORD_RESET_CHALLENGE_VALIDITY_HOURS;
 import static pl.sparkbit.security.config.Properties.PASSWORD_RESET_ENABLED;
 import static pl.sparkbit.security.domain.SecurityChallengeType.PASSWORD_RESET;
@@ -42,16 +46,22 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     private final CredentialsDao credentialsDao;
     private final PasswordResetChallengeCallback callback;
     private final PasswordEncoder passwordEncoder;
+    private final UserDetailsDao userDetailsDao;
 
     @Value("${" + PASSWORD_RESET_CHALLENGE_VALIDITY_HOURS + ":1}")
     private int challengeValidityHours;
+    @Value("${" + PASSWORD_RESET_CHALLENGE_INFORM_NOT_FOUND + ":false}")
+    private boolean informNotFound;
 
     @Override
     @Transactional
-    public void initiatePasswordReset(String email) {
-        Optional<String> userIdOpt = callback.getUserIdForEmail(email);
+    public void initiatePasswordReset(AuthnAttributes authnAttributes) {
+        Optional<String> userIdOpt = userDetailsDao.selectUserId(authnAttributes);
         if (!userIdOpt.isPresent()) {
-            log.debug("Initiated password reset for non-existent email {}", email);
+            log.debug("Initiated password reset for non-existent user {}", authnAttributes);
+            if (informNotFound) {
+                throw new NotFoundException("User not found");
+            }
             return;
         }
 
@@ -70,7 +80,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
         securityChallengeDao.deleteChallenge(userId, PASSWORD_RESET);
         securityChallengeDao.insertChallenge(challenge);
-        log.debug("User {} with email initiated password reset", userId, email);
+        log.debug("User {} initiated password reset", userId);
 
         callback.transmitToUser(challenge);
     }

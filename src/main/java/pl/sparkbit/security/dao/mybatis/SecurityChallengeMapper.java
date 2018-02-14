@@ -13,10 +13,10 @@ public interface SecurityChallengeMapper {
     SecurityChallenge selectChallengeByToken(@Param("token") String token, @Param("type") SecurityChallengeType type,
                                              @Param("prefix") String prefix);
 
-    void deleteChallengeById(@Param("id") String id);
+    void deleteChallengeById(@Param("id") String id, @Param("prefix") String prefix);
 
     void deleteChallengeByUserIdAndType(@Param("userId") String userId, @Param("type") SecurityChallengeType type,
                                         @Param("prefix") String prefix);
 
-    void deleteExpiredChallenges(@Param("now") Instant now);
+    void deleteExpiredChallenges(@Param("now") Instant now, @Param("prefix") String prefix);
 }

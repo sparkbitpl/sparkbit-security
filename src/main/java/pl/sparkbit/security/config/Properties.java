@@ -32,6 +32,8 @@ public class Properties {
     public static final String PASSWORD_ENCODER_TYPE = PREFIX + "passwordEncoderType";
     public static final String PASSWORD_RESET_CHALLENGE_VALIDITY_HOURS =
             PREFIX + "passwordReset.challengeValidityHours";
+    public static final String PASSWORD_RESET_CHALLENGE_INFORM_NOT_FOUND =
+            PREFIX + "passwordReset.informNotFound";
     public static final String PASSWORD_RESET_ENABLED = PREFIX + "passwordReset.enabled";
     public static final String SESSION_DELETER_OLDER_THAN_MINUTES = PREFIX + "session.deleter.olderThanMinutes";
     public static final String SESSION_DELETER_REMOVE_OLD = PREFIX + "session.deleter.removeExpired";
