@@ -8,7 +8,8 @@ public interface CredentialsMapper {
 
     void insertCredentials(@Param("credentials") Credentials credentials, @Param("prefix") String prefix);
 
-    void insertUserRole(@Param("userId") String userId, @Param("role") GrantedAuthority role);
+    void insertUserRole(@Param("userId") String userId, @Param("role") GrantedAuthority role,
+                        @Param("prefix") String prefix);
 
     String selectPasswordHashForUser(@Param("userId") String userId, @Param("prefix") String prefix);
 

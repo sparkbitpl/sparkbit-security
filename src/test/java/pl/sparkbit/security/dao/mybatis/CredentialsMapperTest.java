@@ -42,7 +42,7 @@ public class CredentialsMapperTest extends MapperTestBase {
 
         GrantedAuthority role = new SimpleGrantedAuthority("ROLE_XXX");
 
-        credentialsMapper.insertUserRole(SecurityTestData.CREDS_1_USER_ID, role);
+        credentialsMapper.insertUserRole(SecurityTestData.CREDS_1_USER_ID, role, SecurityDbTables.PREFIX);
 
         assertEquals(1, countRowsInTableWhereColumnsEquals(SecurityDbTables.USER_ROLE,
                 "user_id", quote(SecurityTestData.CREDS_1_USER_ID),

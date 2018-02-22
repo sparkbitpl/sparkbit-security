@@ -32,7 +32,7 @@ public class CredentialsDaoImpl implements CredentialsDao {
 
     @Override
     public void insertUserRole(String userId, GrantedAuthority role) {
-        credentialsMapper.insertUserRole(userId, role);
+        credentialsMapper.insertUserRole(userId, role, prefix);
     }
 
     @Override
