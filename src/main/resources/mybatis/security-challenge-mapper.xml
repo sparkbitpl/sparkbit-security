@@ -20,8 +20,10 @@
         </constructor>
     </resultMap>
 
-    <select id="selectChallengeByToken" resultMap="securityChallengeResultMap">
-        SELECT id, ${prefix}_id AS user_id, challenge_type, expiration_ts, token FROM ${prefix}_security_challenge WHERE token=#{token}
+    <select id="selectChallengeByTokenAndType" resultMap="securityChallengeResultMap">
+        SELECT id, ${prefix}_id AS user_id, challenge_type, expiration_ts, token
+        FROM ${prefix}_security_challenge
+        WHERE token=#{token} AND challenge_type=#{type}
     </select>
 
     <delete id="deleteChallengeById">

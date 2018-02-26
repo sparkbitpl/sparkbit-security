@@ -52,7 +52,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     private final SecurityChallengeDao securityChallengeDao;
     private final CredentialsDao credentialsDao;
     private final PasswordResetChallengeCallback resetPasswordCallback;
-    private final SetNewPasswordChallengeCallback setNewPasswordCallback;
+    private final Optional<SetNewPasswordChallengeCallback> setNewPasswordCallback;
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsDao userDetailsDao;
 
@@ -74,18 +74,23 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         }
 
         String userId = userIdOpt.get();
-        doInitiate(userId, PASSWORD_RESET);
+        SecurityChallenge challenge = createAndInsertChallenge(userId, PASSWORD_RESET);
+        resetPasswordCallback.transmitToUser(challenge);
         log.debug("User {} initiated password reset", userId);
     }
 
     @Override
     @Transactional(propagation = MANDATORY)
     public void initiateSetNewPassword(String userId) {
-        doInitiate(userId, SET_NEW_PASSWORD);
+        if (!setNewPasswordCallback.isPresent()) {
+            throw new IllegalStateException("Implement SetNewPasswordChallengeCallback bean!");
+        }
+        SecurityChallenge challenge = createAndInsertChallenge(userId, SET_NEW_PASSWORD);
+        setNewPasswordCallback.get().transmitToUser(challenge);
         log.debug("User {} initiated setting new password", userId);
     }
 
-    private void doInitiate(String userId, SecurityChallengeType type) {
+    private SecurityChallenge createAndInsertChallenge(String userId, SecurityChallengeType type) {
         String id = idGenerator.generate();
         String token = securityChallengeTokenGenerator.generateChallengeToken();
         Instant expirationTimestamp = clock.instant().plus(challengeValidityHours, ChronoUnit.HOURS);
@@ -100,8 +105,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
         securityChallengeDao.deleteChallenge(userId, type);
         securityChallengeDao.insertChallenge(challenge);
-
-        setNewPasswordCallback.transmitToUser(challenge);
+        return challenge;
     }
 
     @Override
@@ -133,7 +137,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         credentialsDao.updateCredentials(credentials);
 
         if (SET_NEW_PASSWORD.equals(resetType)) {
-            setNewPasswordCallback.notifyOfSuccess(challenge);
+            setNewPasswordCallback.ifPresent(c -> c.notifyOfSuccess(challenge));
         } else if (PASSWORD_RESET.equals(resetType)) {
             resetPasswordCallback.notifyOfSuccess(challenge);
         }

@@ -33,7 +33,7 @@ public class SecurityChallengeDaoImpl implements SecurityChallengeDao {
 
     @Override
     public Optional<SecurityChallenge> selectChallengeByTokenAndType(String token, SecurityChallengeType type) {
-        return Optional.ofNullable(securityChallengeMapper.selectChallengeByToken(token, type, prefix));
+        return Optional.ofNullable(securityChallengeMapper.selectChallengeByTokenAndType(token, type, prefix));
     }
 
     @Override

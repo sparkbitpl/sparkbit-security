@@ -54,7 +54,7 @@ public class SecurityChallengeMapperTest extends MapperTestBase {
         insertTestData(CREDS_1, CHALLENGE_1);
 
         SecurityChallenge challenge =
-                securityChallengeMapper.selectChallengeByToken(CHALLENGE_1_TOKEN, CHALLENGE_1_TYPE, SecurityDbTables.PREFIX);
+                securityChallengeMapper.selectChallengeByTokenAndType(CHALLENGE_1_TOKEN, CHALLENGE_1_TYPE, SecurityDbTables.PREFIX);
 
         assertNotNull(challenge);
         assertEquals(CHALLENGE_1_ID, challenge.getId());

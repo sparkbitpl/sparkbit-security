@@ -10,8 +10,9 @@ public interface SecurityChallengeMapper {
 
     void insertChallenge(@Param("challenge") SecurityChallenge challenge, @Param("prefix") String prefix);
 
-    SecurityChallenge selectChallengeByToken(@Param("token") String token, @Param("type") SecurityChallengeType type,
-                                             @Param("prefix") String prefix);
+    SecurityChallenge selectChallengeByTokenAndType(@Param("token") String token,
+                                                    @Param("type") SecurityChallengeType type,
+                                                    @Param("prefix") String prefix);
 
     void deleteChallengeById(@Param("id") String id, @Param("prefix") String prefix);
 
