@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.sparkbit.security.config.Properties;
+import pl.sparkbit.security.domain.SecurityChallengeType;
 import pl.sparkbit.security.login.AuthnAttributes;
 import pl.sparkbit.security.mvc.dto.in.ResetPasswordDTO;
 import pl.sparkbit.security.service.PasswordResetService;
@@ -46,6 +47,10 @@ public class PasswordResetController {
     @PostMapping(PUBLIC_PASSWORD)
     @ResponseStatus(NO_CONTENT)
     public void resetPassword(@RequestBody @Valid ResetPasswordDTO dto) {
-        passwordResetService.resetPassword(dto.getToken(), dto.getPassword());
+        SecurityChallengeType resetType = dto.getResetType();
+        if (resetType == null) {
+            resetType = SecurityChallengeType.PASSWORD_RESET;
+        }
+        passwordResetService.resetPassword(dto.getToken(), dto.getPassword(), resetType);
     }
 }

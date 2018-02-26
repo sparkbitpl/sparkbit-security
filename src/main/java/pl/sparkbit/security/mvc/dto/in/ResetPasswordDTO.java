@@ -3,6 +3,7 @@ package pl.sparkbit.security.mvc.dto.in;
 import lombok.Data;
 import lombok.NonNull;
 import org.hibernate.validator.constraints.NotEmpty;
+import pl.sparkbit.security.domain.SecurityChallengeType;
 import pl.sparkbit.security.password.policy.Password;
 
 @Data
@@ -14,4 +15,7 @@ public class ResetPasswordDTO {
     @NonNull
     @Password
     private final String password;
+
+    private final SecurityChallengeType resetType;
+
 }
