@@ -13,7 +13,7 @@ import java.time.Clock;
 import static pl.sparkbit.security.config.Properties.SESSION_EXPIRATION_MINUTES;
 
 @Component
-@ConditionalOnProperty(value = SESSION_EXPIRATION_MINUTES)
+@ConditionalOnProperty(SESSION_EXPIRATION_MINUTES)
 @RequiredArgsConstructor
 @Slf4j
 @SuppressWarnings("unused")
@@ -29,5 +29,4 @@ public class RemovingExpiredSessionsJob {
     public void removeOldSessions() {
         sessionDao.deleteExpiredSessions(clock.instant());
     }
-
 }

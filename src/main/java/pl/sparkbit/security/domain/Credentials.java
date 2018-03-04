@@ -1,12 +1,10 @@
 package pl.sparkbit.security.domain;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
 
 @Builder(toBuilder = true)
-@Getter
-@RequiredArgsConstructor
+@Data
 public class Credentials {
 
     private final String userId;

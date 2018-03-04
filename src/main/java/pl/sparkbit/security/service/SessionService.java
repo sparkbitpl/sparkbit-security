@@ -4,6 +4,8 @@ import pl.sparkbit.security.domain.Session;
 
 public interface SessionService {
 
+    String SESSION_EXPIRATION_TS_REQUEST_ATTRIBUTE = "sparkbit.sessionExpirationTs";
+
     Session startNewSession(String oldAuthToken);
 
     void endSession();

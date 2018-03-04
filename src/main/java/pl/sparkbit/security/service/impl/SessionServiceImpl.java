@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.web.context.request.RequestContextHolder;
 import pl.sparkbit.security.Security;
 import pl.sparkbit.security.dao.SessionDao;
 import pl.sparkbit.security.domain.RestUserDetails;
@@ -21,6 +22,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
+import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 import static pl.sparkbit.security.config.Properties.SESSION_EXPIRATION_MINUTES;
 
 @RequiredArgsConstructor
@@ -93,7 +95,10 @@ public class SessionServiceImpl implements SessionService {
     @Override
     @Transactional
     public void updateSessionExpiryTs(String authToken) {
-        sessionDao.updateSessionExpiryTs(authToken, getExpiryTs());
+        Instant expiryTs = getExpiryTs();
+        sessionDao.updateSessionExpiryTs(authToken, expiryTs);
+        RequestContextHolder.currentRequestAttributes()
+                .setAttribute(SESSION_EXPIRATION_TS_REQUEST_ATTRIBUTE, expiryTs, SCOPE_REQUEST);
     }
 
     @Override
@@ -108,5 +113,4 @@ public class SessionServiceImpl implements SessionService {
 
         return clock.instant().plus(sessionExpirationMinutes, ChronoUnit.MINUTES);
     }
-
 }

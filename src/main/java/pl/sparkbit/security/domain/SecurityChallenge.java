@@ -1,14 +1,12 @@
 package pl.sparkbit.security.domain;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
 
 import java.time.Instant;
 
 @Builder(toBuilder = true)
-@Getter
-@RequiredArgsConstructor
+@Data
 public class SecurityChallenge {
 
     private final String id;
