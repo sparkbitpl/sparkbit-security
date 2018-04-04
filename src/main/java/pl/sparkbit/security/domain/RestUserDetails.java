@@ -14,7 +14,7 @@ public class RestUserDetails implements UserDetails {
 
     private final String authToken;
     private final String userId;
-    private final Instant expiresAt;
+    private final Instant expirationTimestamp;
     @SuppressWarnings("unused")
     private Collection<GrantedAuthority> roles;
 
@@ -45,7 +45,7 @@ public class RestUserDetails implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return expiresAt == null || expiresAt.isAfter(Instant.now());
+        return expirationTimestamp == null || expirationTimestamp.isAfter(Instant.now());
     }
 
     @Override

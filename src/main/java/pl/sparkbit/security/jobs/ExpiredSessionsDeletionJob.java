@@ -10,14 +10,14 @@ import pl.sparkbit.security.dao.SessionDao;
 
 import java.time.Clock;
 
-import static pl.sparkbit.security.config.Properties.SESSION_EXPIRATION_MINUTES;
+import static pl.sparkbit.security.config.Properties.SESSION_EXPIRATION_ENABLED;
 
 @Component
-@ConditionalOnProperty(SESSION_EXPIRATION_MINUTES)
+@ConditionalOnProperty(name = SESSION_EXPIRATION_ENABLED, havingValue = "true")
 @RequiredArgsConstructor
 @Slf4j
 @SuppressWarnings("unused")
-public class RemovingExpiredSessionsJob {
+public class ExpiredSessionsDeletionJob {
 
     private static final int ONE_HOUR_IN_MILLIS = 3_600_000;
 

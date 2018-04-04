@@ -9,15 +9,15 @@ public interface SessionDao {
 
     void insertSession(Session session);
 
-    void updateSessionExpiryTs(String authToken, Instant expiresAt);
+    void updateSessionExpirationTimestamp(String authToken, Instant expirationTimestamp);
 
     Optional<Session> selectSession(String authToken);
 
-    void deleteSession(String authToken, Instant deletedTs);
+    void deleteSession(String authToken, Instant deletionTimestamp);
 
-    void deleteSessionsMarkedAsDeleted(Instant olderThan);
-
-    void markSessionsAsDeleted(String userId, Instant deletedTs);
+    void deleteSessions(String userId, Instant deletionTimestamp);
 
     void deleteExpiredSessions(Instant now);
+
+    void purgeDeletedSessions(Instant deletedBefore);
 }

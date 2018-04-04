@@ -9,21 +9,23 @@ import pl.sparkbit.security.dao.SecurityChallengeDao;
 
 import java.time.Clock;
 
-import static pl.sparkbit.security.config.Properties.CHALLENGE_DELETER_RUN_EVERY_MILLIS;
+import static pl.sparkbit.security.config.Properties.EXPIRED_CHALLENGE_DELETION_RUN_EVERY_MILLIS;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 @SuppressWarnings("unused")
-public class RemovingExpiredChallengesJob {
+public class ExpiredChallengesDeletionJob {
+
+    private static final int ONE_HOUR_IN_MILLIS = 3_600_000;
 
     private final SecurityChallengeDao securityChallengeDao;
     private final Clock clock;
 
-    @Scheduled(fixedDelayString = "${" + CHALLENGE_DELETER_RUN_EVERY_MILLIS + ":3600000}")
+    @Scheduled(fixedDelayString = "${" + EXPIRED_CHALLENGE_DELETION_RUN_EVERY_MILLIS + ":" + ONE_HOUR_IN_MILLIS + "}")
     @Transactional
     public void removeExpiredChallenges() {
-        log.trace("Removing expired challenges");
+        log.trace("Deleting expired challenges");
         securityChallengeDao.deleteExpiredChallenges(clock.instant());
     }
 }

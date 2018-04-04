@@ -31,8 +31,8 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public void updateSessionExpiryTs(String authToken, Instant expiresAt) {
-        sessionMapper.updateSessionExpiryTs(authToken, expiresAt, prefix);
+    public void updateSessionExpirationTimestamp(String authToken, Instant expirationTimestamp) {
+        sessionMapper.updateSessionExpirationTimestamp(authToken, expirationTimestamp, prefix);
     }
 
     @Override
@@ -41,22 +41,22 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public void deleteSession(String authToken, Instant deletedTs) {
-        sessionMapper.deleteSession(authToken, deletedTs, prefix);
+    public void deleteSession(String authToken, Instant deletionTimestamp) {
+        sessionMapper.deleteSession(authToken, deletionTimestamp, prefix);
     }
 
     @Override
-    public void deleteSessionsMarkedAsDeleted(Instant olderThan) {
-        sessionMapper.deleteSessionsMarkedAsDeleted(olderThan, prefix);
-    }
-
-    @Override
-    public void markSessionsAsDeleted(String userId, Instant deletedTs) {
-        sessionMapper.markSessionsAsDeleted(userId, deletedTs, prefix);
+    public void deleteSessions(String userId, Instant deletionTimestamp) {
+        sessionMapper.deleteSessions(userId, deletionTimestamp, prefix);
     }
 
     @Override
     public void deleteExpiredSessions(Instant now) {
         sessionMapper.deleteExpiredSessions(now, prefix);
+    }
+
+    @Override
+    public void purgeDeletedSessions(Instant deletedBefore) {
+        sessionMapper.purgeDeletedSessions(deletedBefore, prefix);
     }
 }

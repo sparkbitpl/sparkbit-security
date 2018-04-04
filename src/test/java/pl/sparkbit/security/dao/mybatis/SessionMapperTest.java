@@ -25,46 +25,46 @@ public class SessionMapperTest extends MapperTestBase {
         insertTestData(CREDS_1);
 
         String authToken = "id54321";
-        Instant creation = Instant.ofEpochSecond(31232133);
-        Instant expiresAt = Instant.ofEpochSecond(756756756);
+        Instant creationTimestamp = Instant.ofEpochSecond(31232133);
+        Instant expirationTimestamp = Instant.ofEpochSecond(756756756);
         Session session = Session.builder()
                 .authToken(authToken)
                 .userId(CREDS_1_USER_ID)
-                .creation(creation)
-                .expiresAt(expiresAt)
+                .creationTimestamp(creationTimestamp)
+                .expirationTimestamp(expirationTimestamp)
                 .build();
         sessionMapper.insertSession(session, PREFIX);
 
         assertEquals(1, countRowsInTableWhereColumnsEquals(SESSION,
                 "auth_token", quote(authToken),
                 "user_id", quote(CREDS_1_USER_ID),
-                "creation_ts", creation.toEpochMilli(),
-                "deleted_ts", null,
-                "expires_at", expiresAt.toEpochMilli()
+                "creation_ts", creationTimestamp.toEpochMilli(),
+                "deletion_ts", null,
+                "expiration_ts", expirationTimestamp.toEpochMilli()
         ));
     }
 
     @Test
     public void shouldSelectSession() {
         String authToken = "id12345";
-        Instant creation = Instant.ofEpochSecond(31232133);
+        Instant creationTimestamp = Instant.ofEpochSecond(31232133);
 
-        insertTestData(CREDS_1, session(authToken, CREDS_1_USER_ID, creation));
+        insertTestData(CREDS_1, session(authToken, CREDS_1_USER_ID, creationTimestamp));
 
         Session session = sessionMapper.selectSession(authToken, PREFIX);
         assertNotNull(session);
         assertEquals(authToken, session.getAuthToken());
         assertEquals(CREDS_1_USER_ID, session.getUserId());
-        assertEquals(creation, session.getCreation());
+        assertEquals(creationTimestamp, session.getCreationTimestamp());
     }
 
     @Test
     public void shouldNotSelectSessionWhenIsDeleted() {
         String authToken = "id12345";
-        Instant creation = Instant.ofEpochSecond(31232133);
-        Instant deleted = Instant.ofEpochSecond(31232555);
+        Instant creationTimestamp = Instant.ofEpochSecond(31232133);
+        Instant deletionTimestamp = Instant.ofEpochSecond(31232555);
 
-        insertTestData(CREDS_1, session(authToken, CREDS_1_USER_ID, creation, deleted));
+        insertTestData(CREDS_1, session(authToken, CREDS_1_USER_ID, creationTimestamp, null, deletionTimestamp));
 
         Session session = sessionMapper.selectSession(authToken, PREFIX);
         assertNull(session);
@@ -73,53 +73,73 @@ public class SessionMapperTest extends MapperTestBase {
     @Test
     public void shouldDeleteSession() {
         String authToken = "id12345";
-        Instant creation = Instant.ofEpochSecond(31232133);
-        Instant deletedTs = Instant.ofEpochSecond(31232555);
+        Instant creationTimestamp = Instant.ofEpochSecond(31232133);
+        Instant deletionTimestamp = Instant.ofEpochSecond(31232555);
 
-        insertTestData(CREDS_1, session(authToken, CREDS_1_USER_ID, creation));
+        insertTestData(CREDS_1, session(authToken, CREDS_1_USER_ID, creationTimestamp));
 
-        sessionMapper.deleteSession(authToken, deletedTs, PREFIX);
+        sessionMapper.deleteSession(authToken, deletionTimestamp, PREFIX);
         assertEquals(1, countRowsInTableWhereColumnsEquals(SESSION,
                 "auth_token", quote(authToken),
-                "deleted_ts", deletedTs.toEpochMilli()
+                "deletion_ts", deletionTimestamp.toEpochMilli()
         ));
-    }
-
-    @Test
-    public void shouldDeleteExpiredSessions() {
-        String authToken = "id12345";
-        String authToken2 = "id123456";
-        Instant creation = Instant.ofEpochSecond(31232133);
-        Instant deletedTs1 = Instant.ofEpochSecond(31232555);
-        Instant deletedTs2 = deletedTs1.plusSeconds(5000);
-        Instant olderThan = deletedTs1.plusSeconds(3600);
-
-        Operation session1 = session(authToken, CREDS_1_USER_ID, creation, deletedTs1);
-        Operation session2 = session(authToken2, CREDS_1_USER_ID, creation, deletedTs2);
-        insertTestData(CREDS_1, session1, session2);
-
-        sessionMapper.deleteSessionsMarkedAsDeleted(olderThan, PREFIX);
-
-        assertEquals(1, countRowsInTableWhereColumnsEquals(SESSION, "user_id", quote(CREDS_1_USER_ID)));
     }
 
     @Test
     public void shouldDeleteSessionsForUser() {
         String authToken = "id12345";
         String authToken2 = "id123456";
-        Instant creation = Instant.ofEpochSecond(31232133);
-        Instant deletedTs = Instant.ofEpochSecond(31232555);
+        Instant creationTimestamp = Instant.ofEpochSecond(31232133);
+        Instant deletionTimestamp = Instant.ofEpochSecond(31232555);
 
-        Operation session1 = session(authToken, CREDS_1_USER_ID, creation);
-        Operation session2 = session(authToken2, CREDS_1_USER_ID, creation);
+        Operation session1 = session(authToken, CREDS_1_USER_ID, creationTimestamp);
+        Operation session2 = session(authToken2, CREDS_1_USER_ID, creationTimestamp);
         insertTestData(CREDS_1, session1, session2);
 
-        sessionMapper.markSessionsAsDeleted(CREDS_1_USER_ID, deletedTs, PREFIX);
+        sessionMapper.deleteSessions(CREDS_1_USER_ID, deletionTimestamp, PREFIX);
 
         assertEquals(2, countRowsInTableWhereColumnsEquals(SESSION,
                 "user_id", quote(CREDS_1_USER_ID),
-                "deleted_ts", deletedTs.toEpochMilli())
+                "deletion_ts", deletionTimestamp.toEpochMilli())
         );
     }
 
+    @Test
+    public void shouldDeleteExpiredSessions() {
+        String authToken = "id12345";
+        String authToken2 = "id123456";
+        Instant creationTimestamp = Instant.ofEpochSecond(31232133);
+        Instant expirationTimestamp1 = Instant.ofEpochSecond(31232555);
+        Instant expirationTimestamp2 = Instant.ofEpochSecond(31232777);
+        Instant now = Instant.ofEpochSecond(31232666);
+
+        Operation session1 = session(authToken, CREDS_1_USER_ID, creationTimestamp, expirationTimestamp1, null);
+        Operation session2 = session(authToken2, CREDS_1_USER_ID, creationTimestamp, expirationTimestamp2, null);
+        insertTestData(CREDS_1, session1, session2);
+
+        sessionMapper.deleteExpiredSessions(now, PREFIX);
+
+        assertEquals(1, countRowsInTableWhereColumnsEquals(SESSION,
+                "user_id", quote(CREDS_1_USER_ID),
+                "deletion_ts", now.toEpochMilli())
+        );
+    }
+
+    @Test
+    public void shouldPurgeDeletedSessions() {
+        String authToken = "id12345";
+        String authToken2 = "id123456";
+        Instant creationTimestamp = Instant.ofEpochSecond(31232133);
+        Instant deletionTimestamp1 = Instant.ofEpochSecond(31232555);
+        Instant deletionTimestamp2 = deletionTimestamp1.plusSeconds(5000);
+        Instant deletedBefore = deletionTimestamp1.plusSeconds(3600);
+
+        Operation session1 = session(authToken, CREDS_1_USER_ID, creationTimestamp, null, deletionTimestamp1);
+        Operation session2 = session(authToken2, CREDS_1_USER_ID, creationTimestamp, null, deletionTimestamp2);
+        insertTestData(CREDS_1, session1, session2);
+
+        sessionMapper.purgeDeletedSessions(deletedBefore, PREFIX);
+
+        assertEquals(1, countRowsInTableWhereColumnsEquals(SESSION, "user_id", quote(CREDS_1_USER_ID)));
+    }
 }

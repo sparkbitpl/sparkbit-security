@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import pl.sparkbit.security.dao.mybatis.data.SecurityDbTables;
 import pl.sparkbit.security.dao.mybatis.data.SecurityTestData;
-import pl.sparkbit.security.dao.mybatis.data.SecurityTestDataUtils;
 import pl.sparkbit.security.domain.RestUserDetails;
 import pl.sparkbit.security.login.AuthnAttributes;
 import pl.sparkbit.security.login.LoginUserDetails;
@@ -20,6 +19,7 @@ import static java.util.Collections.singletonMap;
 import static org.junit.Assert.*;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.*;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.*;
+import static pl.sparkbit.security.dao.mybatis.data.SecurityTestDataUtils.session;
 
 public class UserDetailsMapperTest extends MapperTestBase {
 
@@ -52,7 +52,7 @@ public class UserDetailsMapperTest extends MapperTestBase {
         String authToken = "id12345";
         Instant creation = Instant.ofEpochSecond(31232133);
 
-        insertTestData(SecurityTestData.CREDS_1, SecurityTestDataUtils.session(authToken, CREDS_1_USER_ID, creation));
+        insertTestData(SecurityTestData.CREDS_1, session(authToken, CREDS_1_USER_ID, creation));
 
         RestUserDetails restUserDetails = userDetailsMapper.selectRestUserDetails(authToken, SecurityDbTables.PREFIX);
         assertNotNull(restUserDetails);

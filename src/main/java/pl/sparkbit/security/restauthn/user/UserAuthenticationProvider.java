@@ -29,8 +29,8 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
         Assert.notNull(restUserDetails, "Returned restUserDetails should never be null - method contract violation");
         authenticationChecks.check(restUserDetails);
 
-        if (!sessionService.areSessionsImmortal()) {
-            sessionService.updateSessionExpiryTs(authToken);
+        if (sessionService.isSessionExpirationEnabled()) {
+            sessionService.updateSessionExpirationTimestamp(authToken);
         }
 
         return new UserAuthenticationToken(restUserDetails);

@@ -4,7 +4,7 @@ import pl.sparkbit.security.domain.Session;
 
 public interface SessionService {
 
-    String SESSION_EXPIRATION_TS_REQUEST_ATTRIBUTE = "sparkbit.sessionExpirationTs";
+    String SESSION_EXPIRATION_TIMESTAMP_REQUEST_ATTRIBUTE = "sparkbit.sessionExpirationTimestamp";
 
     Session startNewSession(String oldAuthToken);
 
@@ -12,8 +12,8 @@ public interface SessionService {
 
     void endAllSessionsForUser(String userId);
 
-    void updateSessionExpiryTs(String authToken);
+    void updateSessionExpirationTimestamp(String authToken);
 
-    boolean areSessionsImmortal();
+    boolean isSessionExpirationEnabled();
 
 }

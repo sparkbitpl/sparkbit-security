@@ -26,15 +26,18 @@ public class SecurityTestDataUtils {
                 .build();
     }
 
-    public static Operation session(String authToken, String userId, Instant creation) {
-        return session(authToken, userId, creation, null);
+    public static Operation session(String authToken, String userId, Instant creationTimestamp) {
+        return session(authToken, userId, creationTimestamp, null, null);
     }
 
-    public static Operation session(String authToken, String user_id, Instant creation, Instant deleted) {
-        Long deletedTs = deleted == null ? null : deleted.toEpochMilli();
+    public static Operation session(String authToken, String userId, Instant creationTimestamp,
+                                    Instant expirationTimestamp, Instant deletionTimestamp) {
+        Long expirationTimestampLong = expirationTimestamp == null ? null : expirationTimestamp.toEpochMilli();
+        Long deletionTimestampLong = deletionTimestamp == null ? null : deletionTimestamp.toEpochMilli();
         return insertInto(SESSION)
-                .columns("auth_token", "user_id", "creation_ts", "deleted_ts")
-                .values(authToken, user_id, creation.toEpochMilli(), deletedTs)
+                .columns("auth_token", "user_id", "creation_ts", "expiration_ts", "deletion_ts")
+                .values(authToken, userId, creationTimestamp.toEpochMilli(), expirationTimestampLong,
+                        deletionTimestampLong)
                 .build();
     }
 

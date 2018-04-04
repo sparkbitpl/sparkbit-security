@@ -21,7 +21,7 @@ import java.time.Instant;
 import java.util.Optional;
 
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
-import static pl.sparkbit.security.service.SessionService.SESSION_EXPIRATION_TS_REQUEST_ATTRIBUTE;
+import static pl.sparkbit.security.service.SessionService.SESSION_EXPIRATION_TIMESTAMP_REQUEST_ATTRIBUTE;
 
 @RequiredArgsConstructor
 public class RestAuthenticationFilter extends GenericFilterBean {
@@ -48,7 +48,7 @@ public class RestAuthenticationFilter extends GenericFilterBean {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 Object expirationTsObject = RequestContextHolder.currentRequestAttributes()
-                        .getAttribute(SESSION_EXPIRATION_TS_REQUEST_ATTRIBUTE, SCOPE_REQUEST);
+                        .getAttribute(SESSION_EXPIRATION_TIMESTAMP_REQUEST_ATTRIBUTE, SCOPE_REQUEST);
                 if (expirationTsObject != null && expirationTsObject instanceof Instant) {
                     Instant expirationTs = (Instant) expirationTsObject;
                     response.setHeader(sessionExpiresAtHeaderName, String.valueOf(expirationTs.toEpochMilli()));

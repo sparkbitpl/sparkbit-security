@@ -1,5 +1,6 @@
 package pl.sparkbit.security.service.impl;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +24,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
+import static pl.sparkbit.security.config.Properties.SESSION_EXPIRATION_ENABLED;
 import static pl.sparkbit.security.config.Properties.SESSION_EXPIRATION_MINUTES;
 
 @RequiredArgsConstructor
@@ -32,13 +34,18 @@ import static pl.sparkbit.security.config.Properties.SESSION_EXPIRATION_MINUTES;
 public class SessionServiceImpl implements SessionService {
 
     private static final int AUTH_TOKEN_LENGTH = 32;
+    private static final int DEFAULT_SESSION_EXPIRATION_MINUTES = 60;
 
     private final SessionDao sessionDao;
     private final Clock clock;
     private final Security security;
     private final SecureRandomStringGenerator secureRandomStringGenerator;
 
-    @Value("${" + SESSION_EXPIRATION_MINUTES + ":#{null}}")
+    @Getter
+    @Value("${" + SESSION_EXPIRATION_ENABLED + ":false}")
+    private boolean sessionExpirationEnabled;
+
+    @Value("${" + SESSION_EXPIRATION_MINUTES + ":" + DEFAULT_SESSION_EXPIRATION_MINUTES + "}")
     private Integer sessionExpirationMinutes;
 
     @Override
@@ -54,8 +61,8 @@ public class SessionServiceImpl implements SessionService {
         Session newSession = Session.builder()
                 .authToken(secureRandomStringGenerator.base58String(AUTH_TOKEN_LENGTH))
                 .userId(loginUserDetails.getUserId())
-                .creation(clock.instant())
-                .expiresAt(getExpiryTs())
+                .creationTimestamp(clock.instant())
+                .expirationTimestamp(getExpirationTimestamp())
                 .build();
         sessionDao.insertSession(newSession);
 
@@ -89,25 +96,20 @@ public class SessionServiceImpl implements SessionService {
     @Override
     @Transactional
     public void endAllSessionsForUser(String userId) {
-        sessionDao.markSessionsAsDeleted(userId, clock.instant());
+        sessionDao.deleteSessions(userId, clock.instant());
     }
 
     @Override
     @Transactional
-    public void updateSessionExpiryTs(String authToken) {
-        Instant expiryTs = getExpiryTs();
-        sessionDao.updateSessionExpiryTs(authToken, expiryTs);
+    public void updateSessionExpirationTimestamp(String authToken) {
+        Instant expirationTimestamp = getExpirationTimestamp();
+        sessionDao.updateSessionExpirationTimestamp(authToken, expirationTimestamp);
         RequestContextHolder.currentRequestAttributes()
-                .setAttribute(SESSION_EXPIRATION_TS_REQUEST_ATTRIBUTE, expiryTs, SCOPE_REQUEST);
+                .setAttribute(SESSION_EXPIRATION_TIMESTAMP_REQUEST_ATTRIBUTE, expirationTimestamp, SCOPE_REQUEST);
     }
 
-    @Override
-    public boolean areSessionsImmortal() {
-        return sessionExpirationMinutes == null;
-    }
-
-    private Instant getExpiryTs() {
-        if (areSessionsImmortal()) {
+    private Instant getExpirationTimestamp() {
+        if (!isSessionExpirationEnabled()) {
             return null;
         }
 
