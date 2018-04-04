@@ -24,6 +24,6 @@ public class RestAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getPrincipal() {
-        return authToken;
+        return null;
     }
 }

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import static pl.sparkbit.security.Security.DEFAULT_SESSION_EXPIRES_AT_HEADER_NAME;
+import static pl.sparkbit.security.Security.DEFAULT_SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME;
 import static pl.sparkbit.security.config.Properties.*;
 
 public class CorsConfigurer extends WebMvcConfigurerAdapter {
@@ -13,7 +13,7 @@ public class CorsConfigurer extends WebMvcConfigurerAdapter {
     private static final String DEFAULT_ALLOWED_HEADERS = "*";
     private static final String DEFAULT_ALLOWED_METHODS = "GET, POST, PUT, DELETE, HEAD";
     private static final String DEFAULT_ALLOWED_ORIGINS = "*";
-    private static final String DEFAULT_EXPOSED_HEADERS = DEFAULT_SESSION_EXPIRES_AT_HEADER_NAME;
+    private static final String DEFAULT_EXPOSED_HEADERS = DEFAULT_SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME;
     private static final long DEFAULT_MAX_AGE_SECONDS = 1800;
 
     @Value("${" + CORS_ALLOW_CREDENTIALS + ":" + DEFAULT_ALLOW_CREDENTIALS + "}")

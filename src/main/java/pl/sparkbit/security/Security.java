@@ -12,7 +12,8 @@ import pl.sparkbit.security.domain.RestUserDetails;
 public class Security {
 
     public static final String DEFAULT_AUTH_TOKEN_HEADER_NAME = "X-Sparkbit-Auth-Token";
-    public static final String DEFAULT_SESSION_EXPIRES_AT_HEADER_NAME = "X-Sparkbit-Session-Expires-At";
+    public static final String DEFAULT_SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME =
+            "X-Sparkbit-Session-Expiration-Timestamp";
     public static final String DEFAULT_AUTH_TOKEN_COOKIE_NAME = "sparkbitAuthToken";
 
     public static final String USER_ROLE_NAME = "ROLE_USER";

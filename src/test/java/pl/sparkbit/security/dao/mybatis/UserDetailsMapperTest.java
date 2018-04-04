@@ -50,9 +50,9 @@ public class UserDetailsMapperTest extends MapperTestBase {
     @Test
     public void shouldSelectRestUserDetails() {
         String authToken = "id12345";
-        Instant creation = Instant.ofEpochSecond(31232133);
+        Instant creationTimestamp = Instant.ofEpochSecond(31232133);
 
-        insertTestData(SecurityTestData.CREDS_1, session(authToken, CREDS_1_USER_ID, creation));
+        insertTestData(SecurityTestData.CREDS_1, session(authToken, CREDS_1_USER_ID, creationTimestamp));
 
         RestUserDetails restUserDetails = userDetailsMapper.selectRestUserDetails(authToken, SecurityDbTables.PREFIX);
         assertNotNull(restUserDetails);

@@ -29,7 +29,7 @@ public class RestAuthenticationFilter extends GenericFilterBean {
     private final AuthenticationManager authenticationManager;
     private final AuthenticationEntryPoint entryPoint;
     private final AuthenticationTokenHelper authenticationTokenHelper;
-    private final String sessionExpiresAtHeaderName;
+    private final String sessionExpirationTimestampHeaderName;
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain)
@@ -47,11 +47,12 @@ public class RestAuthenticationFilter extends GenericFilterBean {
                         "Authentication is not authenticated after successful authentication");
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                Object expirationTsObject = RequestContextHolder.currentRequestAttributes()
+                Object expirationTimestampObject = RequestContextHolder.currentRequestAttributes()
                         .getAttribute(SESSION_EXPIRATION_TIMESTAMP_REQUEST_ATTRIBUTE, SCOPE_REQUEST);
-                if (expirationTsObject != null && expirationTsObject instanceof Instant) {
-                    Instant expirationTs = (Instant) expirationTsObject;
-                    response.setHeader(sessionExpiresAtHeaderName, String.valueOf(expirationTs.toEpochMilli()));
+                if (expirationTimestampObject != null && expirationTimestampObject instanceof Instant) {
+                    Instant expirationTimestamp = (Instant) expirationTimestampObject;
+                    response.setHeader(sessionExpirationTimestampHeaderName,
+                            String.valueOf(expirationTimestamp.toEpochMilli()));
                 }
             } catch (AuthenticationException failed) {
                 SecurityContextHolder.clearContext();

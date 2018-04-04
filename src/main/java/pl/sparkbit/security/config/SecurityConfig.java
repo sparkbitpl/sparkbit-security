@@ -42,9 +42,9 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-import static pl.sparkbit.security.Security.DEFAULT_SESSION_EXPIRES_AT_HEADER_NAME;
+import static pl.sparkbit.security.Security.DEFAULT_SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME;
 import static pl.sparkbit.security.config.Properties.PASSWORD_ENCODER_TYPE;
-import static pl.sparkbit.security.config.Properties.SESSION_EXPIRES_AT_HEADER_NAME;
+import static pl.sparkbit.security.config.Properties.SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME;
 import static pl.sparkbit.security.mvc.controller.Paths.LOGIN;
 
 @Configuration
@@ -172,8 +172,9 @@ public class SecurityConfig {
         private final AuthenticationTokenHelper authenticationTokenHelper;
         private final SessionService sessionService;
 
-        @Value("${" + SESSION_EXPIRES_AT_HEADER_NAME + ":" + DEFAULT_SESSION_EXPIRES_AT_HEADER_NAME + "}")
-        private String sessionExpiresAtHeaderName;
+        @Value("${" + SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME + ":"
+                + DEFAULT_SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME + "}")
+        private String sessionExpirationTimestampHeaderName;
 
         @Bean
         public UserAuthenticationProvider restAuthenticationProvider() {
@@ -183,7 +184,7 @@ public class SecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             GenericFilterBean restAuthenticationFiler = new RestAuthenticationFilter(authenticationManager(),
-                    authenticationEntryPoint, authenticationTokenHelper, sessionExpiresAtHeaderName);
+                    authenticationEntryPoint, authenticationTokenHelper, sessionExpirationTimestampHeaderName);
 
             http
                     .cors().and()
@@ -219,7 +220,7 @@ public class SecurityConfig {
         public void configure(HttpSecurity http, AuthenticationManager authenticationManager, String antMatcher,
                               String role) throws Exception {
             GenericFilterBean authenticationFilter = new RestAuthenticationFilter(authenticationManager,
-                    authenticationEntryPoint, authenticationTokenHelper, sessionExpiresAtHeaderName);
+                    authenticationEntryPoint, authenticationTokenHelper, sessionExpirationTimestampHeaderName);
 
             http
                     .antMatcher(antMatcher)
