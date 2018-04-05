@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginDTODeserializer extends StdDeserializer<LoginDTO> {
+
     private static final String TYPE_FIELD = "type";
     private static final String DEFAULT_TYPE = "password";
     private static final String GOOGLE_TYPE = "google";
@@ -33,8 +34,7 @@ public class LoginDTODeserializer extends StdDeserializer<LoginDTO> {
     }
 
     @Override
-    public LoginDTO deserialize(JsonParser jp,
-            DeserializationContext ctxt) throws IOException {
+    public LoginDTO deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         ObjectMapper mapper = (ObjectMapper) jp.getCodec();
         ObjectNode root = mapper.readTree(jp);
         Class<? extends LoginDTO> loginClass;

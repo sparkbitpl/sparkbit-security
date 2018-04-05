@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,9 @@ import pl.sparkbit.security.domain.SecurityChallenge;
 import pl.sparkbit.security.domain.SecurityChallengeType;
 import pl.sparkbit.security.exception.NoValidTokenFoundException;
 import pl.sparkbit.security.login.AuthnAttributes;
+import pl.sparkbit.security.login.ExpectedAndProvidedAuthnAttributesMismatchException;
+import pl.sparkbit.security.login.LoginPrincipal;
+import pl.sparkbit.security.login.LoginPrincipalFactory;
 import pl.sparkbit.security.service.PasswordResetService;
 import pl.sparkbit.security.util.SecurityChallengeTokenGenerator;
 
@@ -27,6 +31,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
@@ -55,6 +60,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     private final Optional<SetNewPasswordChallengeCallback> setNewPasswordCallback;
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsDao userDetailsDao;
+    private final LoginPrincipalFactory loginPrincipalFactory;
 
     @Value("${" + PASSWORD_RESET_CHALLENGE_VALIDITY_HOURS + ":1}")
     private int challengeValidityHours;
@@ -63,7 +69,15 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
     @Override
     @Transactional
-    public void initiatePasswordReset(AuthnAttributes authnAttributes) {
+    public void initiatePasswordReset(Map<String, String> authnAttributesMap) {
+        LoginPrincipal loginPrincipal;
+        try {
+            loginPrincipal = loginPrincipalFactory.generate(authnAttributesMap);
+        } catch (ExpectedAndProvidedAuthnAttributesMismatchException e) {
+            throw new AccessDeniedException(e.getMessage());
+        }
+        AuthnAttributes authnAttributes = loginPrincipal.getAuthnAttributes();
+
         Optional<String> userIdOpt = userDetailsDao.selectUserId(authnAttributes);
         if (!userIdOpt.isPresent()) {
             log.debug("Initiated password reset for non-existent user {}", authnAttributes);

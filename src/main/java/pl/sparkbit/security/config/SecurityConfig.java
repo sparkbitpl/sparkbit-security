@@ -23,6 +23,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.GenericFilterBean;
 import pl.sparkbit.security.login.LoginAuthenticationFilter;
+import pl.sparkbit.security.login.LoginPrincipalFactory;
 import pl.sparkbit.security.login.social.FacebookAuthenticationProvider;
 import pl.sparkbit.security.login.social.GoogleAuthenticationProvider;
 import pl.sparkbit.security.login.social.TwitterAuthenticationProvider;
@@ -37,10 +38,8 @@ import pl.sparkbit.security.restauthn.user.UserAuthenticationProvider;
 import pl.sparkbit.security.service.SessionService;
 import pl.sparkbit.security.service.UserDetailsService;
 
-import java.util.Arrays;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toSet;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static pl.sparkbit.security.Security.DEFAULT_SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME;
 import static pl.sparkbit.security.config.Properties.PASSWORD_ENCODER_TYPE;
@@ -77,12 +76,11 @@ public class SecurityConfig {
         private final AuthenticationEntryPoint authenticationEntryPoint;
         private final UserDetailsService userDetailsService;
         private final ObjectMapper objectMapper;
+        private final LoginPrincipalFactory loginPrincipalFactory;
         private final Optional<FacebookResolver> facebookResolver;
         private final Optional<GoogleResolver> googleResolver;
         private final Optional<TwitterResolver> twitterResolver;
 
-        @Value("${" + Properties.EXPECTED_AUTHN_ATTRIBUTES + "}")
-        private String[] expectedAuthnAttributes;
         @Value("${" + PASSWORD_ENCODER_TYPE + ":BCRYPT}")
         private PasswordEncoderType passwordEncoderType;
 
@@ -111,7 +109,7 @@ public class SecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             GenericFilterBean loginAuthenticationFiler =
                     new LoginAuthenticationFilter(authenticationManager(), authenticationEntryPoint,
-                            Arrays.stream(expectedAuthnAttributes).collect(toSet()));
+                            loginPrincipalFactory);
             http
                     .cors().and()
                     .addFilterBefore(loginAuthenticationFiler, BasicAuthenticationFilter.class)

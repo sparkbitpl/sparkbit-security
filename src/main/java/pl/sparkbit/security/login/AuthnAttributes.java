@@ -5,7 +5,6 @@ import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
@@ -15,19 +14,10 @@ public class AuthnAttributes extends HashMap<String, String> {
 
     private static final String SEPARATOR = "__XAX__";
 
-    public AuthnAttributes(Map<String, String> providedAttributes, Set<String> expectedAttributes) {
-        if (providedAttributes == null) {
-            log.warn("Missing authAttributes in login request");
-            throw new InvalidJsonAuthenticationException("Missing userIdentification");
-        }
-        if (!providedAttributes.keySet().equals(expectedAttributes)) {
-            log.warn("Incorrect authnAttributes. Provided: {}, expected: {}", providedAttributes.keySet(),
-                    expectedAttributes);
-            throw new InvalidJsonAuthenticationException("Incorrect authnAttributes. Provided: " +
-                    providedAttributes.keySet() + ", expected: " + expectedAttributes);
-        }
-
-        for (Map.Entry<String, String> entry : providedAttributes.entrySet()) {
+    AuthnAttributes(Map<String, String> attributesMap) {
+        Assert.notNull(attributesMap, "attributeMap cannot be null");
+        Assert.notEmpty(attributesMap, "attributeMap cannot be empty");
+        for (Map.Entry<String, String> entry : attributesMap.entrySet()) {
             String orgKey = entry.getKey();
             String underscoredKey = LOWER_CAMEL.to(LOWER_UNDERSCORE, orgKey);
             put(underscoredKey, entry.getValue());

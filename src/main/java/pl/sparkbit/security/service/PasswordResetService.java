@@ -1,11 +1,12 @@
 package pl.sparkbit.security.service;
 
 import pl.sparkbit.security.domain.SecurityChallengeType;
-import pl.sparkbit.security.login.AuthnAttributes;
+
+import java.util.Map;
 
 public interface PasswordResetService {
 
-    void initiatePasswordReset(AuthnAttributes authnAttributes);
+    void initiatePasswordReset(Map<String, String> authnAttributesMap);
 
     void initiateSetNewPassword(String userId);
 

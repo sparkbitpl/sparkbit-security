@@ -1,7 +1,6 @@
 package pl.sparkbit.security.dao.mybatis;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +9,11 @@ import pl.sparkbit.security.dao.mybatis.data.SecurityDbTables;
 import pl.sparkbit.security.dao.mybatis.data.SecurityTestData;
 import pl.sparkbit.security.domain.RestUserDetails;
 import pl.sparkbit.security.login.AuthnAttributes;
+import pl.sparkbit.security.login.LoginPrincipalFactory;
 import pl.sparkbit.security.login.LoginUserDetails;
 
 import java.time.Instant;
 
-import static java.util.Collections.singleton;
 import static java.util.Collections.singletonMap;
 import static org.junit.Assert.*;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.*;
@@ -68,8 +67,10 @@ public class UserDetailsMapperTest extends MapperTestBase {
     public void shouldSelectUserIdForSimpleLogin() {
         insertTestData(CREDS_1, SIMPLE_LOGIN_USER_1);
 
+        String[] expectedAuthnAttributes = {"username"};
         AuthnAttributes authnAttributes =
-                new AuthnAttributes(singletonMap("username", USER_1_USERNAME), singleton("username"));
+                new LoginPrincipalFactory(expectedAuthnAttributes).generate(singletonMap("username", USER_1_USERNAME))
+                .getAuthnAttributes();
         String userId = userDetailsMapper.selectUserId(SIMPLE_LOGIN_USER, USER_ID_COLUMN_NAME, authnAttributes, PREFIX);
         assertEquals(USER_1_ID, userId);
     }
@@ -78,9 +79,9 @@ public class UserDetailsMapperTest extends MapperTestBase {
     public void shouldSelectUserIdForCompositeLogin() {
         insertTestData(CREDS_1, COMPOSITE_LOGIN_USER_1);
 
-        AuthnAttributes authnAttributes = new AuthnAttributes(
-                ImmutableMap.of("username", USER_1_USERNAME, "context", USER_1_CONTEXT),
-                ImmutableSet.of("username", "context"));
+        String[] expectedAuthnAttributes = {"username", "context"};
+        AuthnAttributes authnAttributes = new LoginPrincipalFactory(expectedAuthnAttributes).generate(
+                ImmutableMap.of("username", USER_1_USERNAME, "context", USER_1_CONTEXT)).getAuthnAttributes();
         String userId = userDetailsMapper.selectUserId(COMPOSITE_LOGIN_USER, USER_ID_COLUMN_NAME, authnAttributes,
                 PREFIX);
         assertEquals(USER_1_ID, userId);

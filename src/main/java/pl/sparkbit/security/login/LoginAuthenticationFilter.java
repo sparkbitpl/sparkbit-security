@@ -22,22 +22,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Set;
 
 @RequiredArgsConstructor
 public class LoginAuthenticationFilter extends GenericFilterBean {
 
     private final AuthenticationManager authenticationManager;
     private final AuthenticationEntryPoint entryPoint;
-    private final Set<String> expectedAuthnAttributes;
+    private final LoginPrincipalFactory loginPrincipalFactory;
     private final ObjectReader jsonReader;
 
-    public LoginAuthenticationFilter(
-            AuthenticationManager authenticationManager,
-            AuthenticationEntryPoint entryPoint, Set<String> expectedAuthnAttributes) {
+    public LoginAuthenticationFilter(AuthenticationManager authenticationManager, AuthenticationEntryPoint entryPoint,
+                                     LoginPrincipalFactory loginPrincipalFactory) {
         this.authenticationManager = authenticationManager;
         this.entryPoint = entryPoint;
-        this.expectedAuthnAttributes = expectedAuthnAttributes;
+        this.loginPrincipalFactory = loginPrincipalFactory;
         LoginDTODeserializer deserializer = new LoginDTODeserializer();
         SimpleModule module = new SimpleModule("LoginDeserializerModule", Version.unknownVersion());
         module.addDeserializer(LoginDTO.class, deserializer);
@@ -55,7 +53,8 @@ public class LoginAuthenticationFilter extends GenericFilterBean {
 
         try {
             LoginDTO dto = getLoginData(request.getReader());
-            Authentication token = dto.toToken(expectedAuthnAttributes);
+            LoginPrincipal loginPrincipal = loginPrincipalFactory.generate(dto.getAuthnAttributesMap());
+            Authentication token = dto.toToken(loginPrincipal);
 
             Authentication authentication = authenticationManager.authenticate(token);
             Assert.isTrue(authentication.isAuthenticated(),

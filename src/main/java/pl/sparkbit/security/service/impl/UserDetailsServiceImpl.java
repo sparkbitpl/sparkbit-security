@@ -10,6 +10,7 @@ import pl.sparkbit.security.dao.UserDetailsDao;
 import pl.sparkbit.security.domain.RestUserDetails;
 import pl.sparkbit.security.exception.SessionNotFoundException;
 import pl.sparkbit.security.login.LoginPrincipal;
+import pl.sparkbit.security.login.LoginPrincipalFactory;
 import pl.sparkbit.security.login.LoginUserDetails;
 import pl.sparkbit.security.service.UserDetailsService;
 
@@ -22,11 +23,12 @@ import java.util.Optional;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserDetailsDao userDetailsDao;
+    private final LoginPrincipalFactory loginPrincipalFactory;
 
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String principalData) throws UsernameNotFoundException {
-        LoginPrincipal principal = new LoginPrincipal(principalData);
+        LoginPrincipal principal = loginPrincipalFactory.generate(principalData);
 
         String userId = userDetailsDao.selectUserId(principal.getAuthnAttributes())
                 .orElseThrow((() -> new UsernameNotFoundException(principal + " not found")));

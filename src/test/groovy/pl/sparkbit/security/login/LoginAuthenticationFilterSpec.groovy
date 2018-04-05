@@ -27,8 +27,9 @@ class LoginAuthenticationFilterSpec extends Specification {
 
     def "should accept a password login dto"() {
         setup:
-        def expectedAuthnAttributes = ['applicationName', 'email'] as Set
-        def filter = new LoginAuthenticationFilter(authManager, entryPoint, expectedAuthnAttributes)
+        String[] expectedAuthnAttributes = ['applicationName', 'email']
+        def filter = new LoginAuthenticationFilter(authManager, entryPoint,
+                new LoginPrincipalFactory(expectedAuthnAttributes))
         def request = new MockHttpServletRequest()
         def response = new MockHttpServletResponse()
         def json = [
@@ -38,8 +39,7 @@ class LoginAuthenticationFilterSpec extends Specification {
                 ],
                 "password"       : "1"
         ]
-        AuthnAttributes authnAttributes =
-                new AuthnAttributes(json.authnAttributes, expectedAuthnAttributes)
+        AuthnAttributes authnAttributes = new AuthnAttributes(json.authnAttributes)
         LoginPrincipal principal = new LoginPrincipal(authnAttributes)
         request.setContent(JsonOutput.toJson(json).bytes)
         def expectedToken = new UsernamePasswordAuthenticationToken(principal, json.password)
@@ -55,8 +55,9 @@ class LoginAuthenticationFilterSpec extends Specification {
 
     def "should fail with an unsupported json payload"() {
         setup:
-        def expectedAuthnAttributes = ['applicationName', 'email'] as Set
-        def filter = new LoginAuthenticationFilter(authManager, entryPoint, expectedAuthnAttributes)
+        String[] expectedAuthnAttributes = ['applicationName', 'email']
+        def filter = new LoginAuthenticationFilter(authManager, entryPoint,
+                new LoginPrincipalFactory(expectedAuthnAttributes))
         def request = new MockHttpServletRequest()
         def response = new MockHttpServletResponse()
         def json = [
@@ -74,5 +75,4 @@ class LoginAuthenticationFilterSpec extends Specification {
         then:
         1 * entryPoint.commence(request, response, _)
     }
-
 }
