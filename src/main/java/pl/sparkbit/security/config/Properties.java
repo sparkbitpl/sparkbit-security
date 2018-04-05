@@ -30,7 +30,7 @@ public class Properties {
     public static final String EMAIL_VERIFICATION_CHALLENGE_VALIDITY_HOURS =
             PREFIX + "emailVerification.challengeValidityHours";
     public static final String EMAIL_VERIFICATION_ENABLED = PREFIX + "emailVerification.enabled";
-    public static final String EXPECTED_AUTHN_ATTRIBUTES = PREFIX + "expected-authn-attributes";
+    public static final String EXPECTED_AUTHN_ATTRIBUTES = PREFIX + "expectedAuthnAttributes";
     public static final String EXPIRED_CHALLENGE_DELETION_RUN_EVERY_MILLIS =
             PREFIX + "expiredChallengeDeletion.runEveryMillis";
     public static final String MINIMAL_PASSWORD_LENGTH = PREFIX + "minPasswordLength";
@@ -45,7 +45,7 @@ public class Properties {
     public static final String SESSION_EXPIRATION_MINUTES = PREFIX + "session.expirationMinutes";
     public static final String SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME =
             PREFIX + "sessionExpirationTimestamp.headerName";
-    public static final String USER_ENTITY_NAME = PREFIX + "user-entity-name";
+    public static final String USER_ENTITY_NAME = PREFIX + "userEntityName";
     public static final String USER_TABLE_NAME = PREFIX + "userTableName";
     public static final String USER_TABLE_ID_COLUMN_NAME = PREFIX + "userTableIdColumnName";
 }

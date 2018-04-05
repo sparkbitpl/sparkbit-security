@@ -17,5 +17,4 @@ public class ResetPasswordDTO {
     private final String password;
 
     private final SecurityChallengeType resetType;
-
 }

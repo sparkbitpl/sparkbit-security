@@ -11,6 +11,7 @@ import pl.sparkbit.security.callbacks.EmailVerificationChallengeCallback;
 import pl.sparkbit.security.dao.SecurityChallengeDao;
 import pl.sparkbit.security.domain.SecurityChallenge;
 import pl.sparkbit.security.exception.NoValidTokenFoundException;
+import pl.sparkbit.security.mvc.dto.in.VerifyEmailDTO;
 import pl.sparkbit.security.service.EmailVerificationService;
 import pl.sparkbit.security.util.SecurityChallengeTokenGenerator;
 
@@ -32,13 +33,15 @@ import static pl.sparkbit.security.exception.NoValidTokenFoundException.FailureR
 @SuppressWarnings("unused")
 public class EmailVerificationServiceImpl implements EmailVerificationService {
 
+    private static final int DEFAULT_CHALLENGE_VALIDITY_HOURS = 1;
+
     private final IdGenerator idGenerator;
     private final SecurityChallengeTokenGenerator securityChallengeTokenGenerator;
     private final Clock clock;
     private final SecurityChallengeDao securityChallengeDao;
     private final EmailVerificationChallengeCallback callback;
 
-    @Value("${" + EMAIL_VERIFICATION_CHALLENGE_VALIDITY_HOURS + ":1}")
+    @Value("${" + EMAIL_VERIFICATION_CHALLENGE_VALIDITY_HOURS + ":" + DEFAULT_CHALLENGE_VALIDITY_HOURS + "}")
     private int challengeValidityHours;
 
     @Override
@@ -65,7 +68,8 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
 
     @Override
     @Transactional
-    public void verifyEmail(String token) {
+    public void verifyEmail(VerifyEmailDTO dto) {
+        String token = dto.getToken();
         Optional<SecurityChallenge> challengeOpt =
                 securityChallengeDao.selectChallengeByTokenAndType(token, EMAIL_VERIFICATION);
         if (!challengeOpt.isPresent()) {

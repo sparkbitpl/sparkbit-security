@@ -26,6 +26,6 @@ public class EmailVerificationController {
     @PostMapping(PUBLIC_EMAIL)
     @ResponseStatus(NO_CONTENT)
     public void verifyEmail(@RequestBody @Valid VerifyEmailDTO dto) {
-        emailVerificationService.verifyEmail(dto.getToken());
+        emailVerificationService.verifyEmail(dto);
     }
 }

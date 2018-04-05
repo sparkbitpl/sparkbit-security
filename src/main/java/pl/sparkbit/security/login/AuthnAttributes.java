@@ -17,7 +17,7 @@ public class AuthnAttributes extends HashMap<String, String> {
 
     public AuthnAttributes(Map<String, String> providedAttributes, Set<String> expectedAttributes) {
         if (providedAttributes == null) {
-            log.warn("Missing autnAttributes in login request");
+            log.warn("Missing authAttributes in login request");
             throw new InvalidJsonAuthenticationException("Missing userIdentification");
         }
         if (!providedAttributes.keySet().equals(expectedAttributes)) {
@@ -48,6 +48,7 @@ public class AuthnAttributes extends HashMap<String, String> {
         }
     }
 
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
         forEach((n, v) -> result.append(n).append(SEPARATOR).append(v).append(SEPARATOR));
