@@ -23,6 +23,7 @@
             <idArg column="auth_token" javaType="String"/>
             <arg column="user_id" javaType="String"/>
             <arg column="expiration_ts" javaType="java.time.Instant"/>
+            <arg column="extra_authn_check_required" javaType="_boolean"/>
         </constructor>
         <collection property="roles" ofType="org.springframework.security.core.authority.SimpleGrantedAuthority">
             <constructor>
@@ -32,7 +33,8 @@
     </resultMap>
 
     <select id="selectRestUserDetails" resultMap="restUserDetailsResultMap">
-        SELECT s.auth_token as auth_token, s.${prefix}_id AS user_id, ur.role, s.expiration_ts AS expiration_ts
+        SELECT s.auth_token as auth_token, s.${prefix}_id AS user_id, ur.role, s.expiration_ts AS expiration_ts,
+            s.extra_authn_check_required as extra_authn_check_required
         FROM ${prefix}_session s LEFT OUTER JOIN ${prefix}_role ur on s.${prefix}_id=ur.${prefix}_id
         WHERE s.auth_token=#{authToken} AND s.deletion_ts IS NULL
     </select>

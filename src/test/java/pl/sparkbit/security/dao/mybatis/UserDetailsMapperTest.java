@@ -61,6 +61,26 @@ public class UserDetailsMapperTest extends MapperTestBase {
         assertEquals(2, restUserDetails.getRoles().size());
         assertTrue(restUserDetails.getRoles().contains(new SimpleGrantedAuthority(SecurityTestData.ROLE_ADMIN)));
         assertTrue(restUserDetails.getRoles().contains(new SimpleGrantedAuthority(SecurityTestData.ROLE_USER)));
+        assertFalse(restUserDetails.isExtraAuthnCheckRequired());
+    }
+
+    @Test
+    public void shouldSelectRestUserDetailsWithAdditionalAuthCheckRequired() {
+        String authToken = "id12346";
+        Instant timestamp = Instant.ofEpochSecond(31232133);
+
+        insertTestData(SecurityTestData.CREDS_1, session(authToken, CREDS_1_USER_ID, timestamp, timestamp, null,
+                true));
+
+        RestUserDetails restUserDetails = userDetailsMapper.selectRestUserDetails(authToken, SecurityDbTables.PREFIX);
+        assertNotNull(restUserDetails);
+        assertEquals(authToken, restUserDetails.getAuthToken());
+        Assert.assertEquals(CREDS_1_USER_ID, restUserDetails.getUserId());
+        assertTrue(restUserDetails.getRoles() == restUserDetails.getAuthorities());
+        assertEquals(2, restUserDetails.getRoles().size());
+        assertTrue(restUserDetails.getRoles().contains(new SimpleGrantedAuthority(SecurityTestData.ROLE_ADMIN)));
+        assertTrue(restUserDetails.getRoles().contains(new SimpleGrantedAuthority(SecurityTestData.ROLE_USER)));
+        assertTrue(restUserDetails.isExtraAuthnCheckRequired());
     }
 
     @Test

@@ -15,6 +15,9 @@ public class Paths {
     //password
     public static final String PASSWORD = "/profile/password";
 
+    //extra authn check
+    public static final String EXTRA_AUTH_CHECK = "/extraAuthCheck";
+
     //challenge
     public static final String PUBLIC_EMAIL = "/public/profile/email";
     public static final String PUBLIC_PASSWORD_RESET_TOKEN = "/public/profile/passwordResetToken";

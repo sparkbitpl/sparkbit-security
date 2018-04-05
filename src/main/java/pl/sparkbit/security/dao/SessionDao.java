@@ -11,6 +11,8 @@ public interface SessionDao {
 
     void updateSessionExpirationTimestamp(String authToken, Instant expirationTimestamp);
 
+    void updateExtraAuthnCheckRequired(String authToken, boolean value);
+
     Optional<Session> selectSession(String authToken);
 
     void deleteSession(String authToken, Instant deletionTimestamp);

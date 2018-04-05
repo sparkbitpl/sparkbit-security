@@ -13,6 +13,10 @@
         UPDATE ${prefix}_session SET expiration_ts = #{expirationTimestamp} WHERE auth_token = #{authToken}
     </update>
 
+    <update id="updateExtraAuthnCheckRequired">
+        UPDATE ${prefix}_session SET extra_authn_check_required = #{value} WHERE auth_token = #{authToken}
+    </update>
+
     <resultMap id="sessionResultMap" type="pl.sparkbit.security.domain.Session">
         <constructor>
             <idArg column="auth_token" javaType="String"/>

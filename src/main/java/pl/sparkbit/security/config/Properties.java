@@ -33,6 +33,9 @@ public class Properties {
     public static final String EXPECTED_AUTHN_ATTRIBUTES = PREFIX + "expectedAuthnAttributes";
     public static final String EXPIRED_CHALLENGE_DELETION_RUN_EVERY_MILLIS =
             PREFIX + "expiredChallengeDeletion.runEveryMillis";
+    public static final String EXTRA_AUTHENTICATION_CHECK_CHALLENGE_VALIDITY_HOURS =
+            PREFIX + "extraAuthnCheck.challengeValidityHours";
+    public static final String EXTRA_AUTHENTICATION_CHECK_ENABLED = PREFIX + "extraAuthnCheck.enabled";
     public static final String MINIMAL_PASSWORD_LENGTH = PREFIX + "minPasswordLength";
     public static final String PASSWORD_CHANGE_ENABLED = PREFIX + "passwordChange.enabled";
     public static final String PASSWORD_ENCODER_TYPE = PREFIX + "passwordEncoderType";

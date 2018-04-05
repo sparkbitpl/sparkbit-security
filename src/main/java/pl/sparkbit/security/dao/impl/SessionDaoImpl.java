@@ -36,6 +36,11 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
+    public void updateExtraAuthnCheckRequired(String authToken, boolean value) {
+        sessionMapper.updateExtraAuthnCheckRequired(authToken, value, prefix);
+    }
+
+    @Override
     public Optional<Session> selectSession(String authToken) {
         return Optional.ofNullable(sessionMapper.selectSession(authToken, prefix));
     }

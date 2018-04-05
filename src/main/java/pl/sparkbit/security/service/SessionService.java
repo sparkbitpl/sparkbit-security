@@ -15,5 +15,4 @@ public interface SessionService {
     void updateSessionExpirationTimestamp(String authToken);
 
     boolean isSessionExpirationEnabled();
-
 }

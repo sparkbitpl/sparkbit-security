@@ -13,6 +13,10 @@ public interface SessionMapper {
                                           @Param("expirationTimestamp") Instant expirationTimestamp,
                                           @Param("prefix") String prefix);
 
+    void updateExtraAuthnCheckRequired(@Param("authToken") String authToken,
+                                       @Param("value") boolean value,
+                                       @Param("prefix") String prefix);
+
     Session selectSession(@Param("authToken") String authToken, @Param("prefix") String prefix);
 
     void deleteSession(@Param("authToken") String authToken, @Param("deletionTimestamp") Instant deletionTimestamp,

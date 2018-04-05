@@ -44,6 +44,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 import static pl.sparkbit.security.Security.DEFAULT_SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME;
 import static pl.sparkbit.security.config.Properties.PASSWORD_ENCODER_TYPE;
 import static pl.sparkbit.security.config.Properties.SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME;
+import static pl.sparkbit.security.mvc.controller.Paths.EXTRA_AUTH_CHECK;
 import static pl.sparkbit.security.mvc.controller.Paths.LOGIN;
 
 @Configuration
@@ -191,8 +192,10 @@ public class SecurityConfig {
                     .authorizeRequests()
                     //fail-safe but LOGIN is already handled by LoginConfigurationAdapter
                     .antMatchers(LOGIN).denyAll()
-                    .antMatchers(ADMIN_PATTERN).hasRole("ADMIN")
-                    .anyRequest().authenticated()
+                    .antMatchers(EXTRA_AUTH_CHECK).authenticated()
+                    //block if user still has to perform extra authn check (eg. input code received by sms)
+                    .antMatchers(ADMIN_PATTERN).access("hasRole('ADMIN') and !principal.isExtraAuthnCheckRequired()")
+                    .anyRequest().access("!principal.isExtraAuthnCheckRequired()")
                     .and()
 
                     .sessionManagement().sessionCreationPolicy(STATELESS).and()
@@ -212,7 +215,7 @@ public class SecurityConfig {
          * A special ConfigurationAdapter extending WebSecurityConfigurerAdapter must be implemented that will
          * call this method from within its configure(HttpSecurity http).
          * The @Order for this new ConfigurationAdapter must be after login/admin but before generic "rest" config
-         * (so between 1 and 100).
+         * (so inclusive between 2 and 99).
          */
         @SuppressWarnings("unused")
         public void configure(HttpSecurity http, AuthenticationManager authenticationManager, String antMatcher,

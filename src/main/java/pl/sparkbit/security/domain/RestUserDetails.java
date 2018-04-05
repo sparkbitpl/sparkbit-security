@@ -15,6 +15,7 @@ public class RestUserDetails implements UserDetails {
     private final String authToken;
     private final String userId;
     private final Instant expirationTimestamp;
+    private final boolean extraAuthnCheckRequired;
     @SuppressWarnings("unused")
     private Collection<GrantedAuthority> roles;
 

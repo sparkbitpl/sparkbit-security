@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -15,17 +16,18 @@ import pl.sparkbit.security.dao.SessionDao;
 import pl.sparkbit.security.domain.RestUserDetails;
 import pl.sparkbit.security.domain.Session;
 import pl.sparkbit.security.login.LoginUserDetails;
+import pl.sparkbit.security.service.ExtraAuthnCheckService;
 import pl.sparkbit.security.service.SessionService;
 import pl.sparkbit.security.util.SecureRandomStringGenerator;
 
+import javax.annotation.PostConstruct;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
-import static pl.sparkbit.security.config.Properties.SESSION_EXPIRATION_ENABLED;
-import static pl.sparkbit.security.config.Properties.SESSION_EXPIRATION_MINUTES;
+import static pl.sparkbit.security.config.Properties.*;
 
 @RequiredArgsConstructor
 @Service
@@ -40,6 +42,12 @@ public class SessionServiceImpl implements SessionService {
     private final Clock clock;
     private final Security security;
     private final SecureRandomStringGenerator secureRandomStringGenerator;
+    private final ApplicationContext applicationContext;
+
+    private ExtraAuthnCheckService extraAuthnCheckService;
+
+    @Value("${" + EXTRA_AUTHENTICATION_CHECK_ENABLED + ":false}")
+    private boolean extraAuthenticationCheckEnabled;
 
     @Getter
     @Value("${" + SESSION_EXPIRATION_ENABLED + ":false}")
@@ -47,6 +55,13 @@ public class SessionServiceImpl implements SessionService {
 
     @Value("${" + SESSION_EXPIRATION_MINUTES + ":" + DEFAULT_SESSION_EXPIRATION_MINUTES + "}")
     private Integer sessionExpirationMinutes;
+
+    @PostConstruct
+    private void setup() {
+        if (extraAuthenticationCheckEnabled) {
+            extraAuthnCheckService = applicationContext.getBean(ExtraAuthnCheckService.class);
+        }
+    }
 
     @Override
     @Transactional
@@ -57,14 +72,20 @@ public class SessionServiceImpl implements SessionService {
         Assert.isInstanceOf(LoginUserDetails.class, auth.getPrincipal(),
                 "New session can be started only from login endpoint");
         LoginUserDetails loginUserDetails = (LoginUserDetails) auth.getPrincipal();
+        String userId = loginUserDetails.getUserId();
 
         Session newSession = Session.builder()
                 .authToken(secureRandomStringGenerator.base58String(AUTH_TOKEN_LENGTH))
-                .userId(loginUserDetails.getUserId())
+                .userId(userId)
                 .creationTimestamp(clock.instant())
                 .expirationTimestamp(getExpirationTimestamp())
                 .build();
         sessionDao.insertSession(newSession);
+
+        if (extraAuthenticationCheckEnabled) {
+            sessionDao.updateExtraAuthnCheckRequired(newSession.getAuthToken(), true);
+            extraAuthnCheckService.initiateExtraAuthnCheck(userId);
+        }
 
         if (oldAuthToken != null && !oldAuthToken.isEmpty()) {
             Optional<Session> oldSession = sessionDao.selectSession(oldAuthToken);
