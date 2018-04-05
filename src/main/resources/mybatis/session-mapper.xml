@@ -9,8 +9,8 @@
         VALUES (#{session.authToken}, #{session.userId}, #{session.creationTimestamp}, #{session.expirationTimestamp})
     </insert>
 
-    <update id="updateSessionExpiryTs">
-        UPDATE ${prefix}_session SET expiraion_ts = #{expirationTimestamp} WHERE auth_token = #{authToken}
+    <update id="updateSessionExpirationTimestamp">
+        UPDATE ${prefix}_session SET expiration_ts = #{expirationTimestamp} WHERE auth_token = #{authToken}
     </update>
 
     <resultMap id="sessionResultMap" type="pl.sparkbit.security.domain.Session">

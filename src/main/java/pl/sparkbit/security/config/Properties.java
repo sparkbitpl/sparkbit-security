@@ -41,8 +41,8 @@ public class Properties {
     public static final String PASSWORD_RESET_CHALLENGE_INFORM_NOT_FOUND =
             PREFIX + "passwordReset.informNotFound";
     public static final String PASSWORD_RESET_ENABLED = PREFIX + "passwordReset.enabled";
-    public static final String SESSION_EXPIRATION_ENABLED = PREFIX + "session.expirationEnabled";
-    public static final String SESSION_EXPIRATION_MINUTES = PREFIX + "session.expirationMinutes";
+    public static final String SESSION_EXPIRATION_ENABLED = PREFIX + "sessionExpiration.enabled";
+    public static final String SESSION_EXPIRATION_MINUTES = PREFIX + "sessionExpiration.minutes";
     public static final String SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME =
             PREFIX + "sessionExpirationTimestamp.headerName";
     public static final String USER_ENTITY_NAME = PREFIX + "userEntityName";

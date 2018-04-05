@@ -45,6 +45,24 @@ public class SessionMapperTest extends MapperTestBase {
     }
 
     @Test
+    public void shouldUpdateSessionExpirationTimestamp() {
+        String authToken = "id12345";
+        Instant creationTimestamp = Instant.ofEpochSecond(31232133);
+        Instant expirationTimestamp = Instant.ofEpochSecond(31232133);
+        Instant deletionTimestamp = Instant.ofEpochSecond(31232133);
+        Instant updatedExpirationTimestamp = Instant.ofEpochSecond(44444444);
+
+        insertTestData(CREDS_1,
+                session(authToken, CREDS_1_USER_ID, creationTimestamp, expirationTimestamp, deletionTimestamp));
+
+        sessionMapper.updateSessionExpirationTimestamp(authToken, updatedExpirationTimestamp, PREFIX);
+        assertEquals(1, countRowsInTableWhereColumnsEquals(SESSION,
+                "auth_token", quote(authToken),
+                "expiration_ts", updatedExpirationTimestamp.toEpochMilli()
+        ));
+    }
+
+    @Test
     public void shouldSelectSession() {
         String authToken = "id12345";
         Instant creationTimestamp = Instant.ofEpochSecond(31232133);
