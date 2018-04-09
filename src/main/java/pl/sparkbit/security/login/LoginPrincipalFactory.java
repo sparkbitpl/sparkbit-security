@@ -29,7 +29,6 @@ public class LoginPrincipalFactory {
 
     public LoginPrincipal generate(String encodedAttributes) {
         LoginPrincipal loginPrincipal = new LoginPrincipal(encodedAttributes);
-        validateAuthnAttributes(loginPrincipal.getAuthnAttributes());
         return loginPrincipal;
     }
 
