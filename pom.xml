@@ -131,6 +131,9 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Commented this as Nexus has problems
+            "Return code is: 400, ReasonPhrase: Repository does not allow updating assets" -->
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -143,6 +146,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
         </plugins>
     </build>
 
@@ -185,7 +189,7 @@
         <dependency>
             <groupId>pl.sparkbit</groupId>
             <artifactId>sparkbit-commons</artifactId>
-            <version>1.20</version>
+            <version>1.0.21</version>
         </dependency>
 
         <dependency>
