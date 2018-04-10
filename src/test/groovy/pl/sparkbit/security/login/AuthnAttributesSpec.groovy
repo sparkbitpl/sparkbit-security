@@ -11,7 +11,7 @@ class AuthnAttributesSpec extends Specification {
         setup:
         def providedAttributes = ["userName": "batman"]
         when:
-        def lui = new AuthnAttributes(providedAttributes)
+        def lui = new AuthnAttributes(providedAttributes).withUnderscoredKeys()
         then:
         lui.size() == 1
         lui["user_name"] == "batman"

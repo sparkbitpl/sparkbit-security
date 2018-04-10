@@ -30,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String principalData) throws UsernameNotFoundException {
         LoginPrincipal principal = loginPrincipalFactory.generate(principalData);
 
-        String userId = userDetailsDao.selectUserId(principal.getAuthnAttributes())
+        String userId = userDetailsDao.selectUserId(principal.getAuthnAttributes().withUnderscoredKeys())
                 .orElseThrow((() -> new UsernameNotFoundException(principal + " not found")));
 
         Optional<LoginUserDetails> userDetails = userDetailsDao.selectLoginUserDetails(userId);

@@ -7,15 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.sparkbit.security.dao.UserDetailsDao;
 import pl.sparkbit.security.dao.mybatis.UserDetailsMapper;
 import pl.sparkbit.security.domain.RestUserDetails;
-import pl.sparkbit.security.login.AuthnAttributes;
 import pl.sparkbit.security.login.LoginUserDetails;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
-import static pl.sparkbit.security.config.Properties.USER_ENTITY_NAME;
-import static pl.sparkbit.security.config.Properties.USER_TABLE_ID_COLUMN_NAME;
-import static pl.sparkbit.security.config.Properties.USER_TABLE_NAME;
+import static pl.sparkbit.security.config.Properties.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -43,7 +41,7 @@ public class UserDetailsDaoImpl implements UserDetailsDao {
     }
 
     @Override
-    public Optional<String> selectUserId(AuthnAttributes authnAttributes) {
+    public Optional<String> selectUserId(Map<String, String> authnAttributes) {
         return Optional.ofNullable(userDetailsMapper.selectUserId(userTableName, userTableIdColumnName, authnAttributes,
                 prefix));
     }

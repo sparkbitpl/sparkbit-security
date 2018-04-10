@@ -17,11 +17,7 @@ public class AuthnAttributes extends HashMap<String, String> {
     AuthnAttributes(Map<String, String> attributesMap) {
         Assert.notNull(attributesMap, "attributeMap cannot be null");
         Assert.notEmpty(attributesMap, "attributeMap cannot be empty");
-        for (Map.Entry<String, String> entry : attributesMap.entrySet()) {
-            String orgKey = entry.getKey();
-            String underscoredKey = LOWER_CAMEL.to(LOWER_UNDERSCORE, orgKey);
-            put(underscoredKey, entry.getValue());
-        }
+        putAll(attributesMap);
     }
 
     AuthnAttributes(String s) {
@@ -44,5 +40,15 @@ public class AuthnAttributes extends HashMap<String, String> {
         forEach((n, v) -> result.append(n).append(SEPARATOR).append(v).append(SEPARATOR));
         result.delete(result.lastIndexOf(SEPARATOR), result.length());
         return result.toString();
+    }
+
+    public Map<String, String> withUnderscoredKeys() {
+        Map<String, String> result = new HashMap<>();
+        for (Map.Entry<String, String> entry : entrySet()) {
+            String orgKey = entry.getKey();
+            String underscoredKey = LOWER_CAMEL.to(LOWER_UNDERSCORE, orgKey);
+            result.put(underscoredKey, entry.getValue());
+        }
+        return result;
     }
 }
