@@ -10,7 +10,7 @@ public interface UserDetailsDao {
 
     Optional<LoginUserDetails> selectLoginUserDetails(String userId);
 
-    Optional<RestUserDetails> selectRestUserDetails(String authToken);
+    Optional<RestUserDetails> selectRestUserDetails(String authTokenHash);
 
     Optional<String> selectUserId(Map<String, String> authnAttributes);
 }

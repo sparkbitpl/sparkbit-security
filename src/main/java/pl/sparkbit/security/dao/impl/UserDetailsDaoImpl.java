@@ -36,8 +36,8 @@ public class UserDetailsDaoImpl implements UserDetailsDao {
     }
 
     @Override
-    public Optional<RestUserDetails> selectRestUserDetails(String authToken) {
-        return Optional.ofNullable(userDetailsMapper.selectRestUserDetails(authToken, prefix));
+    public Optional<RestUserDetails> selectRestUserDetails(String authTokenHash) {
+        return Optional.ofNullable(userDetailsMapper.selectRestUserDetails(authTokenHash, prefix));
     }
 
     @Override

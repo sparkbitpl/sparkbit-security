@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import pl.sparkbit.security.domain.Session;
 import pl.sparkbit.security.mvc.dto.out.AuthTokenDTO;
 import pl.sparkbit.security.restauthn.AuthenticationTokenHelper;
 import pl.sparkbit.security.service.SessionService;
@@ -29,12 +28,12 @@ public class SessionController {
     @PostMapping(LOGIN)
     public AuthTokenDTO login(HttpServletRequest request, HttpServletResponse response) {
         Optional<String> oldAuthToken = authenticationTokenHelper.extractAuthenticationToken(request);
-        Session session = sessionService.startNewSession(oldAuthToken.orElse(null));
+        String authToken = sessionService.startNewSession(oldAuthToken.orElse(null));
 
-        Cookie cookie = authenticationTokenHelper.buildAuthenticationTokenCookie(session.getAuthToken());
+        Cookie cookie = authenticationTokenHelper.buildAuthenticationTokenCookie(authToken);
         response.addCookie(cookie);
 
-        return new AuthTokenDTO(session.getAuthToken());
+        return new AuthTokenDTO(authToken);
     }
 
     @PostMapping(LOGOUT)

@@ -31,23 +31,23 @@ public class SessionDaoImpl implements SessionDao {
     }
 
     @Override
-    public void updateSessionExpirationTimestamp(String authToken, Instant expirationTimestamp) {
-        sessionMapper.updateSessionExpirationTimestamp(authToken, expirationTimestamp, prefix);
+    public void updateSessionExpirationTimestamp(String authTokenHash, Instant expirationTimestamp) {
+        sessionMapper.updateSessionExpirationTimestamp(authTokenHash, expirationTimestamp, prefix);
     }
 
     @Override
-    public void updateExtraAuthnCheckRequired(String authToken, boolean value) {
-        sessionMapper.updateExtraAuthnCheckRequired(authToken, value, prefix);
+    public void updateExtraAuthnCheckRequired(String authTokenHash, boolean value) {
+        sessionMapper.updateExtraAuthnCheckRequired(authTokenHash, value, prefix);
     }
 
     @Override
-    public Optional<Session> selectSession(String authToken) {
-        return Optional.ofNullable(sessionMapper.selectSession(authToken, prefix));
+    public Optional<Session> selectSession(String authTokenHash) {
+        return Optional.ofNullable(sessionMapper.selectSession(authTokenHash, prefix));
     }
 
     @Override
-    public void deleteSession(String authToken, Instant deletionTimestamp) {
-        sessionMapper.deleteSession(authToken, deletionTimestamp, prefix);
+    public void deleteSession(String authTokenHash, Instant deletionTimestamp) {
+        sessionMapper.deleteSession(authTokenHash, deletionTimestamp, prefix);
     }
 
     @Override

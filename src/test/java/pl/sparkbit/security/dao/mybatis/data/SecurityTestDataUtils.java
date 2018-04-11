@@ -41,7 +41,7 @@ public class SecurityTestDataUtils {
         Long expirationTimestampLong = expirationTimestamp == null ? null : expirationTimestamp.toEpochMilli();
         Long deletionTimestampLong = deletionTimestamp == null ? null : deletionTimestamp.toEpochMilli();
         return insertInto(SESSION)
-                .columns("auth_token", "user_id", "creation_ts", "expiration_ts", "deletion_ts",
+                .columns("auth_token_hash", "user_id", "creation_ts", "expiration_ts", "deletion_ts",
                         "extra_authn_check_required")
                 .values(authToken, userId, creationTimestamp.toEpochMilli(), expirationTimestampLong,
                         deletionTimestampLong, extraAuthnCheckRequired)

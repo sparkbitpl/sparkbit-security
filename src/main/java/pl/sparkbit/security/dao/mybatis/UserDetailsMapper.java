@@ -10,7 +10,9 @@ public interface UserDetailsMapper {
 
     LoginUserDetails selectLoginUserDetails(@Param("userId") String userId, @Param("prefix") String prefix);
 
-    RestUserDetails selectRestUserDetails(@Param("authToken") String authToken, @Param("prefix") String prefix);
+    RestUserDetails selectRestUserDetails(
+            @Param("authTokenHash") String authTokenHash,
+            @Param("prefix") String prefix);
 
     String selectUserId(@Param("userTableName") String userTableName,
                         @Param("userTableIdColumnName") String userTableIdColumnName,

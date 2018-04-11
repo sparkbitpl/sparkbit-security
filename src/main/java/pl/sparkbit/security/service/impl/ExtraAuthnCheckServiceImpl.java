@@ -45,8 +45,8 @@ public class ExtraAuthnCheckServiceImpl implements ExtraAuthnCheckService {
         SecurityChallenge challenge = securityChallenges.finishChallenge(token, EXTRA_AUTHN_CHECK);
         callback.notifyOfSuccess(challenge);
 
-        String authToken = security.currentUserDetails().getAuthToken();
-        sessionDao.updateExtraAuthnCheckRequired(authToken, false);
+        String authTokenHash = security.currentUserDetails().getAuthTokenHash();
+        sessionDao.updateExtraAuthnCheckRequired(authTokenHash, false);
 
         log.debug("Extra authn check succeeded for user {}", challenge.getUserId());
     }

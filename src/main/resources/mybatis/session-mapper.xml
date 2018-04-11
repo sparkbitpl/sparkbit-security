@@ -5,21 +5,21 @@
 <mapper namespace="pl.sparkbit.security.dao.mybatis.SessionMapper">
 
     <insert id="insertSession">
-        INSERT INTO ${prefix}_session (auth_token, ${prefix}_id, creation_ts, expiration_ts)
-        VALUES (#{session.authToken}, #{session.userId}, #{session.creationTimestamp}, #{session.expirationTimestamp})
+        INSERT INTO ${prefix}_session (auth_token_hash, ${prefix}_id, creation_ts, expiration_ts)
+        VALUES (#{session.authTokenHash}, #{session.userId}, #{session.creationTimestamp}, #{session.expirationTimestamp})
     </insert>
 
     <update id="updateSessionExpirationTimestamp">
-        UPDATE ${prefix}_session SET expiration_ts = #{expirationTimestamp} WHERE auth_token = #{authToken}
+        UPDATE ${prefix}_session SET expiration_ts = #{expirationTimestamp} WHERE auth_token_hash = #{authTokenHash}
     </update>
 
     <update id="updateExtraAuthnCheckRequired">
-        UPDATE ${prefix}_session SET extra_authn_check_required = #{value} WHERE auth_token = #{authToken}
+        UPDATE ${prefix}_session SET extra_authn_check_required = #{value} WHERE auth_token_hash = #{authTokenHash}
     </update>
 
     <resultMap id="sessionResultMap" type="pl.sparkbit.security.domain.Session">
         <constructor>
-            <idArg column="auth_token" javaType="String"/>
+            <idArg column="auth_token_hash" javaType="String"/>
             <arg column="user_id" javaType="String"/>
             <arg column="creation_ts" javaType="java.time.Instant"/>
             <arg column="expiration_ts" javaType="java.time.Instant"/>
@@ -27,12 +27,12 @@
     </resultMap>
 
     <select id="selectSession" resultMap="sessionResultMap">
-        SELECT auth_token, ${prefix}_id AS user_id, creation_ts, expiration_ts FROM ${prefix}_session s
-        WHERE auth_token=#{authToken} AND deletion_ts IS NULL
+        SELECT auth_token_hash, ${prefix}_id AS user_id, creation_ts, expiration_ts FROM ${prefix}_session s
+        WHERE auth_token_hash=#{authTokenHash} AND deletion_ts IS NULL
     </select>
 
     <update id="deleteSession">
-        UPDATE ${prefix}_session SET deletion_ts=#{deletionTimestamp} WHERE auth_token=#{authToken}
+        UPDATE ${prefix}_session SET deletion_ts=#{deletionTimestamp} WHERE auth_token_hash=#{authTokenHash}
     </update>
 
     <update id="deleteSessions">

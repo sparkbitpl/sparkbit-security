@@ -9,13 +9,13 @@ public interface SessionDao {
 
     void insertSession(Session session);
 
-    void updateSessionExpirationTimestamp(String authToken, Instant expirationTimestamp);
+    void updateSessionExpirationTimestamp(String authTokenHash, Instant expirationTimestamp);
 
-    void updateExtraAuthnCheckRequired(String authToken, boolean value);
+    void updateExtraAuthnCheckRequired(String authTokenHash, boolean value);
 
-    Optional<Session> selectSession(String authToken);
+    Optional<Session> selectSession(String authTokenHash);
 
-    void deleteSession(String authToken, Instant deletionTimestamp);
+    void deleteSession(String authTokenHash, Instant deletionTimestamp);
 
     void deleteSessions(String userId, Instant deletionTimestamp);
 

@@ -12,7 +12,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class RestUserDetails implements UserDetails {
 
-    private final String authToken;
+    private final String authTokenHash;
     private final String userId;
     private final Instant expirationTimestamp;
     private final boolean extraAuthnCheckRequired;
@@ -31,7 +31,7 @@ public class RestUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return authToken;
+        return authTokenHash;
     }
 
     @Override

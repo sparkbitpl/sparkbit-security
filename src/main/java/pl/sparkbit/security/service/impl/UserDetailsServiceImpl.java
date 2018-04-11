@@ -12,6 +12,7 @@ import pl.sparkbit.security.exception.SessionNotFoundException;
 import pl.sparkbit.security.login.LoginPrincipal;
 import pl.sparkbit.security.login.LoginPrincipalFactory;
 import pl.sparkbit.security.login.LoginUserDetails;
+import pl.sparkbit.security.password.encoder.AuthTokenHasher;
 import pl.sparkbit.security.service.UserDetailsService;
 
 import java.util.Optional;
@@ -23,6 +24,7 @@ import java.util.Optional;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserDetailsDao userDetailsDao;
+    private final AuthTokenHasher authTokenHasher;
     private final LoginPrincipalFactory loginPrincipalFactory;
 
     @Override
@@ -40,7 +42,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public RestUserDetails retrieveRestUserDetails(String authToken) {
-        Optional<RestUserDetails> restUserDetails = userDetailsDao.selectRestUserDetails(authToken);
+        String authTokenHash = authTokenHasher.hash(authToken);
+        Optional<RestUserDetails> restUserDetails = userDetailsDao.selectRestUserDetails(authTokenHash);
         return restUserDetails.orElseThrow(() -> new SessionNotFoundException("Session not found"));
     }
 }

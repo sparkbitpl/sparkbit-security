@@ -48,14 +48,14 @@ public class UserDetailsMapperTest extends MapperTestBase {
 
     @Test
     public void shouldSelectRestUserDetails() {
-        String authToken = "id12345";
+        String authTokenHash = "UNIMruUOkLkovQ2TuXGZqAtKt6V6yl2WRUOAQP2763V3z1CNa0QIgHqWdnIpHTpF";
         Instant creationTimestamp = Instant.ofEpochSecond(31232133);
 
-        insertTestData(SecurityTestData.CREDS_1, session(authToken, CREDS_1_USER_ID, creationTimestamp));
+        insertTestData(SecurityTestData.CREDS_1, session(authTokenHash, CREDS_1_USER_ID, creationTimestamp));
 
-        RestUserDetails restUserDetails = userDetailsMapper.selectRestUserDetails(authToken, SecurityDbTables.PREFIX);
+        RestUserDetails restUserDetails = userDetailsMapper.selectRestUserDetails(authTokenHash, SecurityDbTables.PREFIX);
         assertNotNull(restUserDetails);
-        assertEquals(authToken, restUserDetails.getAuthToken());
+        assertEquals(authTokenHash, restUserDetails.getAuthTokenHash());
         Assert.assertEquals(CREDS_1_USER_ID, restUserDetails.getUserId());
         assertTrue(restUserDetails.getRoles() == restUserDetails.getAuthorities());
         assertEquals(2, restUserDetails.getRoles().size());
@@ -66,15 +66,15 @@ public class UserDetailsMapperTest extends MapperTestBase {
 
     @Test
     public void shouldSelectRestUserDetailsWithAdditionalAuthCheckRequired() {
-        String authToken = "id12346";
+        String authTokenHash = "UNIMruUOkLkovQ2TuXGZqAtKt6V6yl2WRUOAQP2763V3z1CNa0QIgHqWdnIpHTpF";
         Instant timestamp = Instant.ofEpochSecond(31232133);
 
-        insertTestData(SecurityTestData.CREDS_1, session(authToken, CREDS_1_USER_ID, timestamp, timestamp, null,
+        insertTestData(SecurityTestData.CREDS_1, session(authTokenHash, CREDS_1_USER_ID, timestamp, timestamp, null,
                 true));
 
-        RestUserDetails restUserDetails = userDetailsMapper.selectRestUserDetails(authToken, SecurityDbTables.PREFIX);
+        RestUserDetails restUserDetails = userDetailsMapper.selectRestUserDetails(authTokenHash, SecurityDbTables.PREFIX);
         assertNotNull(restUserDetails);
-        assertEquals(authToken, restUserDetails.getAuthToken());
+        assertEquals(authTokenHash, restUserDetails.getAuthTokenHash());
         Assert.assertEquals(CREDS_1_USER_ID, restUserDetails.getUserId());
         assertTrue(restUserDetails.getRoles() == restUserDetails.getAuthorities());
         assertEquals(2, restUserDetails.getRoles().size());

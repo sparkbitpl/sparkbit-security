@@ -19,13 +19,13 @@ CREATE TABLE user_role (
 );
 
 CREATE TABLE user_session (
-  auth_token                 VARCHAR(32) NOT NULL,
+  auth_token_hash            VARCHAR(64) NOT NULL,
   user_id                    VARCHAR(32) NOT NULL,
   creation_ts                BIGINT      NOT NULL,
   expiration_ts              BIGINT,
   deletion_ts                BIGINT,
   extra_authn_check_required BOOLEAN     NOT NULL DEFAULT FALSE,
-  PRIMARY KEY (auth_token),
+  PRIMARY KEY (auth_token_hash),
   FOREIGN KEY (user_id) REFERENCES user_credentials (user_id)
 );
 

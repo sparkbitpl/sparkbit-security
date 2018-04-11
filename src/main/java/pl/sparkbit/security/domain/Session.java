@@ -9,7 +9,7 @@ import java.time.Instant;
 @Data
 public class Session {
 
-    private final String authToken;
+    private final String authTokenHash;
     private final String userId;
     private final Instant creationTimestamp;
     private final Instant expirationTimestamp;

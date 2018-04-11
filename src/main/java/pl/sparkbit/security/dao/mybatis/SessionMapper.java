@@ -9,17 +9,18 @@ public interface SessionMapper {
 
     void insertSession(@Param("session") Session session, @Param("prefix") String prefix);
 
-    void updateSessionExpirationTimestamp(@Param("authToken") String authToken,
+    void updateSessionExpirationTimestamp(@Param("authTokenHash") String authTokenHash,
                                           @Param("expirationTimestamp") Instant expirationTimestamp,
                                           @Param("prefix") String prefix);
 
-    void updateExtraAuthnCheckRequired(@Param("authToken") String authToken,
+    void updateExtraAuthnCheckRequired(@Param("authTokenHash") String authTokenHash,
                                        @Param("value") boolean value,
                                        @Param("prefix") String prefix);
 
-    Session selectSession(@Param("authToken") String authToken, @Param("prefix") String prefix);
+    Session selectSession(@Param("authTokenHash") String authTokenHash, @Param("prefix") String prefix);
 
-    void deleteSession(@Param("authToken") String authToken, @Param("deletionTimestamp") Instant deletionTimestamp,
+    void deleteSession(@Param("authTokenHash") String authTokenHash,
+                       @Param("deletionTimestamp") Instant deletionTimestamp,
                        @Param("prefix") String prefix);
 
     void deleteSessions(@Param("userId") String userId, @Param("deletionTimestamp") Instant deletionTimestamp,
