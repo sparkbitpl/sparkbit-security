@@ -10,7 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.web.context.request.RequestContextHolder;
 import pl.sparkbit.security.Security;
 import pl.sparkbit.security.dao.SessionDao;
 import pl.sparkbit.security.domain.RestUserDetails;
@@ -27,7 +26,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 import static pl.sparkbit.security.config.Properties.*;
 
 @RequiredArgsConstructor
@@ -117,13 +115,13 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     @Transactional
-    public void updateSessionExpirationTimestamp(String authToken) {
+    public Instant updateAndGetSessionExpirationTimestamp(String authToken) {
         Instant expirationTimestamp = getExpirationTimestamp();
         String authTokenHash = authTokenHasher.hash(authToken);
 
         sessionDao.updateSessionExpirationTimestamp(authTokenHash, expirationTimestamp);
-        RequestContextHolder.currentRequestAttributes()
-                .setAttribute(SESSION_EXPIRATION_TIMESTAMP_REQUEST_ATTRIBUTE, expirationTimestamp, SCOPE_REQUEST);
+
+        return expirationTimestamp;
     }
 
     private void maybeDeleteOldSession(String oldAuthToken, String userId) {

@@ -9,14 +9,12 @@ import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.util.Assert;
 import pl.sparkbit.security.domain.RestUserDetails;
 import pl.sparkbit.security.restauthn.RestAuthenticationToken;
-import pl.sparkbit.security.service.SessionService;
 import pl.sparkbit.security.service.UserDetailsService;
 
 @RequiredArgsConstructor
 public class UserAuthenticationProvider implements AuthenticationProvider {
 
     private final UserDetailsService userDetailsService;
-    private final SessionService sessionService;
     private final UserDetailsChecker authenticationChecks = new AccountStatusUserDetailsChecker();
 
     @Override
@@ -28,10 +26,6 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
 
         Assert.notNull(restUserDetails, "Returned restUserDetails should never be null - method contract violation");
         authenticationChecks.check(restUserDetails);
-
-        if (sessionService.isSessionExpirationEnabled()) {
-            sessionService.updateSessionExpirationTimestamp(authToken);
-        }
 
         return new UserAuthenticationToken(restUserDetails);
     }

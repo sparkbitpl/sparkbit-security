@@ -7,7 +7,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.util.Assert;
-import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -17,11 +16,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.Instant;
 import java.util.Optional;
-
-import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
-import static pl.sparkbit.security.service.SessionService.SESSION_EXPIRATION_TIMESTAMP_REQUEST_ATTRIBUTE;
 
 @RequiredArgsConstructor
 public class RestAuthenticationFilter extends GenericFilterBean {
@@ -29,7 +24,6 @@ public class RestAuthenticationFilter extends GenericFilterBean {
     private final AuthenticationManager authenticationManager;
     private final AuthenticationEntryPoint entryPoint;
     private final AuthenticationTokenHelper authenticationTokenHelper;
-    private final String sessionExpirationTimestampHeaderName;
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain)
@@ -47,13 +41,7 @@ public class RestAuthenticationFilter extends GenericFilterBean {
                         "Authentication is not authenticated after successful authentication");
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                Object expirationTimestampObject = RequestContextHolder.currentRequestAttributes()
-                        .getAttribute(SESSION_EXPIRATION_TIMESTAMP_REQUEST_ATTRIBUTE, SCOPE_REQUEST);
-                if (expirationTimestampObject != null && expirationTimestampObject instanceof Instant) {
-                    Instant expirationTimestamp = (Instant) expirationTimestampObject;
-                    response.setHeader(sessionExpirationTimestampHeaderName,
-                            String.valueOf(expirationTimestamp.toEpochMilli()));
-                }
+
             } catch (AuthenticationException failed) {
                 SecurityContextHolder.clearContext();
                 entryPoint.commence(request, response, failed);

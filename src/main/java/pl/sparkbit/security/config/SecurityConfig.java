@@ -24,6 +24,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.web.filter.GenericFilterBean;
 import pl.sparkbit.security.login.LoginAuthenticationFilter;
 import pl.sparkbit.security.login.LoginPrincipalFactory;
+import pl.sparkbit.security.login.SessionExpirationHeaderFilter;
 import pl.sparkbit.security.login.social.FacebookAuthenticationProvider;
 import pl.sparkbit.security.login.social.GoogleAuthenticationProvider;
 import pl.sparkbit.security.login.social.TwitterAuthenticationProvider;
@@ -177,18 +178,21 @@ public class SecurityConfig {
 
         @Bean
         public UserAuthenticationProvider restAuthenticationProvider() {
-            return new UserAuthenticationProvider(userDetailsService, sessionService);
+            return new UserAuthenticationProvider(userDetailsService);
         }
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             GenericFilterBean restAuthenticationFiler = new RestAuthenticationFilter(authenticationManager(),
-                    authenticationEntryPoint, authenticationTokenHelper, sessionExpirationTimestampHeaderName);
+                    authenticationEntryPoint, authenticationTokenHelper);
+
+            SessionExpirationHeaderFilter sessionExpirationHeaderFilter = new SessionExpirationHeaderFilter(
+                    sessionService, sessionExpirationTimestampHeaderName, authenticationTokenHelper);
 
             http
                     .cors().and()
                     .addFilterBefore(restAuthenticationFiler, BasicAuthenticationFilter.class)
-
+                    .addFilterAfter(sessionExpirationHeaderFilter, RestAuthenticationFilter.class)
                     .authorizeRequests()
                     //fail-safe but LOGIN is already handled by LoginConfigurationAdapter
                     .antMatchers(LOGIN).denyAll()
@@ -221,7 +225,7 @@ public class SecurityConfig {
         public void configure(HttpSecurity http, AuthenticationManager authenticationManager, String antMatcher,
                               String role) throws Exception {
             GenericFilterBean authenticationFilter = new RestAuthenticationFilter(authenticationManager,
-                    authenticationEntryPoint, authenticationTokenHelper, sessionExpirationTimestampHeaderName);
+                    authenticationEntryPoint, authenticationTokenHelper);
 
             http
                     .antMatcher(antMatcher)
