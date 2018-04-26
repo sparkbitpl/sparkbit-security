@@ -3,9 +3,9 @@ package pl.sparkbit.security.util;
 import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import pl.sparkbit.commons.util.IdGenerator;
+import pl.sparkbit.security.config.Properties;
 import pl.sparkbit.security.dao.SecurityChallengeDao;
 import pl.sparkbit.security.domain.SecurityChallenge;
 import pl.sparkbit.security.domain.SecurityChallengeType;
@@ -13,15 +13,13 @@ import pl.sparkbit.security.exception.NoValidTokenFoundException;
 
 import javax.annotation.PostConstruct;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.Optional;
 
-import static pl.sparkbit.security.config.Properties.*;
 import static pl.sparkbit.security.exception.NoValidTokenFoundException.FailureReason.TOKEN_EXPIRED;
 import static pl.sparkbit.security.exception.NoValidTokenFoundException.FailureReason.TOKEN_NOT_FOUND;
-import static pl.sparkbit.security.util.SecureRandomStringGeneratorImpl.BASE_58_CHARACTERS;
 
 @Component
 @RequiredArgsConstructor
@@ -29,35 +27,26 @@ import static pl.sparkbit.security.util.SecureRandomStringGeneratorImpl.BASE_58_
 @SuppressWarnings("unused")
 public class SecurityChallengesImpl implements SecurityChallenges {
 
-    private static final int DEFAULT_CHALLENGE_VALIDITY_HOURS = 1;
-    private static final int DEFAULT_CHALLENGE_TOKEN_LENGTH = 6;
 
     private final IdGenerator idGenerator;
     private final Clock clock;
     private final SecurityChallengeDao securityChallengeDao;
     private final SecureRandomStringGenerator secureRandomStringGenerator;
+    private final Properties configuration;
 
-    private Map<SecurityChallengeType, Integer> validityTimes;
-
-    @Value("${" + CHALLENGE_TOKEN_LENGTH + ":" + DEFAULT_CHALLENGE_TOKEN_LENGTH + "}")
-    private int tokenLength;
-    @Value("${" + CHALLENGE_TOKEN_ALLOWED_CHARACTERS + ":" + BASE_58_CHARACTERS + "}")
-    private String allowedCharacters;
-
-    @Value("${" + PASSWORD_RESET_CHALLENGE_VALIDITY_HOURS + ":" + DEFAULT_CHALLENGE_VALIDITY_HOURS + "}")
-    private int passwordResetChallengeValidityHours;
-    @Value("${" + EMAIL_VERIFICATION_CHALLENGE_VALIDITY_HOURS + ":" + DEFAULT_CHALLENGE_VALIDITY_HOURS + "}")
-    private int emailVerificationChallengeValidityHours;
-    @Value("${" + EXTRA_AUTHENTICATION_CHECK_CHALLENGE_VALIDITY_HOURS + ":" + DEFAULT_CHALLENGE_VALIDITY_HOURS + "}")
-    private int extraAuthnChallengeValidityHours;
+    private Map<SecurityChallengeType, Duration> validityTimes;
 
     @PostConstruct
     public void setup() {
         validityTimes = ImmutableMap.of(
-                SecurityChallengeType.PASSWORD_RESET, passwordResetChallengeValidityHours,
-                SecurityChallengeType.SET_NEW_PASSWORD, passwordResetChallengeValidityHours,
-                SecurityChallengeType.EMAIL_VERIFICATION, emailVerificationChallengeValidityHours,
-                SecurityChallengeType.EXTRA_AUTHN_CHECK, extraAuthnChallengeValidityHours
+                SecurityChallengeType.PASSWORD_RESET,
+                configuration.getPasswordReset().getChallengeValidity(),
+                SecurityChallengeType.SET_NEW_PASSWORD,
+                configuration.getPasswordReset().getChallengeValidity(),
+                SecurityChallengeType.EMAIL_VERIFICATION,
+                configuration.getEmailVerification().getChallengeValidity(),
+                SecurityChallengeType.EXTRA_AUTHN_CHECK,
+                configuration.getExtraAuthnCheck().getChallengeValidity()
         );
     }
 
@@ -65,7 +54,7 @@ public class SecurityChallengesImpl implements SecurityChallenges {
     public SecurityChallenge createAndInsertChallenge(String userId, SecurityChallengeType type) {
         String id = idGenerator.generate();
         String token = generateChallengeToken();
-        Instant expirationTimestamp = clock.instant().plus(validityTimes.get(type), ChronoUnit.HOURS);
+        Instant expirationTimestamp = clock.instant().plus(validityTimes.get(type));
 
         SecurityChallenge challenge = SecurityChallenge.builder()
                 .id(id)
@@ -100,6 +89,8 @@ public class SecurityChallengesImpl implements SecurityChallenges {
     }
 
     private String generateChallengeToken() {
-        return secureRandomStringGenerator.randomString(tokenLength, allowedCharacters);
+        return secureRandomStringGenerator.randomString(
+                configuration.getChallengeToken().getLength(),
+                configuration.getChallengeToken().getAllowedCharacters());
     }
 }

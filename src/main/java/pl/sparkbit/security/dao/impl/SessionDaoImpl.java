@@ -1,9 +1,9 @@
 package pl.sparkbit.security.dao.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import pl.sparkbit.security.config.Properties;
 import pl.sparkbit.security.dao.SessionDao;
 import pl.sparkbit.security.dao.mybatis.SessionMapper;
 import pl.sparkbit.security.domain.Session;
@@ -12,7 +12,6 @@ import java.time.Instant;
 import java.util.Optional;
 
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
-import static pl.sparkbit.security.config.Properties.USER_ENTITY_NAME;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,47 +20,46 @@ import static pl.sparkbit.security.config.Properties.USER_ENTITY_NAME;
 public class SessionDaoImpl implements SessionDao {
 
     private final SessionMapper sessionMapper;
-
-    @Value("${" + USER_ENTITY_NAME + ":user}")
-    private String prefix;
+    private final Properties configuration;
 
     @Override
     public void insertSession(Session session) {
-        sessionMapper.insertSession(session, prefix);
+        sessionMapper.insertSession(session, configuration.getUserEntityName());
     }
 
     @Override
     public void updateSessionExpirationTimestamp(String authTokenHash, Instant expirationTimestamp) {
-        sessionMapper.updateSessionExpirationTimestamp(authTokenHash, expirationTimestamp, prefix);
+        sessionMapper.updateSessionExpirationTimestamp(authTokenHash, expirationTimestamp,
+                configuration.getUserEntityName());
     }
 
     @Override
     public void updateExtraAuthnCheckRequired(String authTokenHash, boolean value) {
-        sessionMapper.updateExtraAuthnCheckRequired(authTokenHash, value, prefix);
+        sessionMapper.updateExtraAuthnCheckRequired(authTokenHash, value, configuration.getUserEntityName());
     }
 
     @Override
     public Optional<Session> selectSession(String authTokenHash) {
-        return Optional.ofNullable(sessionMapper.selectSession(authTokenHash, prefix));
+        return Optional.ofNullable(sessionMapper.selectSession(authTokenHash, configuration.getUserEntityName()));
     }
 
     @Override
     public void deleteSession(String authTokenHash, Instant deletionTimestamp) {
-        sessionMapper.deleteSession(authTokenHash, deletionTimestamp, prefix);
+        sessionMapper.deleteSession(authTokenHash, deletionTimestamp, configuration.getUserEntityName());
     }
 
     @Override
     public void deleteSessions(String userId, Instant deletionTimestamp) {
-        sessionMapper.deleteSessions(userId, deletionTimestamp, prefix);
+        sessionMapper.deleteSessions(userId, deletionTimestamp, configuration.getUserEntityName());
     }
 
     @Override
     public void deleteExpiredSessions(Instant now) {
-        sessionMapper.deleteExpiredSessions(now, prefix);
+        sessionMapper.deleteExpiredSessions(now, configuration.getUserEntityName());
     }
 
     @Override
     public void purgeDeletedSessions(Instant deletedBefore) {
-        sessionMapper.purgeDeletedSessions(deletedBefore, prefix);
+        sessionMapper.purgeDeletedSessions(deletedBefore, configuration.getUserEntityName());
     }
 }

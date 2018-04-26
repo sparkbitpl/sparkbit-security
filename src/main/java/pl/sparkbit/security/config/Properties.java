@@ -1,54 +1,152 @@
 package pl.sparkbit.security.config;
 
-import lombok.NoArgsConstructor;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
+import pl.sparkbit.security.password.encoder.PasswordEncoderType;
 
-import static lombok.AccessLevel.PRIVATE;
+import javax.validation.constraints.NotNull;
+import java.time.Duration;
 
-@NoArgsConstructor(access = PRIVATE)
-@SuppressWarnings({"checkstyle:hideutilityclassconstructor", "WeakerAccess"})
+@Component
+@ConfigurationProperties("sparkbit.security")
+@Data
+@SuppressWarnings("WeakerAccess")
+@Validated
 public class Properties {
 
     private static final String PREFIX = "sparkbit.security.";
 
-    public static final String ALLOW_UNSECURED_COOKIE = PREFIX + "allowUnsecuredCookie";
-    public static final String AUTH_TOKEN_HEADER_NAME = PREFIX + "authTokenHeader.name";
-    public static final String AUTH_TOKEN_COOKIE_NAME = PREFIX + "authTokenCookie.name";
-    public static final String CHALLENGE_TOKEN_ALLOWED_CHARACTERS = PREFIX + "challengeToken.allowedCharacters";
-    public static final String CHALLENGE_TOKEN_LENGTH = PREFIX + "challengeToken.length";
-    public static final String CORS_ALLOW_CREDENTIALS = PREFIX + "cors.allowCredentials";
-    public static final String CORS_ALLOWED_HEADERS = PREFIX + "cors.allowedHeaders";
-    public static final String CORS_ALLOWED_METHODS = PREFIX + "cors.allowedMethods";
-    public static final String CORS_ALLOWED_ORIGINS = PREFIX + "cors.allowedOrigins";
-    public static final String CORS_MAX_AGE_SECONDS = PREFIX + "cors.maxAgeSeconds";
-    public static final String CORS_EXPOSED_HEADERS = PREFIX + "cors.exposedHeaders";
-    public static final String DEFAULT_PASSWORD_POLICY_ENABLED = PREFIX + "defaultPasswordPolicy.enabled";
-    public static final String DELETED_SESSIONS_PURGING_ENABLED = PREFIX + "deletedSessionPurging.enabled";
-    public static final String DELETED_SESSIONS_PURGING_OLDER_THAN_MINUTES =
-            PREFIX + "deletedSessionPurging.olderThanMinutes";
-    public static final String DELETED_SESSIONS_PURGING_RUN_EVERY_MILLIS =
-            PREFIX + "deletedSessionPurging.runEveryMillis";
-    public static final String EMAIL_VERIFICATION_CHALLENGE_VALIDITY_HOURS =
-            PREFIX + "emailVerification.challengeValidityHours";
-    public static final String EMAIL_VERIFICATION_ENABLED = PREFIX + "emailVerification.enabled";
-    public static final String EXPECTED_AUTHN_ATTRIBUTES = PREFIX + "expectedAuthnAttributes";
-    public static final String EXPIRED_CHALLENGE_DELETION_RUN_EVERY_MILLIS =
-            PREFIX + "expiredChallengeDeletion.runEveryMillis";
-    public static final String EXTRA_AUTHENTICATION_CHECK_CHALLENGE_VALIDITY_HOURS =
-            PREFIX + "extraAuthnCheck.challengeValidityHours";
-    public static final String EXTRA_AUTHENTICATION_CHECK_ENABLED = PREFIX + "extraAuthnCheck.enabled";
-    public static final String MINIMAL_PASSWORD_LENGTH = PREFIX + "minPasswordLength";
-    public static final String PASSWORD_CHANGE_ENABLED = PREFIX + "passwordChange.enabled";
-    public static final String PASSWORD_ENCODER_TYPE = PREFIX + "passwordEncoderType";
-    public static final String PASSWORD_RESET_CHALLENGE_VALIDITY_HOURS =
-            PREFIX + "passwordReset.challengeValidityHours";
-    public static final String PASSWORD_RESET_CHALLENGE_INFORM_NOT_FOUND =
-            PREFIX + "passwordReset.informNotFound";
-    public static final String PASSWORD_RESET_ENABLED = PREFIX + "passwordReset.enabled";
-    public static final String SESSION_EXPIRATION_ENABLED = PREFIX + "sessionExpiration.enabled";
-    public static final String SESSION_EXPIRATION_MINUTES = PREFIX + "sessionExpiration.minutes";
-    public static final String SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME =
-            PREFIX + "sessionExpirationTimestamp.headerName";
-    public static final String USER_ENTITY_NAME = PREFIX + "userEntityName";
-    public static final String USER_TABLE_NAME = PREFIX + "userTableName";
-    public static final String USER_TABLE_ID_COLUMN_NAME = PREFIX + "userTableIdColumnName";
+    public static final String DEFAULT_PASSWORD_POLICY_ENABLED = PREFIX + "default-password-policy-enabled";
+    public static final String DELETED_SESSIONS_PURGING_ENABLED = PREFIX + "deleted-session-purging.enabled";
+    public static final String EMAIL_VERIFICATION_ENABLED = PREFIX + "email-verification.enabled";
+    public static final String EXTRA_AUTHENTICATION_CHECK_ENABLED = PREFIX + "extra-authn-check.enabled";
+    public static final String PASSWORD_CHANGE_ENABLED = PREFIX + "password-change.enabled";
+    public static final String PASSWORD_RESET_ENABLED = PREFIX + "password-reset.enabled";
+    public static final String SESSION_EXPIRATION_ENABLED = PREFIX + "session-expiration.enabled";
+
+    @NotNull
+    private boolean allowUnsecuredCookie;
+    @NotNull
+    private String authTokenHeaderName;
+    @NotNull
+    private String authTokenCookieName;
+    @NotNull
+    private ChallengeToken challengeToken;
+    @NotNull
+    private Cors cors;
+    @NotNull
+    private boolean defaultPasswordPolicyEnabled;
+    @NotNull
+    private DeletedSessionPurging deletedSessionPurging;
+    @NotNull
+    private EmailVerification emailVerification;
+    @NotNull
+    private String expectedAuthnAttributes;
+    @NotNull
+    private ExpiredChallengeDeletion expiredChallengeDeletion;
+    @NotNull
+    private ExtraAuthnCheck extraAuthnCheck;
+    @NotNull
+    private Integer minPasswordLength;
+    @NotNull
+    private boolean passwordChangeEnabled;
+    @NotNull
+    private PasswordEncoderType passwordEncoderType;
+    @NotNull
+    private PasswordReset passwordReset;
+    @NotNull
+    private SessionExpiration sessionExpiration;
+    @NotNull
+    private String userEntityName;
+    @NotNull
+    private String userTableName;
+    @NotNull
+    private String userTableIdColumnName;
+
+    @Data
+    @Validated
+    public static class ChallengeToken {
+        @NotNull
+        private String allowedCharacters;
+        @NotNull
+        private Integer length;
+    }
+
+    @Data
+    @Validated
+    public static class Cors {
+        @NotNull
+        private boolean allowCredentials;
+        @NotNull
+        private String allowedHeaders;
+        @NotNull
+        private String allowedMethods;
+        @NotNull
+        private String allowedOrigins;
+        @NotNull
+        private String exposedHeaders;
+        @NotNull
+        private Duration maxAge;
+    }
+
+    @Data
+    @Validated
+    public static class DeletedSessionPurging {
+        @NotNull
+        private boolean enabled;
+        @NotNull
+        private Duration olderThan;
+        @NotNull
+        private Duration runEvery;
+
+    }
+
+    @Data
+    @Validated
+    public static class EmailVerification {
+        @NotNull
+        private Duration challengeValidity;
+        @NotNull
+        private boolean enabled;
+    }
+
+    @Data
+    @Validated
+    public static class ExpiredChallengeDeletion {
+        @NotNull
+        private Duration runEvery;
+    }
+
+    @Data
+    @Validated
+    public static class ExtraAuthnCheck {
+        @NotNull
+        private Duration challengeValidity;
+        @NotNull
+        private boolean enabled;
+    }
+
+    @Data
+    @Validated
+    public static class PasswordReset {
+        @NotNull
+        private Duration challengeValidity;
+        @NotNull
+        private boolean informNotFound;
+        @NotNull
+        private boolean enabled;
+    }
+
+    @Data
+    @Validated
+    public static class SessionExpiration {
+        @NotNull
+        private boolean enabled;
+        @NotNull
+        private Duration duration;
+        @NotNull
+        private String timestampHeaderName;
+    }
 }

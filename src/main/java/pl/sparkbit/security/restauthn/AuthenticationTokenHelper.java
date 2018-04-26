@@ -1,32 +1,25 @@
 package pl.sparkbit.security.restauthn;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import pl.sparkbit.security.config.Properties;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static pl.sparkbit.security.Security.DEFAULT_AUTH_TOKEN_COOKIE_NAME;
-import static pl.sparkbit.security.Security.DEFAULT_AUTH_TOKEN_HEADER_NAME;
-import static pl.sparkbit.security.config.Properties.*;
-
 @Component
+@RequiredArgsConstructor
 public class AuthenticationTokenHelper {
 
-    @Value("${" + AUTH_TOKEN_HEADER_NAME + ":" + DEFAULT_AUTH_TOKEN_HEADER_NAME + "}")
-    private String authTokenHeaderName;
-    @Value("${" + AUTH_TOKEN_COOKIE_NAME + ":" + DEFAULT_AUTH_TOKEN_COOKIE_NAME + "}")
-    private String authTokenCookieName;
-    @Value("${" + ALLOW_UNSECURED_COOKIE + ":false}")
-    private boolean allowUnsecuredCookie;
+    private final Properties configuration;
 
     public Optional<String> extractAuthenticationToken(HttpServletRequest request) {
-        String authToken = request.getHeader(authTokenHeaderName);
+        String authToken = request.getHeader(configuration.getAuthTokenHeaderName());
         if (authToken == null && request.getCookies() != null) {
             authToken = Arrays.stream(request.getCookies())
-                    .filter(cookie -> cookie.getName().equals(authTokenCookieName))
+                    .filter(cookie -> cookie.getName().equals(configuration.getAuthTokenCookieName()))
                     .findAny()
                     .map(Cookie::getValue)
                     .orElse(null);
@@ -35,8 +28,8 @@ public class AuthenticationTokenHelper {
     }
 
     public Cookie buildAuthenticationTokenCookie(String authToken) {
-        Cookie cookie = new Cookie(authTokenCookieName, authToken);
-        if (!allowUnsecuredCookie) {
+        Cookie cookie = new Cookie(configuration.getAuthTokenCookieName(), authToken);
+        if (!configuration.isAllowUnsecuredCookie()) {
             cookie.setSecure(true);
         }
         return cookie;

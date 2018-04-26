@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
-import static pl.sparkbit.security.config.Properties.EXPECTED_AUTHN_ATTRIBUTES;
 
 @Component
 @Slf4j
@@ -17,7 +16,8 @@ public class LoginPrincipalFactory {
 
     private final Set<String> expectedAttributes;
 
-    public LoginPrincipalFactory(@Value("${" + EXPECTED_AUTHN_ATTRIBUTES + "}") String[] expectedAuthnAttributes) {
+    public LoginPrincipalFactory(
+            @Value("#{properties.getExpectedAuthnAttributes()}") String[] expectedAuthnAttributes) {
         this.expectedAttributes = Arrays.stream(expectedAuthnAttributes).collect(toSet());
     }
 

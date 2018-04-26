@@ -1,0 +1,45 @@
+#This file represents default values when resolving Properties object
+
+sparkbit:
+  security:
+    allow-unsecured-cookie: false
+    auth-token-header-name: X-Sparkbit-Auth-Token
+    auth-token-cookie-name: sparkbitAuthToken
+    challenge-token:
+      allowed-characters: 23456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz
+      length: 6
+    cors:
+      allow-credentials: true
+      allowed-headers: "*"
+      allowed-methods: GET, POST, PUT, DELETE, HEAD
+      allowed-origins: "*"
+      max-age: 30m
+      exposed-headers: X-Sparkbit-Session-Expiration-Timestamp
+    default-password-policy-enabled: true
+    deleted-session-purging:
+      enabled: true
+      older-than: 7d
+      run-every: 1h
+    email-verification:
+      challenge-validity: 1h
+      enabled: false
+    expected-authn-attributes: email
+    expired-challenge-deletion:
+      run-every: 1h
+    extra-authn-check:
+      challenge-validity: 1h
+      enabled: false
+    min-password-length: 8
+    password-change-enabled: true
+    password-encoder-type: BCRYPT
+    password-reset:
+      challenge-validity: 1h
+      inform-not-found: false
+      enabled: false
+    session-expiration:
+      enabled: false
+      duration: 1h
+      timestamp-header-name: X-Sparkbit-Session-Expiration-Timestamp
+    user-entity-name: user
+    user-table-name: uzer
+    user-table-id-column-name: id

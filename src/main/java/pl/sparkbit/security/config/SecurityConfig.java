@@ -3,7 +3,6 @@ package pl.sparkbit.security.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -31,7 +30,6 @@ import pl.sparkbit.security.login.social.TwitterAuthenticationProvider;
 import pl.sparkbit.security.login.social.resolver.FacebookResolver;
 import pl.sparkbit.security.login.social.resolver.GoogleResolver;
 import pl.sparkbit.security.login.social.resolver.TwitterResolver;
-import pl.sparkbit.security.password.encoder.PasswordEncoderType;
 import pl.sparkbit.security.password.encoder.PhpassPasswordEncoder;
 import pl.sparkbit.security.restauthn.AuthenticationTokenHelper;
 import pl.sparkbit.security.restauthn.RestAuthenticationFilter;
@@ -45,9 +43,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-import static pl.sparkbit.security.Security.DEFAULT_SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME;
-import static pl.sparkbit.security.config.Properties.PASSWORD_ENCODER_TYPE;
-import static pl.sparkbit.security.config.Properties.SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME;
 import static pl.sparkbit.security.mvc.controller.Paths.EXTRA_AUTH_CHECK;
 import static pl.sparkbit.security.mvc.controller.Paths.LOGIN;
 
@@ -60,11 +55,6 @@ public class SecurityConfig {
     @Bean
     public ConversionService conversionService() {
         return new DefaultConversionService();
-    }
-
-    @Bean
-    public CorsConfigurer corsConfigurer() {
-        return new CorsConfigurer();
     }
 
     @Bean
@@ -86,13 +76,11 @@ public class SecurityConfig {
         private final Optional<FacebookResolver> facebookResolver;
         private final Optional<GoogleResolver> googleResolver;
         private final Optional<TwitterResolver> twitterResolver;
-
-        @Value("${" + PASSWORD_ENCODER_TYPE + ":BCRYPT}")
-        private PasswordEncoderType passwordEncoderType;
+        private final Properties configuration;
 
         @Bean
         public PasswordEncoder passwordEncoder() {
-            switch (passwordEncoderType) {
+            switch (configuration.getPasswordEncoderType()) {
                 case STANDARD:
                     return new StandardPasswordEncoder();
                 case BCRYPT:
@@ -175,10 +163,7 @@ public class SecurityConfig {
         private final AuthenticationEntryPoint authenticationEntryPoint;
         private final AuthenticationTokenHelper authenticationTokenHelper;
         private final SessionService sessionService;
-
-        @Value("${" + SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME + ":"
-                + DEFAULT_SESSION_EXPIRATION_TIMESTAMP_HEADER_NAME + "}")
-        private String sessionExpirationTimestampHeaderName;
+        private final Properties configuration;
 
         @Bean
         public UserAuthenticationProvider restAuthenticationProvider() {
@@ -191,7 +176,9 @@ public class SecurityConfig {
                     authenticationEntryPoint, authenticationTokenHelper);
 
             SessionExpirationHeaderFilter sessionExpirationHeaderFilter = new SessionExpirationHeaderFilter(
-                    sessionService, sessionExpirationTimestampHeaderName, authenticationTokenHelper);
+                    sessionService,
+                    configuration.getSessionExpiration().getTimestampHeaderName(),
+                    authenticationTokenHelper);
 
             http
                     .cors().and()

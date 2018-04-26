@@ -2,7 +2,6 @@ package pl.sparkbit.security.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.sparkbit.commons.exception.NotFoundException;
 import pl.sparkbit.security.callbacks.PasswordResetChallengeCallback;
 import pl.sparkbit.security.callbacks.SetNewPasswordChallengeCallback;
+import pl.sparkbit.security.config.Properties;
 import pl.sparkbit.security.dao.CredentialsDao;
 import pl.sparkbit.security.dao.UserDetailsDao;
 import pl.sparkbit.security.domain.Credentials;
@@ -53,9 +53,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     private final PasswordResetChallengeCallback passwordResetCallback;
     private final SecurityChallenges securityChallenges;
     private final UserDetailsDao userDetailsDao;
-
-    @Value("${" + PASSWORD_RESET_CHALLENGE_INFORM_NOT_FOUND + ":false}")
-    private boolean informNotFound;
+    private final Properties configuration;
 
     @Override
     @Transactional
@@ -71,7 +69,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         Optional<String> userIdOpt = userDetailsDao.selectUserId(authnAttributes);
         if (!userIdOpt.isPresent()) {
             log.debug("Initiated password reset for non-existent user {}", authnAttributes);
-            if (informNotFound) {
+            if (configuration.getPasswordReset().isInformNotFound()) {
                 throw new NotFoundException("User not found");
             }
             return;

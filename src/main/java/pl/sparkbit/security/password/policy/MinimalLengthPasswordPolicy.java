@@ -1,22 +1,22 @@
 package pl.sparkbit.security.password.policy;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+import pl.sparkbit.security.config.Properties;
 
 import static pl.sparkbit.security.config.Properties.DEFAULT_PASSWORD_POLICY_ENABLED;
-import static pl.sparkbit.security.config.Properties.MINIMAL_PASSWORD_LENGTH;
 
 @Component
-@ConditionalOnProperty(value = DEFAULT_PASSWORD_POLICY_ENABLED, havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(value = DEFAULT_PASSWORD_POLICY_ENABLED, havingValue = "true")
+@RequiredArgsConstructor
 @SuppressWarnings("unused")
 public class MinimalLengthPasswordPolicy implements PasswordPolicy {
 
-    @Value("${" + MINIMAL_PASSWORD_LENGTH + ":8}")
-    private int minimalLength;
+    private final Properties configuration;
 
     @Override
     public boolean isValid(String password) {
-        return password.length() >= minimalLength;
+        return password.length() >= configuration.getMinPasswordLength();
     }
 }

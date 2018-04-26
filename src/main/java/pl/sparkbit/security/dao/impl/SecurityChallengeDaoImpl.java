@@ -1,9 +1,9 @@
 package pl.sparkbit.security.dao.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import pl.sparkbit.security.config.Properties;
 import pl.sparkbit.security.dao.SecurityChallengeDao;
 import pl.sparkbit.security.dao.mybatis.SecurityChallengeMapper;
 import pl.sparkbit.security.domain.SecurityChallenge;
@@ -13,7 +13,6 @@ import java.time.Instant;
 import java.util.Optional;
 
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
-import static pl.sparkbit.security.config.Properties.USER_ENTITY_NAME;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,32 +21,31 @@ import static pl.sparkbit.security.config.Properties.USER_ENTITY_NAME;
 public class SecurityChallengeDaoImpl implements SecurityChallengeDao {
 
     private final SecurityChallengeMapper securityChallengeMapper;
-
-    @Value("${" + USER_ENTITY_NAME + ":user}")
-    private String prefix;
+    private final Properties configuration;
 
     @Override
     public void insertChallenge(SecurityChallenge securityChallenge) {
-        securityChallengeMapper.insertChallenge(securityChallenge, prefix);
+        securityChallengeMapper.insertChallenge(securityChallenge, configuration.getUserEntityName());
     }
 
     @Override
     public Optional<SecurityChallenge> selectChallengeByTokenAndType(String token, SecurityChallengeType type) {
-        return Optional.ofNullable(securityChallengeMapper.selectChallengeByTokenAndType(token, type, prefix));
+        return Optional.ofNullable(securityChallengeMapper.selectChallengeByTokenAndType(token, type,
+                configuration.getUserEntityName()));
     }
 
     @Override
     public void deleteChallenge(String id) {
-        securityChallengeMapper.deleteChallengeById(id, prefix);
+        securityChallengeMapper.deleteChallengeById(id, configuration.getUserEntityName());
     }
 
     @Override
     public void deleteChallenge(String userId, SecurityChallengeType type) {
-        securityChallengeMapper.deleteChallengeByUserIdAndType(userId, type, prefix);
+        securityChallengeMapper.deleteChallengeByUserIdAndType(userId, type, configuration.getUserEntityName());
     }
 
     @Override
     public void deleteExpiredChallenges(Instant now) {
-        securityChallengeMapper.deleteExpiredChallenges(now, prefix);
+        securityChallengeMapper.deleteExpiredChallenges(now, configuration.getUserEntityName());
     }
 }

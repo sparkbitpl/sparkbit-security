@@ -15,7 +15,7 @@ import pl.sparkbit.security.service.PasswordChangeService;
 
 import static pl.sparkbit.security.config.Properties.PASSWORD_CHANGE_ENABLED;
 
-@ConditionalOnProperty(value = PASSWORD_CHANGE_ENABLED, havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(value = PASSWORD_CHANGE_ENABLED, havingValue = "true")
 @RequiredArgsConstructor
 @Service
 @Slf4j
