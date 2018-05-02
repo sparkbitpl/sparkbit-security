@@ -10,7 +10,7 @@ import pl.sparkbit.security.dao.SessionDao;
 
 import java.time.Clock;
 
-import static pl.sparkbit.security.config.Properties.SESSION_EXPIRATION_ENABLED;
+import static pl.sparkbit.security.config.SecurityProperties.SESSION_EXPIRATION_ENABLED;
 
 @Component
 @ConditionalOnProperty(name = SESSION_EXPIRATION_ENABLED, havingValue = "true")

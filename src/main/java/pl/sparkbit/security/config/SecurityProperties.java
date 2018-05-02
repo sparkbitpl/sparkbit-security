@@ -14,7 +14,7 @@ import java.time.Duration;
 @Data
 @SuppressWarnings("WeakerAccess")
 @Validated
-public class Properties {
+public class SecurityProperties {
 
     private static final String PREFIX = "sparkbit.security.";
 
@@ -27,7 +27,7 @@ public class Properties {
     public static final String SESSION_EXPIRATION_ENABLED = PREFIX + "session-expiration.enabled";
 
     @NotNull
-    private boolean allowUnsecuredCookie;
+    private Boolean allowUnsecuredCookie;
     @NotNull
     private String authTokenHeaderName;
     @NotNull
@@ -37,7 +37,7 @@ public class Properties {
     @NotNull
     private Cors cors;
     @NotNull
-    private boolean defaultPasswordPolicyEnabled;
+    private Boolean defaultPasswordPolicyEnabled;
     @NotNull
     private DeletedSessionPurging deletedSessionPurging;
     @NotNull
@@ -51,7 +51,7 @@ public class Properties {
     @NotNull
     private Integer minPasswordLength;
     @NotNull
-    private boolean passwordChangeEnabled;
+    private Boolean passwordChangeEnabled;
     @NotNull
     private PasswordEncoderType passwordEncoderType;
     @NotNull
@@ -78,7 +78,7 @@ public class Properties {
     @Validated
     public static class Cors {
         @NotNull
-        private boolean allowCredentials;
+        private Boolean allowCredentials;
         @NotNull
         private String allowedHeaders;
         @NotNull
@@ -95,7 +95,7 @@ public class Properties {
     @Validated
     public static class DeletedSessionPurging {
         @NotNull
-        private boolean enabled;
+        private Boolean enabled;
         @NotNull
         private Duration olderThan;
         @NotNull
@@ -109,7 +109,7 @@ public class Properties {
         @NotNull
         private Duration challengeValidity;
         @NotNull
-        private boolean enabled;
+        private Boolean enabled;
     }
 
     @Data
@@ -125,7 +125,7 @@ public class Properties {
         @NotNull
         private Duration challengeValidity;
         @NotNull
-        private boolean enabled;
+        private Boolean enabled;
     }
 
     @Data
@@ -134,16 +134,16 @@ public class Properties {
         @NotNull
         private Duration challengeValidity;
         @NotNull
-        private boolean informNotFound;
+        private Boolean informNotFound;
         @NotNull
-        private boolean enabled;
+        private Boolean enabled;
     }
 
     @Data
     @Validated
     public static class SessionExpiration {
         @NotNull
-        private boolean enabled;
+        private Boolean enabled;
         @NotNull
         private Duration duration;
         @NotNull

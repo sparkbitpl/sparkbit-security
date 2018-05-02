@@ -3,7 +3,7 @@ package pl.sparkbit.security.dao.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import pl.sparkbit.security.config.Properties;
+import pl.sparkbit.security.config.SecurityProperties;
 import pl.sparkbit.security.dao.UserDetailsDao;
 import pl.sparkbit.security.dao.mybatis.UserDetailsMapper;
 import pl.sparkbit.security.domain.RestUserDetails;
@@ -21,7 +21,7 @@ import static org.springframework.transaction.annotation.Propagation.MANDATORY;
 public class UserDetailsDaoImpl implements UserDetailsDao {
 
     private final UserDetailsMapper userDetailsMapper;
-    private final Properties configuration;
+    private final SecurityProperties configuration;
 
     @Override
     public Optional<LoginUserDetails> selectLoginUserDetails(String userId) {

@@ -17,7 +17,7 @@ public class LoginPrincipalFactory {
     private final Set<String> expectedAttributes;
 
     public LoginPrincipalFactory(
-            @Value("#{properties.getExpectedAuthnAttributes()}") String[] expectedAuthnAttributes) {
+            @Value("#{securityProperties.getExpectedAuthnAttributes()}") String[] expectedAuthnAttributes) {
         this.expectedAttributes = Arrays.stream(expectedAuthnAttributes).collect(toSet());
     }
 

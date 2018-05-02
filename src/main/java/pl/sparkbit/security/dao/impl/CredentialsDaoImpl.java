@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import pl.sparkbit.security.config.Properties;
+import pl.sparkbit.security.config.SecurityProperties;
 import pl.sparkbit.security.dao.CredentialsDao;
 import pl.sparkbit.security.dao.mybatis.CredentialsMapper;
 import pl.sparkbit.security.domain.Credentials;
@@ -20,7 +20,7 @@ import static org.springframework.transaction.annotation.Propagation.MANDATORY;
 public class CredentialsDaoImpl implements CredentialsDao {
 
     private final CredentialsMapper credentialsMapper;
-    private final Properties configuration;
+    private final SecurityProperties configuration;
 
     @Override
     public void insertCredentials(Credentials credentials) {

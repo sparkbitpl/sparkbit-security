@@ -76,7 +76,7 @@ public class SecurityConfig {
         private final Optional<FacebookResolver> facebookResolver;
         private final Optional<GoogleResolver> googleResolver;
         private final Optional<TwitterResolver> twitterResolver;
-        private final Properties configuration;
+        private final SecurityProperties configuration;
 
         @Bean
         public PasswordEncoder passwordEncoder() {
@@ -163,7 +163,7 @@ public class SecurityConfig {
         private final AuthenticationEntryPoint authenticationEntryPoint;
         private final AuthenticationTokenHelper authenticationTokenHelper;
         private final SessionService sessionService;
-        private final Properties configuration;
+        private final SecurityProperties configuration;
 
         @Bean
         public UserAuthenticationProvider restAuthenticationProvider() {

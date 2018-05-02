@@ -18,7 +18,7 @@ public class ExpiredChallengesDeletionJob {
     private final SecurityChallengeDao securityChallengeDao;
     private final Clock clock;
 
-    @Scheduled(fixedDelayString = "#{properties.getExpiredChallengeDeletion().getRunEvery()}")
+    @Scheduled(fixedDelayString = "#{securityProperties.getExpiredChallengeDeletion().getRunEvery()}")
     @Transactional
     public void removeExpiredChallenges() {
         log.trace("Deleting expired challenges");

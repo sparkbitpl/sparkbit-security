@@ -12,7 +12,7 @@ import pl.sparkbit.security.service.EmailVerificationService;
 import javax.validation.Valid;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static pl.sparkbit.security.config.Properties.EMAIL_VERIFICATION_ENABLED;
+import static pl.sparkbit.security.config.SecurityProperties.EMAIL_VERIFICATION_ENABLED;
 import static pl.sparkbit.security.mvc.controller.Paths.PUBLIC_EMAIL;
 
 @ConditionalOnProperty(value = EMAIL_VERIFICATION_ENABLED, havingValue = "true")

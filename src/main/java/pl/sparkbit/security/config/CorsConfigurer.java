@@ -10,12 +10,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SuppressWarnings("unused")
 public class CorsConfigurer implements WebMvcConfigurer {
 
-    private final Properties configuration;
+    private final SecurityProperties configuration;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowCredentials(configuration.getCors().isAllowCredentials())
+                .allowCredentials(configuration.getCors().getAllowCredentials())
                 .allowedHeaders(configuration.getCors().getAllowedHeaders())
                 .exposedHeaders(configuration.getCors().getExposedHeaders())
                 .allowedMethods(configuration.getCors().getAllowedMethods())

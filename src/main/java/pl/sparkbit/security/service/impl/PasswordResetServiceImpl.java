@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.sparkbit.commons.exception.NotFoundException;
 import pl.sparkbit.security.callbacks.PasswordResetChallengeCallback;
 import pl.sparkbit.security.callbacks.SetNewPasswordChallengeCallback;
-import pl.sparkbit.security.config.Properties;
+import pl.sparkbit.security.config.SecurityProperties;
 import pl.sparkbit.security.dao.CredentialsDao;
 import pl.sparkbit.security.dao.UserDetailsDao;
 import pl.sparkbit.security.domain.Credentials;
@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
-import static pl.sparkbit.security.config.Properties.*;
+import static pl.sparkbit.security.config.SecurityProperties.*;
 import static pl.sparkbit.security.domain.SecurityChallengeType.PASSWORD_RESET;
 import static pl.sparkbit.security.domain.SecurityChallengeType.SET_NEW_PASSWORD;
 import static pl.sparkbit.security.exception.NoValidTokenFoundException.FailureReason.TOKEN_NOT_FOUND;
@@ -53,7 +53,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     private final PasswordResetChallengeCallback passwordResetCallback;
     private final SecurityChallenges securityChallenges;
     private final UserDetailsDao userDetailsDao;
-    private final Properties configuration;
+    private final SecurityProperties configuration;
 
     @Override
     @Transactional
@@ -69,7 +69,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         Optional<String> userIdOpt = userDetailsDao.selectUserId(authnAttributes);
         if (!userIdOpt.isPresent()) {
             log.debug("Initiated password reset for non-existent user {}", authnAttributes);
-            if (configuration.getPasswordReset().isInformNotFound()) {
+            if (configuration.getPasswordReset().getInformNotFound()) {
                 throw new NotFoundException("User not found");
             }
             return;

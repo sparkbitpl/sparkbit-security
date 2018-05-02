@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import pl.sparkbit.commons.util.IdGenerator;
-import pl.sparkbit.security.config.Properties;
+import pl.sparkbit.security.config.SecurityProperties;
 import pl.sparkbit.security.dao.SecurityChallengeDao;
 import pl.sparkbit.security.domain.SecurityChallenge;
 import pl.sparkbit.security.domain.SecurityChallengeType;
@@ -32,7 +32,7 @@ public class SecurityChallengesImpl implements SecurityChallenges {
     private final Clock clock;
     private final SecurityChallengeDao securityChallengeDao;
     private final SecureRandomStringGenerator secureRandomStringGenerator;
-    private final Properties configuration;
+    private final SecurityProperties configuration;
 
     private Map<SecurityChallengeType, Duration> validityTimes;
 

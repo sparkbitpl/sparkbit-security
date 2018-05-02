@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import pl.sparkbit.security.Security;
-import pl.sparkbit.security.config.Properties;
+import pl.sparkbit.security.config.SecurityProperties;
 import pl.sparkbit.security.dao.SessionDao;
 import pl.sparkbit.security.domain.RestUserDetails;
 import pl.sparkbit.security.domain.Session;
@@ -38,19 +38,19 @@ public class SessionServiceImpl implements SessionService {
     private final Security security;
     private final SecureRandomStringGenerator secureRandomStringGenerator;
     private final ApplicationContext applicationContext;
-    private final Properties configuration;
+    private final SecurityProperties configuration;
     private ExtraAuthnCheckService extraAuthnCheckService;
 
     @PostConstruct
     private void setup() {
-        if (configuration.getExtraAuthnCheck().isEnabled()) {
+        if (configuration.getExtraAuthnCheck().getEnabled()) {
             extraAuthnCheckService = applicationContext.getBean(ExtraAuthnCheckService.class);
         }
     }
 
     @Override
     public boolean isSessionExpirationEnabled() {
-        return configuration.getSessionExpiration().isEnabled();
+        return configuration.getSessionExpiration().getEnabled();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class SessionServiceImpl implements SessionService {
 
         sessionDao.insertSession(newSession);
 
-        if (configuration.getExtraAuthnCheck().isEnabled()) {
+        if (configuration.getExtraAuthnCheck().getEnabled()) {
             sessionDao.updateExtraAuthnCheckRequired(newSession.getAuthTokenHash(), true);
             extraAuthnCheckService.initiateExtraAuthnCheck(userId);
         }

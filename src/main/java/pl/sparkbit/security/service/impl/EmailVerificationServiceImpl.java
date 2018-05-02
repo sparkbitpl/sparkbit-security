@@ -11,7 +11,7 @@ import pl.sparkbit.security.mvc.dto.in.VerifyEmailDTO;
 import pl.sparkbit.security.service.EmailVerificationService;
 import pl.sparkbit.security.util.SecurityChallenges;
 
-import static pl.sparkbit.security.config.Properties.EMAIL_VERIFICATION_ENABLED;
+import static pl.sparkbit.security.config.SecurityProperties.EMAIL_VERIFICATION_ENABLED;
 import static pl.sparkbit.security.domain.SecurityChallengeType.EMAIL_VERIFICATION;
 
 @ConditionalOnProperty(value = EMAIL_VERIFICATION_ENABLED, havingValue = "true")

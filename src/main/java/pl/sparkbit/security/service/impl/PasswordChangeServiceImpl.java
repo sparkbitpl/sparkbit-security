@@ -13,7 +13,7 @@ import pl.sparkbit.security.exception.InvalidCurrentPasswordException;
 import pl.sparkbit.security.mvc.dto.in.ChangePasswordDTO;
 import pl.sparkbit.security.service.PasswordChangeService;
 
-import static pl.sparkbit.security.config.Properties.PASSWORD_CHANGE_ENABLED;
+import static pl.sparkbit.security.config.SecurityProperties.PASSWORD_CHANGE_ENABLED;
 
 @ConditionalOnProperty(value = PASSWORD_CHANGE_ENABLED, havingValue = "true")
 @RequiredArgsConstructor

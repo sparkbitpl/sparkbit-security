@@ -12,7 +12,7 @@ import pl.sparkbit.security.service.PasswordChangeService;
 import javax.validation.Valid;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static pl.sparkbit.security.config.Properties.PASSWORD_CHANGE_ENABLED;
+import static pl.sparkbit.security.config.SecurityProperties.PASSWORD_CHANGE_ENABLED;
 import static pl.sparkbit.security.mvc.controller.Paths.PASSWORD;
 
 @ConditionalOnProperty(value = PASSWORD_CHANGE_ENABLED, havingValue = "true")

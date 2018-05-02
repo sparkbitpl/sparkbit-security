@@ -2,7 +2,7 @@ package pl.sparkbit.security.restauthn;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import pl.sparkbit.security.config.Properties;
+import pl.sparkbit.security.config.SecurityProperties;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +13,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthenticationTokenHelper {
 
-    private final Properties configuration;
+    private final SecurityProperties configuration;
 
     public Optional<String> extractAuthenticationToken(HttpServletRequest request) {
         String authToken = request.getHeader(configuration.getAuthTokenHeaderName());
@@ -29,7 +29,7 @@ public class AuthenticationTokenHelper {
 
     public Cookie buildAuthenticationTokenCookie(String authToken) {
         Cookie cookie = new Cookie(configuration.getAuthTokenCookieName(), authToken);
-        if (!configuration.isAllowUnsecuredCookie()) {
+        if (!configuration.getAllowUnsecuredCookie()) {
             cookie.setSecure(true);
         }
         return cookie;

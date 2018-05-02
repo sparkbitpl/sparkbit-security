@@ -13,7 +13,7 @@ import pl.sparkbit.security.mvc.dto.in.ExtraAuthnCheckDTO;
 import pl.sparkbit.security.service.ExtraAuthnCheckService;
 import pl.sparkbit.security.util.SecurityChallenges;
 
-import static pl.sparkbit.security.config.Properties.EXTRA_AUTHENTICATION_CHECK_ENABLED;
+import static pl.sparkbit.security.config.SecurityProperties.EXTRA_AUTHENTICATION_CHECK_ENABLED;
 import static pl.sparkbit.security.domain.SecurityChallengeType.EXTRA_AUTHN_CHECK;
 
 @ConditionalOnProperty(value = EXTRA_AUTHENTICATION_CHECK_ENABLED, havingValue = "true")
