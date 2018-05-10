@@ -17,6 +17,6 @@ public class MinimalLengthPasswordPolicy implements PasswordPolicy {
 
     @Override
     public boolean isValid(String password) {
-        return password.length() >= configuration.getMinPasswordLength();
+        return password.length() >= configuration.getDefaultPasswordPolicy().getMinPasswordLength();
     }
 }

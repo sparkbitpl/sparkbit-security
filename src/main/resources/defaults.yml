@@ -15,7 +15,9 @@ sparkbit:
       allowed-origins: "*"
       max-age: 30m
       exposed-headers: X-Sparkbit-Session-Expiration-Timestamp
-    default-password-policy-enabled: true
+    default-password-policy:
+      enabled: true
+      min-password-length: 8
     deleted-session-purging:
       enabled: true
       older-than: 7d
@@ -29,7 +31,6 @@ sparkbit:
     extra-authn-check:
       challenge-validity: 1h
       enabled: false
-    min-password-length: 8
     password-change-enabled: true
     password-encoder-type: BCRYPT
     password-reset:
@@ -40,6 +41,7 @@ sparkbit:
       enabled: false
       duration: 1h
       timestamp-header-name: X-Sparkbit-Session-Expiration-Timestamp
-    user-entity-name: user
-    user-table-name: uzer
-    user-table-id-column-name: id
+    database-schema:
+      user-entity-name: user
+      user-table-name: uzer
+      user-table-id-column-name: id

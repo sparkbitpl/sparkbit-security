@@ -24,22 +24,22 @@ public class CredentialsDaoImpl implements CredentialsDao {
 
     @Override
     public void insertCredentials(Credentials credentials) {
-        credentialsMapper.insertCredentials(credentials, configuration.getUserEntityName());
+        credentialsMapper.insertCredentials(credentials, configuration.getDatabaseSchema().getUserEntityName());
     }
 
     @Override
     public void insertUserRole(String userId, GrantedAuthority role) {
-        credentialsMapper.insertUserRole(userId, role, configuration.getUserEntityName());
+        credentialsMapper.insertUserRole(userId, role, configuration.getDatabaseSchema().getUserEntityName());
     }
 
     @Override
     public Optional<String> selectPasswordHashForUser(String userId) {
         return Optional.ofNullable(credentialsMapper.selectPasswordHashForUser(userId,
-                configuration.getUserEntityName()));
+                configuration.getDatabaseSchema().getUserEntityName()));
     }
 
     @Override
     public void updateCredentials(Credentials credentials) {
-        credentialsMapper.updateCredentials(credentials, configuration.getUserEntityName());
+        credentialsMapper.updateCredentials(credentials, configuration.getDatabaseSchema().getUserEntityName());
     }
 }

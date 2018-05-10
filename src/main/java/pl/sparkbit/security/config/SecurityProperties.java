@@ -18,7 +18,7 @@ public class SecurityProperties {
 
     private static final String PREFIX = "sparkbit.security.";
 
-    public static final String DEFAULT_PASSWORD_POLICY_ENABLED = PREFIX + "default-password-policy-enabled";
+    public static final String DEFAULT_PASSWORD_POLICY_ENABLED = PREFIX + "default-password-policy.enabled";
     public static final String DELETED_SESSIONS_PURGING_ENABLED = PREFIX + "deleted-session-purging.enabled";
     public static final String EMAIL_VERIFICATION_ENABLED = PREFIX + "email-verification.enabled";
     public static final String EXTRA_AUTHENTICATION_CHECK_ENABLED = PREFIX + "extra-authn-check.enabled";
@@ -37,8 +37,6 @@ public class SecurityProperties {
     @NotNull
     private Cors cors;
     @NotNull
-    private Boolean defaultPasswordPolicyEnabled;
-    @NotNull
     private DeletedSessionPurging deletedSessionPurging;
     @NotNull
     private EmailVerification emailVerification;
@@ -49,8 +47,6 @@ public class SecurityProperties {
     @NotNull
     private ExtraAuthnCheck extraAuthnCheck;
     @NotNull
-    private Integer minPasswordLength;
-    @NotNull
     private Boolean passwordChangeEnabled;
     @NotNull
     private PasswordEncoderType passwordEncoderType;
@@ -59,11 +55,29 @@ public class SecurityProperties {
     @NotNull
     private SessionExpiration sessionExpiration;
     @NotNull
-    private String userEntityName;
+    private DefaultPasswordPolicy defaultPasswordPolicy;
     @NotNull
-    private String userTableName;
-    @NotNull
-    private String userTableIdColumnName;
+    private SecurityProperties.DatabaseSchema databaseSchema;
+
+    @Data
+    @Validated
+    public static class DatabaseSchema {
+        @NotNull
+        private String userEntityName;
+        @NotNull
+        private String userTableName;
+        @NotNull
+        private String userTableIdColumnName;
+    }
+
+    @Data
+    @Validated
+    public static class DefaultPasswordPolicy {
+        @NotNull
+        private Boolean enabled;
+        @NotNull
+        private Integer minPasswordLength;
+    }
 
     @Data
     @Validated

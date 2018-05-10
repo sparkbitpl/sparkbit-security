@@ -24,42 +24,45 @@ public class SessionDaoImpl implements SessionDao {
 
     @Override
     public void insertSession(Session session) {
-        sessionMapper.insertSession(session, configuration.getUserEntityName());
+        sessionMapper.insertSession(session, configuration.getDatabaseSchema().getUserEntityName());
     }
 
     @Override
     public void updateSessionExpirationTimestamp(String authTokenHash, Instant expirationTimestamp) {
         sessionMapper.updateSessionExpirationTimestamp(authTokenHash, expirationTimestamp,
-                configuration.getUserEntityName());
+                configuration.getDatabaseSchema().getUserEntityName());
     }
 
     @Override
     public void updateExtraAuthnCheckRequired(String authTokenHash, boolean value) {
-        sessionMapper.updateExtraAuthnCheckRequired(authTokenHash, value, configuration.getUserEntityName());
+        sessionMapper.updateExtraAuthnCheckRequired(authTokenHash, value,
+                configuration.getDatabaseSchema().getUserEntityName());
     }
 
     @Override
     public Optional<Session> selectSession(String authTokenHash) {
-        return Optional.ofNullable(sessionMapper.selectSession(authTokenHash, configuration.getUserEntityName()));
+        return Optional.ofNullable(sessionMapper.selectSession(authTokenHash,
+                configuration.getDatabaseSchema().getUserEntityName()));
     }
 
     @Override
     public void deleteSession(String authTokenHash, Instant deletionTimestamp) {
-        sessionMapper.deleteSession(authTokenHash, deletionTimestamp, configuration.getUserEntityName());
+        sessionMapper.deleteSession(authTokenHash, deletionTimestamp,
+                configuration.getDatabaseSchema().getUserEntityName());
     }
 
     @Override
     public void deleteSessions(String userId, Instant deletionTimestamp) {
-        sessionMapper.deleteSessions(userId, deletionTimestamp, configuration.getUserEntityName());
+        sessionMapper.deleteSessions(userId, deletionTimestamp, configuration.getDatabaseSchema().getUserEntityName());
     }
 
     @Override
     public void deleteExpiredSessions(Instant now) {
-        sessionMapper.deleteExpiredSessions(now, configuration.getUserEntityName());
+        sessionMapper.deleteExpiredSessions(now, configuration.getDatabaseSchema().getUserEntityName());
     }
 
     @Override
     public void purgeDeletedSessions(Instant deletedBefore) {
-        sessionMapper.purgeDeletedSessions(deletedBefore, configuration.getUserEntityName());
+        sessionMapper.purgeDeletedSessions(deletedBefore, configuration.getDatabaseSchema().getUserEntityName());
     }
 }

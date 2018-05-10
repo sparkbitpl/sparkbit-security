@@ -25,27 +25,29 @@ public class SecurityChallengeDaoImpl implements SecurityChallengeDao {
 
     @Override
     public void insertChallenge(SecurityChallenge securityChallenge) {
-        securityChallengeMapper.insertChallenge(securityChallenge, configuration.getUserEntityName());
+        securityChallengeMapper.insertChallenge(securityChallenge,
+                configuration.getDatabaseSchema().getUserEntityName());
     }
 
     @Override
     public Optional<SecurityChallenge> selectChallengeByTokenAndType(String token, SecurityChallengeType type) {
         return Optional.ofNullable(securityChallengeMapper.selectChallengeByTokenAndType(token, type,
-                configuration.getUserEntityName()));
+                configuration.getDatabaseSchema().getUserEntityName()));
     }
 
     @Override
     public void deleteChallenge(String id) {
-        securityChallengeMapper.deleteChallengeById(id, configuration.getUserEntityName());
+        securityChallengeMapper.deleteChallengeById(id, configuration.getDatabaseSchema().getUserEntityName());
     }
 
     @Override
     public void deleteChallenge(String userId, SecurityChallengeType type) {
-        securityChallengeMapper.deleteChallengeByUserIdAndType(userId, type, configuration.getUserEntityName());
+        securityChallengeMapper.deleteChallengeByUserIdAndType(userId,
+                type, configuration.getDatabaseSchema().getUserEntityName());
     }
 
     @Override
     public void deleteExpiredChallenges(Instant now) {
-        securityChallengeMapper.deleteExpiredChallenges(now, configuration.getUserEntityName());
+        securityChallengeMapper.deleteExpiredChallenges(now, configuration.getDatabaseSchema().getUserEntityName());
     }
 }

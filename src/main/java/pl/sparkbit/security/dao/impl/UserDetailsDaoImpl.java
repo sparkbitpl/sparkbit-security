@@ -25,21 +25,22 @@ public class UserDetailsDaoImpl implements UserDetailsDao {
 
     @Override
     public Optional<LoginUserDetails> selectLoginUserDetails(String userId) {
-        return Optional.ofNullable(userDetailsMapper.selectLoginUserDetails(userId, configuration.getUserEntityName()));
+        return Optional.ofNullable(userDetailsMapper.selectLoginUserDetails(userId,
+                configuration.getDatabaseSchema().getUserEntityName()));
     }
 
     @Override
     public Optional<RestUserDetails> selectRestUserDetails(String authTokenHash) {
         return Optional.ofNullable(userDetailsMapper.selectRestUserDetails(authTokenHash,
-                configuration.getUserEntityName()));
+                configuration.getDatabaseSchema().getUserEntityName()));
     }
 
     @Override
     public Optional<String> selectUserId(Map<String, String> authnAttributes) {
         return Optional.ofNullable(userDetailsMapper.selectUserId(
-                configuration.getUserTableName(),
-                configuration.getUserTableIdColumnName(),
+                configuration.getDatabaseSchema().getUserTableName(),
+                configuration.getDatabaseSchema().getUserTableIdColumnName(),
                 authnAttributes,
-                configuration.getUserEntityName()));
+                configuration.getDatabaseSchema().getUserEntityName()));
     }
 }
