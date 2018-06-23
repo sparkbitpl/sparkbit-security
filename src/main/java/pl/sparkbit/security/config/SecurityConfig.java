@@ -39,7 +39,6 @@ import pl.sparkbit.security.service.UserDetailsService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Optional;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -157,6 +156,7 @@ public class SecurityConfig {
     @RequiredArgsConstructor
     public static class RestConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
+        private static final String ACTUATOR_PATTERN = "/actuator/**";
         private static final String ADMIN_PATTERN = "/admin/**";
 
         private final UserDetailsService userDetailsService;
@@ -189,6 +189,8 @@ public class SecurityConfig {
                     .antMatchers(LOGIN).denyAll()
                     .antMatchers(EXTRA_AUTH_CHECK).authenticated()
                     //block if user still has to perform extra authn check (eg. input code received by sms)
+                    .antMatchers(ACTUATOR_PATTERN).access("hasRole('ACTUATOR')" +
+                    " and !principal.isExtraAuthnCheckRequired()")
                     .antMatchers(ADMIN_PATTERN).access("hasRole('ADMIN') and !principal.isExtraAuthnCheckRequired()")
                     .anyRequest().access("!principal.isExtraAuthnCheckRequired()")
                     .and()
