@@ -40,8 +40,6 @@ public class RestAuthenticationFilter extends GenericFilterBean {
                 Assert.isTrue(authentication.isAuthenticated(),
                         "Authentication is not authenticated after successful authentication");
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
-
             } catch (AuthenticationException failed) {
                 SecurityContextHolder.clearContext();
                 entryPoint.commence(request, response, failed);

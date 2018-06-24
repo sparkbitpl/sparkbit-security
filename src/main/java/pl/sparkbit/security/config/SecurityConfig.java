@@ -48,7 +48,7 @@ import static pl.sparkbit.security.mvc.controller.Paths.LOGIN;
 @Configuration
 @EnableWebSecurity
 @MapperScan("pl.sparkbit.security.dao.mybatis")
-@SuppressWarnings("SpringFacetCodeInspection")
+@SuppressWarnings({"SpringFacetCodeInspection", "checkstyle:magicnumber"})
 public class SecurityConfig {
 
     @Bean
@@ -81,6 +81,7 @@ public class SecurityConfig {
         public PasswordEncoder passwordEncoder() {
             switch (configuration.getPasswordEncoderType()) {
                 case STANDARD:
+                    //noinspection deprecation
                     return new StandardPasswordEncoder();
                 case BCRYPT:
                     return new BCryptPasswordEncoder();
@@ -153,6 +154,56 @@ public class SecurityConfig {
     }
 
     @Configuration
+    @Order(3)
+    @RequiredArgsConstructor
+    //This is needed because we want /error endpoint to be publicly available but if the user is authenticated
+    //we want SecurityContext to be populated. That's why we have authentication here but not access control.
+    public static class ErrorConfigurationAdapter extends WebSecurityConfigurerAdapter {
+
+        private static final String ERROR_PATTERN = "/error/**";
+
+        private final UserDetailsService userDetailsService;
+        private final AuthenticationEntryPoint authenticationEntryPoint;
+        private final AuthenticationTokenHelper authenticationTokenHelper;
+        private final SessionService sessionService;
+        private final SecurityProperties configuration;
+
+        @Bean
+        //TODO This bean is created twice - here and below in RestConfigurationAdapter.
+        public UserAuthenticationProvider restAuthenticationProvider() {
+            return new UserAuthenticationProvider(userDetailsService);
+        }
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            GenericFilterBean restAuthenticationFiler = new RestAuthenticationFilter(authenticationManager(),
+                    authenticationEntryPoint, authenticationTokenHelper);
+
+            SessionExpirationHeaderFilter sessionExpirationHeaderFilter = new SessionExpirationHeaderFilter(
+                    sessionService,
+                    configuration.getSessionExpiration().getTimestampHeaderName(),
+                    authenticationTokenHelper);
+
+            http
+                    .cors().and()
+                    .addFilterBefore(restAuthenticationFiler, BasicAuthenticationFilter.class)
+                    .addFilterAfter(sessionExpirationHeaderFilter, RestAuthenticationFilter.class)
+                    .antMatcher(ERROR_PATTERN)
+
+                    .sessionManagement().sessionCreationPolicy(STATELESS).and()
+                    .anonymous().disable()
+                    .logout().disable()
+                    .rememberMe().disable()
+                    .csrf().disable();
+        }
+
+        @Override
+        protected void configure(AuthenticationManagerBuilder auth) {
+            auth.authenticationProvider(restAuthenticationProvider());
+        }
+    }
+
+    @Configuration
     @RequiredArgsConstructor
     public static class RestConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
@@ -170,6 +221,7 @@ public class SecurityConfig {
             return new UserAuthenticationProvider(userDetailsService);
         }
 
+        @SuppressWarnings({"ELValidationInJSP", "SpringElInspection"})
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             GenericFilterBean restAuthenticationFiler = new RestAuthenticationFilter(authenticationManager(),
