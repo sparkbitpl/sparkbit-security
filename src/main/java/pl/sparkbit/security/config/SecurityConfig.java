@@ -144,6 +144,7 @@ public class SecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http
+                    .cors().and()
                     .antMatcher(PUBLIC_PATTERN)
                     .sessionManagement().sessionCreationPolicy(STATELESS).and()
                     .anonymous().disable()
@@ -156,38 +157,23 @@ public class SecurityConfig {
     @Configuration
     @Order(3)
     @RequiredArgsConstructor
-    //This is needed because we want /error endpoint to be publicly available but if the user is authenticated
-    //we want SecurityContext to be populated. That's why we have authentication here but not access control.
+    // With this configuration /error endpoint is publicly available and security context is not available
+    // in error handling - even if user is authenticated.
+    // If we needed SecurityContext to be populated, we'd have to add authentication here (but not access control).
+    // The challenge would be to handle situations when errors are caused by problem with authentication (eg. invalid
+    // session token). Such cases would cause errors during authentication for error handling as well and empty
+    // response as a result.
+    // Probably the best solution would be to have a completely different authentication configuration for /error than
+    // for other rest endpoints (other filer, providers etc.).
+    // See scs-64 in YouTrack
     public static class ErrorConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
         private static final String ERROR_PATTERN = "/error/**";
 
-        private final UserDetailsService userDetailsService;
-        private final AuthenticationEntryPoint authenticationEntryPoint;
-        private final AuthenticationTokenHelper authenticationTokenHelper;
-        private final SessionService sessionService;
-        private final SecurityProperties configuration;
-
-        @Bean
-        //TODO This bean is created twice - here and below in RestConfigurationAdapter.
-        public UserAuthenticationProvider restAuthenticationProvider() {
-            return new UserAuthenticationProvider(userDetailsService);
-        }
-
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            GenericFilterBean restAuthenticationFiler = new RestAuthenticationFilter(authenticationManager(),
-                    authenticationEntryPoint, authenticationTokenHelper);
-
-            SessionExpirationHeaderFilter sessionExpirationHeaderFilter = new SessionExpirationHeaderFilter(
-                    sessionService,
-                    configuration.getSessionExpiration().getTimestampHeaderName(),
-                    authenticationTokenHelper);
-
             http
                     .cors().and()
-                    .addFilterBefore(restAuthenticationFiler, BasicAuthenticationFilter.class)
-                    .addFilterAfter(sessionExpirationHeaderFilter, RestAuthenticationFilter.class)
                     .antMatcher(ERROR_PATTERN)
 
                     .sessionManagement().sessionCreationPolicy(STATELESS).and()
@@ -195,11 +181,6 @@ public class SecurityConfig {
                     .logout().disable()
                     .rememberMe().disable()
                     .csrf().disable();
-        }
-
-        @Override
-        protected void configure(AuthenticationManagerBuilder auth) {
-            auth.authenticationProvider(restAuthenticationProvider());
         }
     }
 
