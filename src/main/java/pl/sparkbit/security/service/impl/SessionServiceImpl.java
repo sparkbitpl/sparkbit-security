@@ -13,6 +13,8 @@ import pl.sparkbit.security.config.SecurityProperties;
 import pl.sparkbit.security.dao.SessionDao;
 import pl.sparkbit.security.domain.RestUserDetails;
 import pl.sparkbit.security.domain.Session;
+import pl.sparkbit.security.hooks.LoginHook;
+import pl.sparkbit.security.hooks.LogoutHook;
 import pl.sparkbit.security.login.LoginUserDetails;
 import pl.sparkbit.security.password.encoder.AuthTokenHasher;
 import pl.sparkbit.security.service.ExtraAuthnCheckService;
@@ -27,7 +29,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-@SuppressWarnings("unused")
+@SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unused"})
 public class SessionServiceImpl implements SessionService {
 
     private static final int AUTH_TOKEN_LENGTH = 32;
@@ -39,6 +41,8 @@ public class SessionServiceImpl implements SessionService {
     private final SecureRandomStringGenerator secureRandomStringGenerator;
     private final ApplicationContext applicationContext;
     private final SecurityProperties configuration;
+    private final Optional<LoginHook> loginHook;
+    private final Optional<LogoutHook> logoutHook;
     private ExtraAuthnCheckService extraAuthnCheckService;
 
     @PostConstruct
@@ -76,6 +80,8 @@ public class SessionServiceImpl implements SessionService {
 
         sessionDao.insertSession(newSession);
 
+        loginHook.ifPresent(hook -> hook.doAfterSuccessfulLogin(userId));
+
         if (configuration.getExtraAuthnCheck().getEnabled()) {
             sessionDao.updateExtraAuthnCheckRequired(newSession.getAuthTokenHash(), true);
             extraAuthnCheckService.initiateExtraAuthnCheck(userId);
@@ -95,6 +101,8 @@ public class SessionServiceImpl implements SessionService {
 
         sessionDao.deleteSession(restUserDetails.getAuthTokenHash(), clock.instant());
         SecurityContextHolder.clearContext();
+
+        logoutHook.ifPresent(hook -> hook.doAfterSuccessfulLogout(restUserDetails.getUserId()));
     }
 
     @Override
