@@ -22,16 +22,14 @@ public class SecurityProperties {
     public static final String DELETED_SESSIONS_PURGING_ENABLED = PREFIX + "deleted-session-purging.enabled";
     public static final String EMAIL_VERIFICATION_ENABLED = PREFIX + "email-verification.enabled";
     public static final String EXTRA_AUTHENTICATION_CHECK_ENABLED = PREFIX + "extra-authn-check.enabled";
-    public static final String PASSWORD_CHANGE_ENABLED = PREFIX + "password-change.enabled";
+    public static final String PASSWORD_CHANGE_ENABLED = PREFIX + "password-change-enabled";
     public static final String PASSWORD_RESET_ENABLED = PREFIX + "password-reset.enabled";
     public static final String SESSION_EXPIRATION_ENABLED = PREFIX + "session-expiration.enabled";
 
     @NotNull
-    private Boolean allowUnsecuredCookie;
+    private AuthCookie authCookie;
     @NotNull
     private String authTokenHeaderName;
-    @NotNull
-    private String authTokenCookieName;
     @NotNull
     private ChallengeToken challengeToken;
     @NotNull
@@ -57,7 +55,20 @@ public class SecurityProperties {
     @NotNull
     private DefaultPasswordPolicy defaultPasswordPolicy;
     @NotNull
-    private SecurityProperties.DatabaseSchema databaseSchema;
+    private DatabaseSchema databaseSchema;
+    @NotNull
+    private Paths paths;
+
+    @Data
+    @Validated
+    public static class AuthCookie {
+        @NotNull
+        private String name;
+        @NotNull
+        private String path;
+        @NotNull
+        private Boolean allowUnsecured;
+    }
 
     @Data
     @Validated
@@ -162,5 +173,32 @@ public class SecurityProperties {
         private Duration duration;
         @NotNull
         private String timestampHeaderName;
+    }
+
+    @Data
+    @Validated
+    public static class Paths {
+        @NotNull
+        private String commonPrefix;
+        @NotNull
+        private String publicPrefix;
+        @NotNull
+        private String adminPrefix;
+        @NotNull
+        private String login;
+        @NotNull
+        private String logout;
+        @NotNull
+        private String extraAuthCheck;
+        @NotNull
+        private String password;
+        @NotNull
+        private String publicPasswordResetToken;
+        @NotNull
+        private String publicPassword;
+        @NotNull
+        private String publicEmail;
+        @NotNull
+        private String buildInfo;
     }
 }

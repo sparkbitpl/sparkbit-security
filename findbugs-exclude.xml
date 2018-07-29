@@ -5,6 +5,16 @@
     </Match>
 
     <Match>
+        <Class name="pl.sparkbit.security.login.LoginAuthenticationFilter"/>
+        <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
+        <Class name="pl.sparkbit.security.restauthn.RestAuthenticationFilter"/>
+        <Bug pattern="BC_UNCONFIRMED_CAST"/>
+    </Match>
+
+    <Match>
         <Class name="pl.sparkbit.security.mvc.dto.out.AuthTokenDTO"/>
         <Field name="authToken"/>
         <Bug pattern="URF_UNREAD_FIELD"/>

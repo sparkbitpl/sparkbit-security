@@ -2,9 +2,12 @@
 
 sparkbit:
   security:
-    allow-unsecured-cookie: false
+    auth-cookie:
+      name: sparkbitAuthToken
+      path: ${sparkbit.security.paths.common-prefix}
+      allow-unsecured: false
     auth-token-header-name: X-Sparkbit-Auth-Token
-    auth-token-cookie-name: sparkbitAuthToken
+
     challenge-token:
       allowed-characters: 23456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz
       length: 6
@@ -45,3 +48,20 @@ sparkbit:
       user-entity-name: user
       user-table-name: uzer
       user-table-id-column-name: id
+    paths:
+      # prefixes - no common prefix be default
+      common-prefix:
+      public-prefix: ${sparkbit.security.paths.common-prefix}/public
+      admin-prefix: ${sparkbit.security.paths.common-prefix}/admin
+      # login
+      login: ${sparkbit.security.paths.common-prefix}/login
+      # protected endpoints
+      logout: ${sparkbit.security.paths.common-prefix}/logout
+      extraAuthCheck: ${sparkbit.security.paths.common-prefix}/extraAuthCheck
+      password: ${sparkbit.security.paths.common-prefix}/profile/password
+      # public endpoints
+      publicPasswordResetToken: ${sparkbit.security.paths.public-prefix}/profile/passwordResetToken
+      publicPassword: ${sparkbit.security.paths.public-prefix}/profile/password
+      publicEmail: ${sparkbit.security.paths.public-prefix}/profile/email
+      # from commons
+      buildInfo: ${sparkbit.security.paths.admin-prefix}/buildInfo

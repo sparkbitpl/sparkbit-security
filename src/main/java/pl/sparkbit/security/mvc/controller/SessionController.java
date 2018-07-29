@@ -1,7 +1,6 @@
 package pl.sparkbit.security.mvc.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import pl.sparkbit.security.mvc.dto.out.AuthTokenDTO;
@@ -14,8 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static pl.sparkbit.security.mvc.controller.Paths.LOGIN;
-import static pl.sparkbit.security.mvc.controller.Paths.LOGOUT;
 
 @RequiredArgsConstructor
 @RestController
@@ -25,7 +22,6 @@ public class SessionController {
     private final AuthenticationTokenHelper authenticationTokenHelper;
     private final SessionService sessionService;
 
-    @PostMapping(LOGIN)
     public AuthTokenDTO login(HttpServletRequest request, HttpServletResponse response) {
         Optional<String> oldAuthToken = authenticationTokenHelper.extractAuthenticationToken(request);
         String authToken = sessionService.startNewSession(oldAuthToken.orElse(null));
@@ -36,7 +32,6 @@ public class SessionController {
         return new AuthTokenDTO(authToken);
     }
 
-    @PostMapping(LOGOUT)
     @ResponseStatus(NO_CONTENT)
     public void logout(HttpServletResponse response) {
         sessionService.endSession();

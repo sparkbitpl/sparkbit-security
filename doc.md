@@ -93,7 +93,7 @@ with such entry Sparkbit Security will assume presence of `email` and `applicati
 	  "email": "user0@foo.bar",
 	  "applicationName": "my-app-name"
 	},
-	"type" : "authType",
+	"type" : "authType"
 	// other fields described below
 }
 ```

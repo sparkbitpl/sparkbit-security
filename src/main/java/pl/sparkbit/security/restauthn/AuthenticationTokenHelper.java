@@ -19,7 +19,7 @@ public class AuthenticationTokenHelper {
         String authToken = request.getHeader(configuration.getAuthTokenHeaderName());
         if (authToken == null && request.getCookies() != null) {
             authToken = Arrays.stream(request.getCookies())
-                    .filter(cookie -> cookie.getName().equals(configuration.getAuthTokenCookieName()))
+                    .filter(cookie -> cookie.getName().equals(configuration.getAuthCookie().getName()))
                     .findAny()
                     .map(Cookie::getValue)
                     .orElse(null);
@@ -28,8 +28,9 @@ public class AuthenticationTokenHelper {
     }
 
     public Cookie buildAuthenticationTokenCookie(String authToken) {
-        Cookie cookie = new Cookie(configuration.getAuthTokenCookieName(), authToken);
-        if (!configuration.getAllowUnsecuredCookie()) {
+        Cookie cookie = new Cookie(configuration.getAuthCookie().getName(), authToken);
+        cookie.setPath(configuration.getAuthCookie().getPath());
+        if (!configuration.getAuthCookie().getAllowUnsecured()) {
             cookie.setSecure(true);
         }
         return cookie;

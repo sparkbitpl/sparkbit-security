@@ -3,6 +3,7 @@ package pl.sparkbit.security.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -42,8 +43,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-import static pl.sparkbit.security.mvc.controller.Paths.EXTRA_AUTH_CHECK;
-import static pl.sparkbit.security.mvc.controller.Paths.LOGIN;
 
 @Configuration
 @EnableWebSecurity
@@ -107,7 +106,7 @@ public class SecurityConfig {
             http
                     .cors().and()
                     .addFilterBefore(loginAuthenticationFiler, BasicAuthenticationFilter.class)
-                    .antMatcher(LOGIN)
+                    .antMatcher(configuration.getPaths().getLogin())
 
                     .sessionManagement().sessionCreationPolicy(STATELESS).and()
                     .anonymous().disable()
@@ -137,15 +136,16 @@ public class SecurityConfig {
 
     @Configuration
     @Order(2)
+    @RequiredArgsConstructor
     public static class PublicRestConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
-        private static final String PUBLIC_PATTERN = "/public/**";
+        private final SecurityProperties configuration;
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http
                     .cors().and()
-                    .antMatcher(PUBLIC_PATTERN)
+                    .antMatcher(configuration.getPaths().getPublicPrefix() + "/**")
                     .sessionManagement().sessionCreationPolicy(STATELESS).and()
                     .anonymous().disable()
                     .logout().disable()
@@ -188,9 +188,6 @@ public class SecurityConfig {
     @RequiredArgsConstructor
     public static class RestConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
-        private static final String ACTUATOR_PATTERN = "/actuator/**";
-        private static final String ADMIN_PATTERN = "/admin/**";
-
         private final UserDetailsService userDetailsService;
         private final AuthenticationEntryPoint authenticationEntryPoint;
         private final AuthenticationTokenHelper authenticationTokenHelper;
@@ -219,12 +216,14 @@ public class SecurityConfig {
                     .addFilterAfter(sessionExpirationHeaderFilter, RestAuthenticationFilter.class)
                     .authorizeRequests()
                     //fail-safe but LOGIN is already handled by LoginConfigurationAdapter
-                    .antMatchers(LOGIN).denyAll()
-                    .antMatchers(EXTRA_AUTH_CHECK).authenticated()
-                    //block if user still has to perform extra authn check (eg. input code received by sms)
-                    .antMatchers(ACTUATOR_PATTERN).access("hasRole('ACTUATOR')" +
-                    " and !principal.isExtraAuthnCheckRequired()")
-                    .antMatchers(ADMIN_PATTERN).access("hasRole('ADMIN') and !principal.isExtraAuthnCheckRequired()")
+                    .antMatchers(configuration.getPaths().getLogin()).denyAll()
+                    .antMatchers(configuration.getPaths().getExtraAuthCheck()).authenticated()
+                    //below: block if user still has to perform extra authn check (eg. input code received by sms)
+                    //Actuator other endpoints require special group
+                    .requestMatchers(EndpointRequest.toAnyEndpoint())
+                    .access("hasRole('ACTUATOR') and !principal.isExtraAuthnCheckRequired()")
+                    .antMatchers(configuration.getPaths().getAdminPrefix() + "/**")
+                    .access("hasRole('ADMIN') and !principal.isExtraAuthnCheckRequired()")
                     .anyRequest().access("!principal.isExtraAuthnCheckRequired()")
                     .and()
 
