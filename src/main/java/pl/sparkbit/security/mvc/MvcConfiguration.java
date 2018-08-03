@@ -1,19 +1,32 @@
 package pl.sparkbit.security.mvc;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import pl.sparkbit.security.config.SecurityProperties;
 
-@Configuration
+@Component
 @RequiredArgsConstructor
-public class MvcConfiguration {
+@SuppressWarnings("unused")
+public class MvcConfiguration implements WebMvcRegistrations {
 
     private final SecurityProperties configuration;
 
-    @Bean
-    protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {
+    @Override
+    public RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
         return new EndpointMappings(configuration.getPaths());
+    }
+
+    @Override
+    public RequestMappingHandlerAdapter getRequestMappingHandlerAdapter() {
+        return new RequestMappingHandlerAdapter();
+    }
+
+    @Override
+    public ExceptionHandlerExceptionResolver getExceptionHandlerExceptionResolver() {
+        return new ExceptionHandlerExceptionResolver();
     }
 }
