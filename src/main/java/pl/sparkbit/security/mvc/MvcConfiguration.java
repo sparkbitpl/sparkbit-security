@@ -3,8 +3,6 @@ package pl.sparkbit.security.mvc;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import pl.sparkbit.security.config.SecurityProperties;
 
@@ -18,15 +16,5 @@ public class MvcConfiguration implements WebMvcRegistrations {
     @Override
     public RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
         return new EndpointMappings(configuration.getPaths());
-    }
-
-    @Override
-    public RequestMappingHandlerAdapter getRequestMappingHandlerAdapter() {
-        return new RequestMappingHandlerAdapter();
-    }
-
-    @Override
-    public ExceptionHandlerExceptionResolver getExceptionHandlerExceptionResolver() {
-        return new ExceptionHandlerExceptionResolver();
     }
 }
