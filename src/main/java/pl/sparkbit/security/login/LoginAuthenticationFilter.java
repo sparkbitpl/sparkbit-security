@@ -66,7 +66,7 @@ public class LoginAuthenticationFilter extends GenericFilterBean {
             loginHook.performAdditionalAuthenticationChecks(userId, loginPrincipal.getAuthnAttributes(), request);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            loginHook.processAdditionalData(dto.getAdditionalData());
+            loginHook.processAdditionalData(userId, dto.getAdditionalData());
         } catch (AuthenticationException failed) {
             SecurityContextHolder.clearContext();
             entryPoint.commence(request, response, failed);
