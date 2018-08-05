@@ -69,6 +69,10 @@ public class SessionServiceImpl implements SessionService {
         LoginUserDetails loginUserDetails = (LoginUserDetails) auth.getPrincipal();
         String userId = loginUserDetails.getUserId();
 
+        if (oldAuthToken != null && !oldAuthToken.isEmpty()) {
+            maybeDeleteOldSession(oldAuthToken, userId);
+        }
+
         String newAuthToken = secureRandomStringGenerator.base58String(AUTH_TOKEN_LENGTH);
 
         Session newSession = Session.builder()
@@ -77,18 +81,13 @@ public class SessionServiceImpl implements SessionService {
                 .creationTimestamp(clock.instant())
                 .expirationTimestamp(getExpirationTimestamp())
                 .build();
-
         sessionDao.insertSession(newSession);
-
-        loginHook.ifPresent(hook -> hook.doAfterSuccessfulLogin(userId));
 
         if (configuration.getExtraAuthnCheck().getEnabled()) {
             sessionDao.updateExtraAuthnCheckRequired(newSession.getAuthTokenHash(), true);
             extraAuthnCheckService.initiateExtraAuthnCheck(userId);
-        }
-
-        if (oldAuthToken != null && !oldAuthToken.isEmpty()) {
-            maybeDeleteOldSession(oldAuthToken, newSession.getUserId());
+        } else {
+            loginHook.ifPresent(hook -> hook.doAfterSuccessfulLogin(userId));
         }
 
         return newAuthToken;

@@ -6,5 +6,7 @@ public interface BaseChallengeCallback {
 
     void transmitToUser(SecurityChallenge challenge);
 
-    void notifyOfSuccess(SecurityChallenge challenge);
+    @SuppressWarnings("unused")
+    default void notifyOfSuccess(SecurityChallenge challenge) {
+    }
 }

@@ -9,9 +9,12 @@ import pl.sparkbit.security.Security;
 import pl.sparkbit.security.callbacks.ExtraAuthnCheckChallengeCallback;
 import pl.sparkbit.security.dao.SessionDao;
 import pl.sparkbit.security.domain.SecurityChallenge;
+import pl.sparkbit.security.hooks.LoginHook;
 import pl.sparkbit.security.mvc.dto.in.ExtraAuthnCheckDTO;
 import pl.sparkbit.security.service.ExtraAuthnCheckService;
 import pl.sparkbit.security.util.SecurityChallenges;
+
+import java.util.Optional;
 
 import static pl.sparkbit.security.config.SecurityProperties.EXTRA_AUTHENTICATION_CHECK_ENABLED;
 import static pl.sparkbit.security.domain.SecurityChallengeType.EXTRA_AUTHN_CHECK;
@@ -20,12 +23,13 @@ import static pl.sparkbit.security.domain.SecurityChallengeType.EXTRA_AUTHN_CHEC
 @RequiredArgsConstructor
 @Service
 @Slf4j
-@SuppressWarnings("unused")
+@SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unused"})
 public class ExtraAuthnCheckServiceImpl implements ExtraAuthnCheckService {
 
     private static final int DEFAULT_CHALLENGE_VALIDITY_HOURS = 1;
 
     private final ExtraAuthnCheckChallengeCallback callback;
+    private final Optional<LoginHook> loginHook;
     private final Security security;
     private final SecurityChallenges securityChallenges;
     private final SessionDao sessionDao;
@@ -49,5 +53,7 @@ public class ExtraAuthnCheckServiceImpl implements ExtraAuthnCheckService {
         sessionDao.updateExtraAuthnCheckRequired(authTokenHash, false);
 
         log.debug("Extra authn check succeeded for user {}", challenge.getUserId());
+
+        loginHook.ifPresent(hook -> hook.doAfterSuccessfulLogin(challenge.getUserId()));
     }
 }
