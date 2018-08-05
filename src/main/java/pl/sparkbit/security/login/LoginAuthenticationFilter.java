@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -13,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.util.Assert;
 import org.springframework.web.filter.GenericFilterBean;
+import pl.sparkbit.security.hooks.LoginHook;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -23,19 +23,21 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Reader;
 
-@RequiredArgsConstructor
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class LoginAuthenticationFilter extends GenericFilterBean {
 
     private final AuthenticationManager authenticationManager;
     private final AuthenticationEntryPoint entryPoint;
     private final LoginPrincipalFactory loginPrincipalFactory;
+    private final LoginHook loginHook;
     private final ObjectReader jsonReader;
 
     public LoginAuthenticationFilter(AuthenticationManager authenticationManager, AuthenticationEntryPoint entryPoint,
-                                     LoginPrincipalFactory loginPrincipalFactory) {
+                                     LoginPrincipalFactory loginPrincipalFactory, LoginHook loginHook) {
         this.authenticationManager = authenticationManager;
         this.entryPoint = entryPoint;
         this.loginPrincipalFactory = loginPrincipalFactory;
+        this.loginHook = loginHook;
         LoginDTODeserializer deserializer = new LoginDTODeserializer();
         SimpleModule module = new SimpleModule("LoginDeserializerModule", Version.unknownVersion());
         module.addDeserializer(LoginDTO.class, deserializer);
@@ -59,6 +61,10 @@ public class LoginAuthenticationFilter extends GenericFilterBean {
             Authentication authentication = authenticationManager.authenticate(token);
             Assert.isTrue(authentication.isAuthenticated(),
                     "Authentication is not authenticated after successful authentication");
+
+            String userId = ((LoginUserDetails) authentication.getPrincipal()).getUserId();
+            loginHook.performAdditionalAuthenticationChecks(userId, loginPrincipal.getAuthnAttributes(), request);
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (AuthenticationException failed) {
             SecurityContextHolder.clearContext();

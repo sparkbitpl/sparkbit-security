@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.AuthenticationEntryPoint
+import pl.sparkbit.security.hooks.LoginHook
 import spock.lang.Specification
 
 import javax.servlet.FilterChain
@@ -16,12 +17,16 @@ class LoginAuthenticationFilterSpec extends Specification {
     def authentication
     def authManager
     def entryPoint
+    def loginHook
     def filterChain
 
     def setup() {
-        authentication = Mock(Authentication)
+        authentication = Mock(Authentication) {
+            getPrincipal() >> Mock(LoginUserDetails)
+        }
         authManager = Mock(AuthenticationManager)
         entryPoint = Mock(AuthenticationEntryPoint)
+        loginHook = Mock(LoginHook)
         filterChain = Mock(FilterChain)
     }
 
@@ -29,7 +34,7 @@ class LoginAuthenticationFilterSpec extends Specification {
         setup:
         String[] expectedAuthnAttributes = ['applicationName', 'email']
         def filter = new LoginAuthenticationFilter(authManager, entryPoint,
-                new LoginPrincipalFactory(expectedAuthnAttributes))
+                new LoginPrincipalFactory(expectedAuthnAttributes), loginHook)
         def request = new MockHttpServletRequest()
         def response = new MockHttpServletResponse()
         def json = [
@@ -57,7 +62,7 @@ class LoginAuthenticationFilterSpec extends Specification {
         setup:
         String[] expectedAuthnAttributes = ['applicationName', 'email']
         def filter = new LoginAuthenticationFilter(authManager, entryPoint,
-                new LoginPrincipalFactory(expectedAuthnAttributes))
+                new LoginPrincipalFactory(expectedAuthnAttributes), loginHook)
         def request = new MockHttpServletRequest()
         def response = new MockHttpServletResponse()
         def json = [

@@ -57,4 +57,9 @@
         <Class name="pl.sparkbit.security.service.UserDetailsService"/>
         <Bug pattern="NM_SAME_SIMPLE_NAME_AS_INTERFACE"/>
     </Match>
+
+    <Match>
+        <Class name="pl.sparkbit.security.config.SecurityConfig$LoginConfigurationAdapter$1"/>
+        <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+    </Match>
 </FindBugsFilter>

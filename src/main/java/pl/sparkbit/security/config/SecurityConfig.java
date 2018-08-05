@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.GenericFilterBean;
+import pl.sparkbit.security.hooks.LoginHook;
 import pl.sparkbit.security.login.LoginAuthenticationFilter;
 import pl.sparkbit.security.login.LoginPrincipalFactory;
 import pl.sparkbit.security.login.SessionExpirationHeaderFilter;
@@ -74,6 +75,7 @@ public class SecurityConfig {
         private final Optional<FacebookResolver> facebookResolver;
         private final Optional<GoogleResolver> googleResolver;
         private final Optional<TwitterResolver> twitterResolver;
+        private final Optional<LoginHook> loginHook;
         private final SecurityProperties configuration;
 
         @Bean
@@ -102,7 +104,9 @@ public class SecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             GenericFilterBean loginAuthenticationFiler =
                     new LoginAuthenticationFilter(authenticationManager(), authenticationEntryPoint,
-                            loginPrincipalFactory);
+                            loginPrincipalFactory, loginHook.orElseGet(() -> new LoginHook() {
+                            })
+                    );
             http
                     .cors().and()
                     .addFilterBefore(loginAuthenticationFiler, BasicAuthenticationFilter.class)
