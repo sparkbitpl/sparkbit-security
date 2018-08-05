@@ -13,4 +13,7 @@ public abstract class LoginDTO implements AuthenticationTokenHolder {
 
     @JsonProperty("authnAttributes")
     private Map<String, String> authnAttributesMap;
+
+    @JsonProperty
+    private Map<String, Object> additionalData;
 }

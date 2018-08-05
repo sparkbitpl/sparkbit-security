@@ -64,8 +64,9 @@ public class LoginAuthenticationFilter extends GenericFilterBean {
 
             String userId = ((LoginUserDetails) authentication.getPrincipal()).getUserId();
             loginHook.performAdditionalAuthenticationChecks(userId, loginPrincipal.getAuthnAttributes(), request);
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            loginHook.processAdditionalData(dto.getAdditionalData());
         } catch (AuthenticationException failed) {
             SecurityContextHolder.clearContext();
             entryPoint.commence(request, response, failed);

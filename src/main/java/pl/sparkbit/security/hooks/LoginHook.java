@@ -4,6 +4,7 @@ import org.springframework.security.core.AuthenticationException;
 import pl.sparkbit.security.login.AuthnAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public interface LoginHook {
@@ -17,5 +18,8 @@ public interface LoginHook {
     }
 
     default void doAfterSuccessfulLogin(String userId) {
+    }
+
+    default void processAdditionalData(Map<String, Object> data) {
     }
 }
