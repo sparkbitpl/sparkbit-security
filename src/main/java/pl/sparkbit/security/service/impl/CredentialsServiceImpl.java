@@ -6,10 +6,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.sparkbit.security.dao.CredentialsDao;
+import pl.sparkbit.security.dao.SessionDao;
 import pl.sparkbit.security.domain.Credentials;
 import pl.sparkbit.security.service.CredentialsService;
-import pl.sparkbit.security.service.SessionService;
 
+import java.time.Clock;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -18,9 +19,10 @@ import java.util.Collections;
 @SuppressWarnings("unused")
 public class CredentialsServiceImpl implements CredentialsService {
 
-    private final SessionService sessionService;
+    private final SessionDao sessionDao;
     private final CredentialsDao credentialsDao;
     private final PasswordEncoder passwordEncoder;
+    private final Clock clock;
 
     @Override
     @Transactional
@@ -44,7 +46,7 @@ public class CredentialsServiceImpl implements CredentialsService {
     public void disableUser(String userId) {
         Credentials credentials = Credentials.builder().userId(userId).enabled(false).build();
         credentialsDao.updateCredentials(credentials);
-        sessionService.endAllSessionsForUser(userId);
+        sessionDao.deleteSessions(userId, clock.instant());
     }
 
     @Override
@@ -59,6 +61,6 @@ public class CredentialsServiceImpl implements CredentialsService {
     public void deleteUser(String userId) {
         Credentials credentials = Credentials.builder().userId(userId).deleted(true).build();
         credentialsDao.updateCredentials(credentials);
-        sessionService.endAllSessionsForUser(userId);
+        sessionDao.deleteSessions(userId, clock.instant());
     }
 }

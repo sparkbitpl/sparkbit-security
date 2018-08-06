@@ -3,7 +3,8 @@ package pl.sparkbit.security.mvc.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import pl.sparkbit.security.mvc.dto.out.AuthTokenDTO;
+import pl.sparkbit.security.domain.NewSessionData;
+import pl.sparkbit.security.mvc.dto.out.NewSessionDataDTO;
 import pl.sparkbit.security.restauthn.AuthenticationTokenHelper;
 import pl.sparkbit.security.service.SessionService;
 
@@ -22,14 +23,14 @@ public class SessionController {
     private final AuthenticationTokenHelper authenticationTokenHelper;
     private final SessionService sessionService;
 
-    public AuthTokenDTO login(HttpServletRequest request, HttpServletResponse response) {
+    public NewSessionDataDTO login(HttpServletRequest request, HttpServletResponse response) {
         Optional<String> oldAuthToken = authenticationTokenHelper.extractAuthenticationToken(request);
-        String authToken = sessionService.startNewSession(oldAuthToken.orElse(null));
+        NewSessionData sessionData = sessionService.startNewSession(oldAuthToken.orElse(null));
 
-        Cookie cookie = authenticationTokenHelper.buildAuthenticationTokenCookie(authToken);
+        Cookie cookie = authenticationTokenHelper.buildAuthenticationTokenCookie(sessionData.getAuthToken());
         response.addCookie(cookie);
 
-        return new AuthTokenDTO(authToken);
+        return NewSessionDataDTO.from(sessionData);
     }
 
     @ResponseStatus(NO_CONTENT)

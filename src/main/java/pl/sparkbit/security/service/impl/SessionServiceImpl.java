@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import pl.sparkbit.security.Security;
+import pl.sparkbit.security.callbacks.LoginResponseAdditionalDataCallback;
 import pl.sparkbit.security.config.SecurityProperties;
 import pl.sparkbit.security.dao.SessionDao;
+import pl.sparkbit.security.domain.NewSessionData;
 import pl.sparkbit.security.domain.RestUserDetails;
 import pl.sparkbit.security.domain.Session;
 import pl.sparkbit.security.hooks.LoginHook;
@@ -24,6 +26,7 @@ import pl.sparkbit.security.util.SecureRandomStringGenerator;
 import javax.annotation.PostConstruct;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -43,6 +46,7 @@ public class SessionServiceImpl implements SessionService {
     private final SecurityProperties configuration;
     private final Optional<LoginHook> loginHook;
     private final Optional<LogoutHook> logoutHook;
+    private final Optional<LoginResponseAdditionalDataCallback> additionalDataCallback;
     private ExtraAuthnCheckService extraAuthnCheckService;
 
     @PostConstruct
@@ -59,7 +63,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     @Transactional
-    public String startNewSession(String oldAuthToken) {
+    public NewSessionData startNewSession(String oldAuthToken) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -90,7 +94,15 @@ public class SessionServiceImpl implements SessionService {
             loginHook.ifPresent(hook -> hook.doAfterSuccessfulLogin(userId));
         }
 
-        return newAuthToken;
+        NewSessionData.NewSessionDataBuilder sessionDataBuilder = NewSessionData.builder()
+                .authToken(newAuthToken)
+                .userId(userId);
+
+        if (!configuration.getExtraAuthnCheck().getEnabled() && additionalDataCallback.isPresent()) {
+            Map<String, Object> additionalData = additionalDataCallback.get().getAdditionalData();
+            sessionDataBuilder.additionalData(additionalData);
+        }
+        return sessionDataBuilder.build();
     }
 
     @Override

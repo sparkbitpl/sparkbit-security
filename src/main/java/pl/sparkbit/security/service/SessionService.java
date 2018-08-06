@@ -1,10 +1,12 @@
 package pl.sparkbit.security.service;
 
+import pl.sparkbit.security.domain.NewSessionData;
+
 import java.time.Instant;
 
 public interface SessionService {
 
-    String startNewSession(String oldAuthToken);
+    NewSessionData startNewSession(String oldAuthToken);
 
     void endSession();
 

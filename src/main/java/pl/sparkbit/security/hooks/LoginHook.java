@@ -17,9 +17,10 @@ public interface LoginHook {
             throws AuthenticationException {
     }
 
-    default void doAfterSuccessfulLogin(String userId) {
+    default void doAfterSuccessfulLogin(String userId) throws AuthenticationException {
     }
 
-    default void processAdditionalData(String userId, Map<String, Object> data, HttpServletRequest request) {
+    default void processAdditionalData(String userId, Map<String, Object> data, HttpServletRequest request)
+            throws AuthenticationException {
     }
 }
