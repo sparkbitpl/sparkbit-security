@@ -20,6 +20,6 @@ public interface LoginHook {
     default void doAfterSuccessfulLogin(String userId) {
     }
 
-    default void processAdditionalData(String userId, Map<String, Object> data) {
+    default void processAdditionalData(String userId, Map<String, Object> data, HttpServletRequest request) {
     }
 }
