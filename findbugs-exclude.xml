@@ -1,16 +1,10 @@
 <FindBugsFilter>
     <Match>
-        <Class name="pl.sparkbit.security.restauthn.user.UserAuthenticationProvider"/>
-        <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-        <Class name="pl.sparkbit.security.login.LoginAuthenticationFilter"/>
-        <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-        <Class name="pl.sparkbit.security.restauthn.RestAuthenticationFilter"/>
+        <Or>
+            <Class name="pl.sparkbit.security.restauthn.user.UserAuthenticationProvider"/>
+            <Class name="pl.sparkbit.security.login.LoginAuthenticationFilter"/>
+            <Class name="pl.sparkbit.security.restauthn.RestAuthenticationFilter"/>
+        </Or>
         <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
 
@@ -27,19 +21,11 @@
     </Match>
 
     <Match>
-        <Class name="pl.sparkbit.security.login.social.GoogleAuthenticationProvider"/>
-        <Method name="authenticate"/>
-        <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-        <Class name="pl.sparkbit.security.login.social.TwitterAuthenticationProvider"/>
-        <Method name="authenticate"/>
-        <Bug pattern="BC_UNCONFIRMED_CAST"/>
-    </Match>
-
-    <Match>
-        <Class name="pl.sparkbit.security.login.social.FacebookAuthenticationProvider"/>
+        <Or>
+            <Class name="pl.sparkbit.security.login.social.GoogleAuthenticationProvider"/>
+            <Class name="pl.sparkbit.security.login.social.TwitterAuthenticationProvider"/>
+            <Class name="pl.sparkbit.security.login.social.FacebookAuthenticationProvider"/>
+        </Or>
         <Method name="authenticate"/>
         <Bug pattern="BC_UNCONFIRMED_CAST"/>
     </Match>
@@ -61,5 +47,13 @@
     <Match>
         <Class name="pl.sparkbit.security.config.SecurityConfig$LoginConfigurationAdapter$1"/>
         <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
+    </Match>
+
+    <Match>
+        <Class name="pl.sparkbit.security.config.SecurityProperties$Cors"/>
+        <Or>
+            <Bug pattern="EI_EXPOSE_REP"/>
+            <Bug pattern="EI_EXPOSE_REP2"/>
+        </Or>
     </Match>
 </FindBugsFilter>

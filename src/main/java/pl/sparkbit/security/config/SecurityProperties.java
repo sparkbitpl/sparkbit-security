@@ -107,7 +107,7 @@ public class SecurityProperties {
         @NotNull
         private String allowedHeaders;
         @NotNull
-        private String allowedMethods;
+        private String[] allowedMethods;
         @NotNull
         private String allowedOrigins;
         @NotNull
