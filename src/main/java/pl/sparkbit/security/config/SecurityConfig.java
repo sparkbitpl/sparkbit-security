@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.GenericFilterBean;
 import pl.sparkbit.security.hooks.LoginHook;
 import pl.sparkbit.security.login.LoginAuthenticationFilter;
@@ -158,18 +159,21 @@ public class SecurityConfig {
         }
     }
 
+
+    /**
+     * With this configuration /error endpoint is publicly available and security context is not available
+     * in error handling - even if user is authenticated.
+     * If we needed SecurityContext to be populated, we'd have to add authentication here (but not access control).
+     * The challenge would be to handle situations when errors are caused by problem with authentication (eg. invalid
+     * session token). Such cases would cause errors during authentication for error handling as well and empty
+     * response as a result.
+     * Probably the best solution would be to have a completely different authentication configuration for /error than
+     * for other rest endpoints (other filter, providers etc.).
+     * See scs-64 in YouTrack
+     */
     @Configuration
     @Order(3)
     @RequiredArgsConstructor
-    // With this configuration /error endpoint is publicly available and security context is not available
-    // in error handling - even if user is authenticated.
-    // If we needed SecurityContext to be populated, we'd have to add authentication here (but not access control).
-    // The challenge would be to handle situations when errors are caused by problem with authentication (eg. invalid
-    // session token). Such cases would cause errors during authentication for error handling as well and empty
-    // response as a result.
-    // Probably the best solution would be to have a completely different authentication configuration for /error than
-    // for other rest endpoints (other filer, providers etc.).
-    // See scs-64 in YouTrack
     public static class ErrorConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
         private static final String ERROR_PATTERN = "/error/**";
@@ -188,7 +192,33 @@ public class SecurityConfig {
         }
     }
 
+    /**
+     * This configuration assures that actuator's health endpoint is publicly available. Applications can override it
+     * by creating a WebSecurityConfigurerAdapter with order less than 20.
+     * Actuator configuration can be used to enforce specific roles to see health details
+     * (management.endpoint.health.show-details and management.endpoint.health.roles).
+     */
     @Configuration
+    @Order(20)
+    @RequiredArgsConstructor
+    public static class ActuatorHealthConfigurationAdapter extends WebSecurityConfigurerAdapter {
+
+        private final SecurityConfig.RestConfigurationAdapter restConfiguration;
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            RequestMatcher actuatorHealthRequestMatcher = EndpointRequest.to("health");
+            restConfiguration.allowPublicAccess(http, actuatorHealthRequestMatcher);
+        }
+
+        @Override
+        protected void configure(AuthenticationManagerBuilder auth) {
+            restConfiguration.enableAuthenticationSupport(auth);
+        }
+    }
+
+    @Configuration
+    @Order(100)
     @RequiredArgsConstructor
     public static class RestConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
@@ -250,15 +280,21 @@ public class SecurityConfig {
          * The @Order for this new ConfigurationAdapter must be after login/admin but before generic "rest" config
          * (so inclusive between 2 and 99).
          */
-        @SuppressWarnings("unused")
-        public void configure(HttpSecurity http, AuthenticationManager authenticationManager, String antMatcher,
-                              String role) throws Exception {
+        @SuppressWarnings({"unused", "WeakerAccess"})
+        public void requireRoleForPathPrefix(HttpSecurity http, AuthenticationManager authenticationManager,
+                                             String pathPrefix, String role) throws Exception {
             GenericFilterBean authenticationFilter = new RestAuthenticationFilter(authenticationManager,
                     authenticationEntryPoint, authenticationTokenHelper);
 
+            SessionExpirationHeaderFilter sessionExpirationHeaderFilter = new SessionExpirationHeaderFilter(
+                    sessionService,
+                    configuration.getSessionExpiration().getTimestampHeaderName(),
+                    authenticationTokenHelper);
+
             http
-                    .antMatcher(antMatcher)
+                    .antMatcher(pathPrefix)
                     .addFilterBefore(authenticationFilter, BasicAuthenticationFilter.class)
+                    .addFilterAfter(sessionExpirationHeaderFilter, RestAuthenticationFilter.class)
                     .authorizeRequests()
                     .anyRequest().hasRole(role)
                     .and()
@@ -268,6 +304,47 @@ public class SecurityConfig {
                     .logout().disable()
                     .rememberMe().disable()
                     .csrf().disable();
+        }
+
+        /**
+         * This method can be used when the application requires that some paths don't require authentication but
+         * for some reason cannot be prefixed with /public.
+         * A special ConfigurationAdapter extending WebSecurityConfigurerAdapter must be implemented that will
+         * call this method from within its configure(HttpSecurity http).
+         * The @Order for this new ConfigurationAdapter must be after login/admin but before generic "rest" config
+         * (so inclusive between 2 and 99).
+         */
+        @SuppressWarnings({"unused", "WeakerAccess"})
+        public void allowPublicAccess(HttpSecurity http, RequestMatcher matcher)
+                throws Exception {
+            GenericFilterBean authenticationFilter = new RestAuthenticationFilter(authenticationManager(),
+                    authenticationEntryPoint, authenticationTokenHelper);
+
+            SessionExpirationHeaderFilter sessionExpirationHeaderFilter = new SessionExpirationHeaderFilter(
+                    sessionService,
+                    configuration.getSessionExpiration().getTimestampHeaderName(),
+                    authenticationTokenHelper);
+            http
+                    .requestMatcher(matcher)
+                    .addFilterBefore(authenticationFilter, BasicAuthenticationFilter.class)
+                    .addFilterAfter(sessionExpirationHeaderFilter, RestAuthenticationFilter.class)
+
+                    .sessionManagement().sessionCreationPolicy(STATELESS).and()
+                    .anonymous().disable()
+                    .logout().disable()
+                    .rememberMe().disable()
+                    .csrf().disable();
+        }
+
+        /**
+         * This method is usually usefull together with allowPublicAccess(). allowPublicAccess configures aendpoint
+         * as publicly available, this method enables authentication. This is useful when we want public access,
+         * but if user is logged in, we want to have access to authentication token.
+         *
+         */
+        @SuppressWarnings("WeakerAccess")
+        public void enableAuthenticationSupport(AuthenticationManagerBuilder auth) {
+            auth.authenticationProvider(restAuthenticationProvider());
         }
     }
 }
