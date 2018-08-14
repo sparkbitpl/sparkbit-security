@@ -198,7 +198,5 @@ public class SecurityProperties {
         private String publicPassword;
         @NotNull
         private String publicEmail;
-        @NotNull
-        private String buildInfo;
     }
 }

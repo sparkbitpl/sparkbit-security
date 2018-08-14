@@ -63,5 +63,3 @@ sparkbit:
       publicPasswordResetToken: ${sparkbit.security.paths.public-prefix}/profile/passwordResetToken
       publicPassword: ${sparkbit.security.paths.public-prefix}/profile/password
       publicEmail: ${sparkbit.security.paths.public-prefix}/profile/email
-      # from commons
-      buildInfo: ${sparkbit.security.paths.admin-prefix}/buildInfo

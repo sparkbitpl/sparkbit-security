@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import pl.sparkbit.commons.buildinfo.mvc.controller.BuildInfoController;
 import pl.sparkbit.security.config.SecurityProperties;
 import pl.sparkbit.security.mvc.controller.*;
 import pl.sparkbit.security.mvc.dto.in.ChangePasswordDTO;
@@ -17,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
@@ -31,7 +29,6 @@ public class EndpointMappings extends RequestMappingHandlerMapping {
     private static final Method INITIATE_PASSWORD_RESET_METHOD;
     private static final Method RESET_PASSWORD_METHOD;
     private static final Method VERIFY_EMAIL_METHOD;
-    private static final Method BUILD_INFO_GET_METHOD;
 
     static {
         try {
@@ -46,7 +43,6 @@ public class EndpointMappings extends RequestMappingHandlerMapping {
                     PasswordResetController.class.getMethod("initiatePasswordReset", Map.class);
             RESET_PASSWORD_METHOD = PasswordResetController.class.getMethod("resetPassword", ResetPasswordDTO.class);
             VERIFY_EMAIL_METHOD = EmailVerificationController.class.getMethod("verifyEmail", VerifyEmailDTO.class);
-            BUILD_INFO_GET_METHOD = BuildInfoController.class.getMethod("getBuildInfo");
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -78,9 +74,6 @@ public class EndpointMappings extends RequestMappingHandlerMapping {
         }
         if (method.equals(VERIFY_EMAIL_METHOD)) {
             return requestMappingInfo(paths.getPublicEmail(), POST);
-        }
-        if (method.equals(BUILD_INFO_GET_METHOD)) {
-            return requestMappingInfo(paths.getBuildInfo(), GET);
         }
         return super.getMappingForMethod(method, handlerType);
     }
