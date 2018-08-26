@@ -189,7 +189,7 @@
         <dependency>
             <groupId>pl.sparkbit</groupId>
             <artifactId>sparkbit-commons</artifactId>
-            <version>1.0.31</version>
+            <version>1.0.33</version>
         </dependency>
 
         <dependency>
