@@ -7,7 +7,7 @@ class LoginPrincipalFactorySpec extends Specification {
     def "shouldSucceedForProvidedAttributesMatchingExpected"() {
         setup:
         def providedAttributes = ["username": "batman"]
-        String[] expectedAttributes = ["username"]
+        Set<String> expectedAttributes = ["username"]
         def factory = new LoginPrincipalFactory(expectedAttributes)
         when:
         factory.validateAuthnAttributes(providedAttributes)
@@ -18,7 +18,7 @@ class LoginPrincipalFactorySpec extends Specification {
     def "shouldThrowExceptionForAdditionalProvidedAttribute"() {
         setup:
         def providedAttributes = ["username": "batman", "company": "gotham"]
-        String[] expectedAttributes = ["username"]
+        Set<String> expectedAttributes = ["username"]
         def factory = new LoginPrincipalFactory(expectedAttributes)
         when:
         factory.validateAuthnAttributes(providedAttributes)
@@ -29,7 +29,7 @@ class LoginPrincipalFactorySpec extends Specification {
     def "shouldThrowExceptionForMissingProvidedAttribute"() {
         setup:
         def providedAttributes = ["username": "batman"]
-        String[] expectedAttributes = ["username", "company"]
+        Set<String> expectedAttributes = ["username", "company"]
         def factory = new LoginPrincipalFactory(expectedAttributes)
         when:
         factory.validateAuthnAttributes(providedAttributes)
@@ -40,7 +40,7 @@ class LoginPrincipalFactorySpec extends Specification {
     def "shouldThrowExceptionForEmptyProvidedAttributes"() {
         setup:
         def providedAttributes = [:]
-        String[] expectedAttributes = ["username", "company"]
+        Set<String> expectedAttributes = ["username", "company"]
         def factory = new LoginPrincipalFactory(expectedAttributes)
         when:
         factory.validateAuthnAttributes(providedAttributes)
@@ -51,7 +51,7 @@ class LoginPrincipalFactorySpec extends Specification {
     def "shouldThrowExceptionForNullProvidedAttributes"() {
         setup:
         def providedAttributes = null
-        String[] expectedAttributes = []
+        Set<String> expectedAttributes = []
         def factory = new LoginPrincipalFactory(expectedAttributes)
         when:
         factory.validateAuthnAttributes(providedAttributes)

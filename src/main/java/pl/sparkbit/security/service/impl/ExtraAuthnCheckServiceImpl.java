@@ -2,6 +2,7 @@ package pl.sparkbit.security.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,8 +15,6 @@ import pl.sparkbit.security.mvc.dto.in.ExtraAuthnCheckDTO;
 import pl.sparkbit.security.service.ExtraAuthnCheckService;
 import pl.sparkbit.security.util.SecurityChallenges;
 
-import java.util.Optional;
-
 import static pl.sparkbit.security.config.SecurityProperties.EXTRA_AUTHENTICATION_CHECK_ENABLED;
 import static pl.sparkbit.security.domain.SecurityChallengeType.EXTRA_AUTHN_CHECK;
 
@@ -23,13 +22,11 @@ import static pl.sparkbit.security.domain.SecurityChallengeType.EXTRA_AUTHN_CHEC
 @RequiredArgsConstructor
 @Service
 @Slf4j
-@SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unused"})
+@SuppressWarnings({"unused"})
 public class ExtraAuthnCheckServiceImpl implements ExtraAuthnCheckService {
 
-    private static final int DEFAULT_CHALLENGE_VALIDITY_HOURS = 1;
-
     private final ExtraAuthnCheckChallengeCallback callback;
-    private final Optional<LoginHook> loginHook;
+    private final ObjectProvider<LoginHook> loginHook;
     private final Security security;
     private final SecurityChallenges securityChallenges;
     private final SessionDao sessionDao;
@@ -54,6 +51,6 @@ public class ExtraAuthnCheckServiceImpl implements ExtraAuthnCheckService {
 
         log.debug("Extra authn check succeeded for user {}", challenge.getUserId());
 
-        loginHook.ifPresent(hook -> hook.doAfterSuccessfulLogin(challenge.getUserId()));
+        loginHook.ifAvailable(hook -> hook.doAfterSuccessfulLogin(challenge.getUserId()));
     }
 }

@@ -20,7 +20,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @RequiredArgsConstructor
-public class EndpointMappings extends RequestMappingHandlerMapping {
+public class SecurityHandlerMapping extends RequestMappingHandlerMapping {
 
     private static final Method LOGIN_METHOD;
     private static final Method LOGOUT_METHOD;

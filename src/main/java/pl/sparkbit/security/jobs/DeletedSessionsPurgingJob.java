@@ -15,7 +15,7 @@ import java.time.Instant;
 import static pl.sparkbit.security.config.SecurityProperties.*;
 
 @Component
-@ConditionalOnProperty(value = DELETED_SESSIONS_PURGING_ENABLED, havingValue = "true")
+@ConditionalOnProperty(value = DELETED_SESSIONS_PURGING_ENABLED, havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 @Slf4j
 @SuppressWarnings("unused")

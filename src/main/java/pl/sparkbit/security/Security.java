@@ -5,11 +5,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import pl.sparkbit.security.domain.RestUserDetails;
 import pl.sparkbit.security.login.LoginUserDetails;
 
-@Component
 @SuppressWarnings({"unused", "WeakerAccess"})
 @Slf4j
 public class Security {

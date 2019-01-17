@@ -1,25 +1,16 @@
 package pl.sparkbit.security.login;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-import static java.util.stream.Collectors.toSet;
-
-@Component
 @Slf4j
+@RequiredArgsConstructor
 public class LoginPrincipalFactory {
 
     private final Set<String> expectedAttributes;
-
-    public LoginPrincipalFactory(
-            @Value("#{securityProperties.getExpectedAuthnAttributes()}") String[] expectedAuthnAttributes) {
-        this.expectedAttributes = Arrays.stream(expectedAuthnAttributes).collect(toSet());
-    }
 
     public LoginPrincipal generate(Map<String, String> providedAttributes) {
         validateAuthnAttributes(providedAttributes);

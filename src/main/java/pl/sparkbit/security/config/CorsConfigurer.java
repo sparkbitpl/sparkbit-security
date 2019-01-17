@@ -1,13 +1,10 @@
 package pl.sparkbit.security.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Component
 @RequiredArgsConstructor
-@SuppressWarnings("unused")
 public class CorsConfigurer implements WebMvcConfigurer {
 
     private final SecurityProperties configuration;

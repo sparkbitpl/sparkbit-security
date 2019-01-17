@@ -3,7 +3,6 @@ package pl.sparkbit.security.util;
 import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import pl.sparkbit.commons.util.IdGenerator;
 import pl.sparkbit.security.config.SecurityProperties;
 import pl.sparkbit.security.dao.SecurityChallengeDao;
@@ -21,7 +20,6 @@ import java.util.Optional;
 import static pl.sparkbit.security.exception.NoValidTokenFoundException.FailureReason.TOKEN_EXPIRED;
 import static pl.sparkbit.security.exception.NoValidTokenFoundException.FailureReason.TOKEN_NOT_FOUND;
 
-@Component
 @RequiredArgsConstructor
 @Slf4j
 @SuppressWarnings("unused")

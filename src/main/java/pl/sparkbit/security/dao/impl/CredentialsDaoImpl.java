@@ -2,7 +2,6 @@ package pl.sparkbit.security.dao.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import pl.sparkbit.security.config.SecurityProperties;
 import pl.sparkbit.security.dao.CredentialsDao;
@@ -13,7 +12,6 @@ import java.util.Optional;
 
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
 
-@Repository
 @RequiredArgsConstructor
 @SuppressWarnings("unused")
 @Transactional(propagation = MANDATORY)

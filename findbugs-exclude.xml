@@ -45,7 +45,7 @@
     </Match>
 
     <Match>
-        <Class name="pl.sparkbit.security.config.SecurityConfig$LoginConfigurationAdapter$1"/>
+        <Class name="pl.sparkbit.security.config.SparkbitSecurityWebConfigurer$LoginConfigurationAdapter$1"/>
         <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
     </Match>
 

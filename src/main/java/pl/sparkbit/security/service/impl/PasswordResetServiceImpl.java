@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.transaction.annotation.Propagation.MANDATORY;
-import static pl.sparkbit.security.config.SecurityProperties.*;
+import static pl.sparkbit.security.config.SecurityProperties.PASSWORD_RESET_ENABLED;
 import static pl.sparkbit.security.domain.SecurityChallengeType.PASSWORD_RESET;
 import static pl.sparkbit.security.domain.SecurityChallengeType.SET_NEW_PASSWORD;
 import static pl.sparkbit.security.exception.NoValidTokenFoundException.FailureReason.TOKEN_NOT_FOUND;

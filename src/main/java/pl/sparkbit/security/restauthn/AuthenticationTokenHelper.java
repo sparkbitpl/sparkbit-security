@@ -1,7 +1,6 @@
 package pl.sparkbit.security.restauthn;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import pl.sparkbit.security.config.SecurityProperties;
 
 import javax.servlet.http.Cookie;
@@ -9,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Optional;
 
-@Component
 @RequiredArgsConstructor
 public class AuthenticationTokenHelper {
 

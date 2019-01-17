@@ -17,8 +17,8 @@ import pl.sparkbit.security.service.UserDetailsService;
 
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 @Slf4j
 @SuppressWarnings("unused")
 public class UserDetailsServiceImpl implements UserDetailsService {

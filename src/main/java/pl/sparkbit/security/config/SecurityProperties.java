@@ -2,14 +2,15 @@ package pl.sparkbit.security.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import pl.sparkbit.security.password.encoder.PasswordEncoderType;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.Duration;
+import java.util.Collections;
+import java.util.Set;
 
-@Component
 @ConfigurationProperties("sparkbit.security")
 @Data
 @SuppressWarnings("WeakerAccess")
@@ -17,7 +18,6 @@ import java.time.Duration;
 public class SecurityProperties {
 
     private static final String PREFIX = "sparkbit.security.";
-
     public static final String DEFAULT_PASSWORD_POLICY_ENABLED = PREFIX + "default-password-policy.enabled";
     public static final String DELETED_SESSIONS_PURGING_ENABLED = PREFIX + "deleted-session-purging.enabled";
     public static final String EMAIL_VERIFICATION_ENABLED = PREFIX + "email-verification.enabled";
@@ -27,40 +27,55 @@ public class SecurityProperties {
     public static final String SESSION_EXPIRATION_ENABLED = PREFIX + "session-expiration.enabled";
 
     @NotNull
-    private AuthCookie authCookie;
+    @Valid
+    private AuthCookie authCookie = new AuthCookie();
     @NotNull
+    @Valid
     private String authTokenHeaderName = "X-Sparkbit-Auth-Token";
     @NotNull
-    private ChallengeToken challengeToken;
+    @Valid
+    private ChallengeToken challengeToken = new ChallengeToken();
     @NotNull
-    private Cors cors;
+    @Valid
+    private Cors cors = new Cors();
     @NotNull
-    private DeletedSessionPurging deletedSessionPurging;
+    @Valid
+    private DeletedSessionPurging deletedSessionPurging = new DeletedSessionPurging();
     @NotNull
-    private EmailVerification emailVerification;
+    @Valid
+    private EmailVerification emailVerification = new EmailVerification();
     @NotNull
-    private String expectedAuthnAttributes = "email";
+    @Valid
+    private Set<String> expectedAuthnAttributes = Collections.singleton("email");
     @NotNull
-    private ExpiredChallengeDeletion expiredChallengeDeletion;
+    @Valid
+    private ExpiredChallengeDeletion expiredChallengeDeletion = new ExpiredChallengeDeletion();
     @NotNull
-    private ExtraAuthnCheck extraAuthnCheck;
+    @Valid
+    private ExtraAuthnCheck extraAuthnCheck = new ExtraAuthnCheck();
     @NotNull
+    @Valid
     private Boolean passwordChangeEnabled = true;
     @NotNull
+    @Valid
     private PasswordEncoderType passwordEncoderType = PasswordEncoderType.BCRYPT;
     @NotNull
-    private PasswordReset passwordReset;
+    @Valid
+    private PasswordReset passwordReset = new PasswordReset();
     @NotNull
-    private SessionExpiration sessionExpiration;
+    @Valid
+    private SessionExpiration sessionExpiration = new SessionExpiration();
     @NotNull
-    private DefaultPasswordPolicy defaultPasswordPolicy;
+    @Valid
+    private DefaultPasswordPolicy defaultPasswordPolicy = new DefaultPasswordPolicy();
     @NotNull
-    private DatabaseSchema databaseSchema;
+    @Valid
+    private DatabaseSchema databaseSchema = new DatabaseSchema();
     @NotNull
-    private Paths paths;
+    @Valid
+    private Paths paths = new Paths();
 
     @Data
-    @Validated
     public static class AuthCookie {
         @NotNull
         private String name = "sparkbitAuthToken";
@@ -71,7 +86,6 @@ public class SecurityProperties {
     }
 
     @Data
-    @Validated
     public static class DatabaseSchema {
         @NotNull
         private String userEntityName = "user";
@@ -82,7 +96,6 @@ public class SecurityProperties {
     }
 
     @Data
-    @Validated
     public static class DefaultPasswordPolicy {
         @NotNull
         private Boolean enabled = true;
@@ -91,7 +104,6 @@ public class SecurityProperties {
     }
 
     @Data
-    @Validated
     public static class ChallengeToken {
         @NotNull
         private String allowedCharacters = "23456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
@@ -100,7 +112,6 @@ public class SecurityProperties {
     }
 
     @Data
-    @Validated
     public static class Cors {
         @NotNull
         private Boolean allowCredentials = true;
@@ -117,7 +128,6 @@ public class SecurityProperties {
     }
 
     @Data
-    @Validated
     public static class DeletedSessionPurging {
         @NotNull
         private Boolean enabled = true;
@@ -128,7 +138,6 @@ public class SecurityProperties {
     }
 
     @Data
-    @Validated
     public static class EmailVerification {
         @NotNull
         private Duration challengeValidity = Duration.ofHours(1);
@@ -137,14 +146,12 @@ public class SecurityProperties {
     }
 
     @Data
-    @Validated
     public static class ExpiredChallengeDeletion {
         @NotNull
         private Duration runEvery = Duration.ofHours(1);
     }
 
     @Data
-    @Validated
     public static class ExtraAuthnCheck {
         @NotNull
         private Duration challengeValidity = Duration.ofHours(1);
@@ -153,7 +160,6 @@ public class SecurityProperties {
     }
 
     @Data
-    @Validated
     public static class PasswordReset {
         @NotNull
         private Duration challengeValidity = Duration.ofHours(1);
@@ -164,7 +170,6 @@ public class SecurityProperties {
     }
 
     @Data
-    @Validated
     public static class SessionExpiration {
         @NotNull
         private Boolean enabled = false;
@@ -175,7 +180,6 @@ public class SecurityProperties {
     }
 
     @Data
-    @Validated
     public static class Paths {
         @NotNull
         private String publicPrefix = "/public";

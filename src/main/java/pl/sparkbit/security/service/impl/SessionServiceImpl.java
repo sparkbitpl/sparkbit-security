@@ -2,7 +2,7 @@ package pl.sparkbit.security.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,10 +29,10 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 @Slf4j
-@SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unused"})
+@SuppressWarnings({"unused"})
 public class SessionServiceImpl implements SessionService {
 
     private static final int AUTH_TOKEN_LENGTH = 32;
@@ -42,17 +42,18 @@ public class SessionServiceImpl implements SessionService {
     private final Clock clock;
     private final Security security;
     private final SecureRandomStringGenerator secureRandomStringGenerator;
-    private final ApplicationContext applicationContext;
     private final SecurityProperties configuration;
-    private final Optional<LoginHook> loginHook;
-    private final Optional<LogoutHook> logoutHook;
-    private final Optional<LoginResponseAdditionalDataCallback> additionalDataCallback;
-    private ExtraAuthnCheckService extraAuthnCheckService;
+    private final ObjectProvider<LoginHook> loginHook;
+    private final ObjectProvider<LogoutHook> logoutHook;
+    private final ObjectProvider<LoginResponseAdditionalDataCallback> additionalDataCallback;
+    private final ObjectProvider<ExtraAuthnCheckService> extraAuthnCheckService;
 
     @PostConstruct
     private void setup() {
         if (configuration.getExtraAuthnCheck().getEnabled()) {
-            extraAuthnCheckService = applicationContext.getBean(ExtraAuthnCheckService.class);
+            if (extraAuthnCheckService.getIfAvailable() == null) {
+                throw new RuntimeException("No defined bean " + ExtraAuthnCheckService.class.getSimpleName());
+            }
         }
     }
 
@@ -89,18 +90,25 @@ public class SessionServiceImpl implements SessionService {
 
         if (configuration.getExtraAuthnCheck().getEnabled()) {
             sessionDao.updateExtraAuthnCheckRequired(newSession.getAuthTokenHash(), true);
-            extraAuthnCheckService.initiateExtraAuthnCheck(userId);
+            ExtraAuthnCheckService svc = extraAuthnCheckService.getIfAvailable();
+            if (svc == null) {
+                throw new RuntimeException("Missing bean " + ExtraAuthnCheckService.class.getSimpleName());
+            } else {
+                svc.initiateExtraAuthnCheck(userId);
+            }
         } else {
-            loginHook.ifPresent(hook -> hook.doAfterSuccessfulLogin(userId));
+            loginHook.ifAvailable(hook -> hook.doAfterSuccessfulLogin(userId));
         }
 
         NewSessionData.NewSessionDataBuilder sessionDataBuilder = NewSessionData.builder()
                 .authToken(newAuthToken)
                 .userId(userId);
 
-        if (!configuration.getExtraAuthnCheck().getEnabled() && additionalDataCallback.isPresent()) {
-            Map<String, Object> additionalData = additionalDataCallback.get().getAdditionalData();
-            sessionDataBuilder.additionalData(additionalData);
+        if (!configuration.getExtraAuthnCheck().getEnabled()) {
+            additionalDataCallback.ifAvailable(callback -> {
+                Map<String, Object> additionalData = callback.getAdditionalData();
+                sessionDataBuilder.additionalData(additionalData);
+            });
         }
         return sessionDataBuilder.build();
     }
@@ -113,7 +121,7 @@ public class SessionServiceImpl implements SessionService {
         sessionDao.deleteSession(restUserDetails.getAuthTokenHash(), clock.instant());
         SecurityContextHolder.clearContext();
 
-        logoutHook.ifPresent(hook -> hook.doAfterSuccessfulLogout(restUserDetails.getUserId()));
+        logoutHook.ifAvailable(hook -> hook.doAfterSuccessfulLogout(restUserDetails.getUserId()));
     }
 
     @Override

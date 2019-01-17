@@ -1,11 +1,8 @@
 package pl.sparkbit.security.util;
 
-import org.springframework.stereotype.Component;
-
 import java.security.SecureRandom;
 
-@Component
-@SuppressWarnings({"unused", "WeakerAccess", "checkstyle:hideutilityclassconstructor"})
+@SuppressWarnings({"WeakerAccess", "checkstyle:hideutilityclassconstructor"})
 public class SecureRandomStringGeneratorImpl implements SecureRandomStringGenerator {
 
     public static final String DIGITS = "01234567890";

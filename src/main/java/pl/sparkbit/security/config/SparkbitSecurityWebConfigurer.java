@@ -2,9 +2,9 @@ package pl.sparkbit.security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -16,10 +16,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -34,33 +30,21 @@ import pl.sparkbit.security.login.social.TwitterAuthenticationProvider;
 import pl.sparkbit.security.login.social.resolver.FacebookResolver;
 import pl.sparkbit.security.login.social.resolver.GoogleResolver;
 import pl.sparkbit.security.login.social.resolver.TwitterResolver;
-import pl.sparkbit.security.password.encoder.PhpassPasswordEncoder;
 import pl.sparkbit.security.restauthn.AuthenticationTokenHelper;
 import pl.sparkbit.security.restauthn.RestAuthenticationFilter;
 import pl.sparkbit.security.restauthn.user.UserAuthenticationProvider;
 import pl.sparkbit.security.service.SessionService;
 import pl.sparkbit.security.service.UserDetailsService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-@Configuration
 @EnableWebSecurity
-@MapperScan("pl.sparkbit.security.dao.mybatis")
-@SuppressWarnings({"SpringFacetCodeInspection", "checkstyle:magicnumber"})
-public class SecurityConfig {
+public class SparkbitSecurityWebConfigurer {
 
     @Bean
+    @ConditionalOnMissingBean
     public ConversionService conversionService() {
         return new DefaultConversionService();
-    }
-
-    @Bean
-    public AuthenticationEntryPoint authenticationEntryPoint() {
-        return (HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) ->
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
     }
 
     @Configuration
@@ -77,36 +61,14 @@ public class SecurityConfig {
         private final ObjectProvider<TwitterResolver> twitterResolver;
         private final ObjectProvider<LoginHook> loginHook;
         private final SecurityProperties configuration;
-
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-            switch (configuration.getPasswordEncoderType()) {
-                case STANDARD:
-                    //noinspection deprecation
-                    return new StandardPasswordEncoder();
-                case BCRYPT:
-                    return new BCryptPasswordEncoder();
-                case PHPASS:
-                    return new PhpassPasswordEncoder();
-            }
-            return new BCryptPasswordEncoder();
-        }
-
-        @Bean
-        public DaoAuthenticationProvider daoAuthenticationProvider() {
-            DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-            daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-            daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-            return daoAuthenticationProvider;
-        }
+        private final DaoAuthenticationProvider daoAuthenticationProvider;
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            GenericFilterBean loginAuthenticationFiler =
-                    new LoginAuthenticationFilter(authenticationManager(), authenticationEntryPoint,
-                            loginPrincipalFactory, loginHook.getIfAvailable(() -> new LoginHook() {
-                            })
-                    );
+            LoginHook hook = loginHook.getIfAvailable(() -> new LoginHook() {
+            });
+            GenericFilterBean loginAuthenticationFiler = new LoginAuthenticationFilter(
+                    authenticationManager(), authenticationEntryPoint, loginPrincipalFactory, hook);
             http
                     .cors().and()
                     .addFilterBefore(loginAuthenticationFiler, BasicAuthenticationFilter.class)
@@ -121,7 +83,7 @@ public class SecurityConfig {
 
         @Override
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-            auth.authenticationProvider(daoAuthenticationProvider());
+            auth.authenticationProvider(daoAuthenticationProvider);
 
             // not lambda expression because GoogleAuthenticationProvider throws exceptions
             if (googleResolver.getIfAvailable() != null) {
@@ -202,7 +164,7 @@ public class SecurityConfig {
     @RequiredArgsConstructor
     public static class ActuatorHealthConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
-        private final SecurityConfig.RestConfigurationAdapter restConfiguration;
+        private final RestConfigurationAdapter restConfiguration;
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {

@@ -32,7 +32,7 @@ class LoginAuthenticationFilterSpec extends Specification {
 
     def "should accept a password login dto"() {
         setup:
-        String[] expectedAuthnAttributes = ['applicationName', 'email']
+        Set<String> expectedAuthnAttributes = ['applicationName', 'email']
         def filter = new LoginAuthenticationFilter(authManager, entryPoint,
                 new LoginPrincipalFactory(expectedAuthnAttributes), loginHook)
         def request = new MockHttpServletRequest()
@@ -60,7 +60,7 @@ class LoginAuthenticationFilterSpec extends Specification {
 
     def "should fail with an unsupported json payload"() {
         setup:
-        String[] expectedAuthnAttributes = ['applicationName', 'email']
+        Set<String> expectedAuthnAttributes = ['applicationName', 'email']
         def filter = new LoginAuthenticationFilter(authManager, entryPoint,
                 new LoginPrincipalFactory(expectedAuthnAttributes), loginHook)
         def request = new MockHttpServletRequest()
