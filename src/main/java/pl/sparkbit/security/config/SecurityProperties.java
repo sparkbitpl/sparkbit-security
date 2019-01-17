@@ -29,7 +29,7 @@ public class SecurityProperties {
     @NotNull
     private AuthCookie authCookie;
     @NotNull
-    private String authTokenHeaderName;
+    private String authTokenHeaderName = "X-Sparkbit-Auth-Token";
     @NotNull
     private ChallengeToken challengeToken;
     @NotNull
@@ -39,15 +39,15 @@ public class SecurityProperties {
     @NotNull
     private EmailVerification emailVerification;
     @NotNull
-    private String expectedAuthnAttributes;
+    private String expectedAuthnAttributes = "email";
     @NotNull
     private ExpiredChallengeDeletion expiredChallengeDeletion;
     @NotNull
     private ExtraAuthnCheck extraAuthnCheck;
     @NotNull
-    private Boolean passwordChangeEnabled;
+    private Boolean passwordChangeEnabled = true;
     @NotNull
-    private PasswordEncoderType passwordEncoderType;
+    private PasswordEncoderType passwordEncoderType = PasswordEncoderType.BCRYPT;
     @NotNull
     private PasswordReset passwordReset;
     @NotNull
@@ -63,140 +63,137 @@ public class SecurityProperties {
     @Validated
     public static class AuthCookie {
         @NotNull
-        private String name;
+        private String name = "sparkbitAuthToken";
         @NotNull
-        private String path;
+        private String path = "/";
         @NotNull
-        private Boolean allowUnsecured;
+        private Boolean allowUnsecured = false;
     }
 
     @Data
     @Validated
     public static class DatabaseSchema {
         @NotNull
-        private String userEntityName;
+        private String userEntityName = "user";
         @NotNull
-        private String userTableName;
+        private String userTableName = "uzer";
         @NotNull
-        private String userTableIdColumnName;
+        private String userTableIdColumnName = "id";
     }
 
     @Data
     @Validated
     public static class DefaultPasswordPolicy {
         @NotNull
-        private Boolean enabled;
+        private Boolean enabled = true;
         @NotNull
-        private Integer minPasswordLength;
+        private Integer minPasswordLength = 8;
     }
 
     @Data
     @Validated
     public static class ChallengeToken {
         @NotNull
-        private String allowedCharacters;
+        private String allowedCharacters = "23456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
         @NotNull
-        private Integer length;
+        private Integer length = 6;
     }
 
     @Data
     @Validated
     public static class Cors {
         @NotNull
-        private Boolean allowCredentials;
+        private Boolean allowCredentials = true;
         @NotNull
-        private String allowedHeaders;
+        private String allowedHeaders = "*";
         @NotNull
-        private String[] allowedMethods;
+        private String[] allowedMethods = {"GET", "POST", "PUT", "DELETE", "HEAD"};
         @NotNull
-        private String allowedOrigins;
+        private String allowedOrigins = "*";
         @NotNull
-        private String exposedHeaders;
+        private String exposedHeaders = "X-Sparkbit-Session-Expiration-Timestamp";
         @NotNull
-        private Duration maxAge;
+        private Duration maxAge = Duration.ofMinutes(30);
     }
 
     @Data
     @Validated
     public static class DeletedSessionPurging {
         @NotNull
-        private Boolean enabled;
+        private Boolean enabled = true;
         @NotNull
-        private Duration olderThan;
+        private Duration olderThan = Duration.ofDays(7);
         @NotNull
-        private Duration runEvery;
-
+        private Duration runEvery = Duration.ofHours(1);
     }
 
     @Data
     @Validated
     public static class EmailVerification {
         @NotNull
-        private Duration challengeValidity;
+        private Duration challengeValidity = Duration.ofHours(1);
         @NotNull
-        private Boolean enabled;
+        private Boolean enabled = false;
     }
 
     @Data
     @Validated
     public static class ExpiredChallengeDeletion {
         @NotNull
-        private Duration runEvery;
+        private Duration runEvery = Duration.ofHours(1);
     }
 
     @Data
     @Validated
     public static class ExtraAuthnCheck {
         @NotNull
-        private Duration challengeValidity;
+        private Duration challengeValidity = Duration.ofHours(1);
         @NotNull
-        private Boolean enabled;
+        private Boolean enabled = false;
     }
 
     @Data
     @Validated
     public static class PasswordReset {
         @NotNull
-        private Duration challengeValidity;
+        private Duration challengeValidity = Duration.ofHours(1);
         @NotNull
-        private Boolean informNotFound;
+        private Boolean informNotFound = false;
         @NotNull
-        private Boolean enabled;
+        private Boolean enabled = false;
     }
 
     @Data
     @Validated
     public static class SessionExpiration {
         @NotNull
-        private Boolean enabled;
+        private Boolean enabled = false;
         @NotNull
-        private Duration duration;
+        private Duration duration = Duration.ofHours(1);
         @NotNull
-        private String timestampHeaderName;
+        private String timestampHeaderName = "X-Sparkbit-Session-Expiration-Timestamp";
     }
 
     @Data
     @Validated
     public static class Paths {
         @NotNull
-        private String commonPrefix;
+        private String publicPrefix = "/public";
         @NotNull
-        private String publicPrefix;
+        private String adminPrefix = "/admin";
         @NotNull
-        private String adminPrefix;
+        private String login = "/login";
         @NotNull
-        private String login;
+        private String logout = "/logout";
         @NotNull
-        private String logout;
+        private String extraAuthCheck = "/extraAuthCheck";
         @NotNull
-        private String extraAuthCheck;
+        private String password = "/profile/password";
         @NotNull
-        private String password;
+        private String publicPasswordResetToken = "/profile/passwordResetToken";
         @NotNull
-        private String publicPasswordResetToken;
+        private String publicPassword = "/profile/password";
         @NotNull
-        private String publicPassword;
-        @NotNull
-        private String publicEmail;
+        private String publicEmail = "/profile/email";
     }
 }

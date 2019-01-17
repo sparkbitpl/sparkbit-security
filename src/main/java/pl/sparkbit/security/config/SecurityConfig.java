@@ -3,6 +3,7 @@ package pl.sparkbit.security.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +43,6 @@ import pl.sparkbit.security.service.UserDetailsService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -66,17 +66,16 @@ public class SecurityConfig {
     @Configuration
     @Order(1)
     @RequiredArgsConstructor
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static class LoginConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
         private final AuthenticationEntryPoint authenticationEntryPoint;
         private final UserDetailsService userDetailsService;
         private final ObjectMapper objectMapper;
         private final LoginPrincipalFactory loginPrincipalFactory;
-        private final Optional<FacebookResolver> facebookResolver;
-        private final Optional<GoogleResolver> googleResolver;
-        private final Optional<TwitterResolver> twitterResolver;
-        private final Optional<LoginHook> loginHook;
+        private final ObjectProvider<FacebookResolver> facebookResolver;
+        private final ObjectProvider<GoogleResolver> googleResolver;
+        private final ObjectProvider<TwitterResolver> twitterResolver;
+        private final ObjectProvider<LoginHook> loginHook;
         private final SecurityProperties configuration;
 
         @Bean
@@ -105,7 +104,7 @@ public class SecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             GenericFilterBean loginAuthenticationFiler =
                     new LoginAuthenticationFilter(authenticationManager(), authenticationEntryPoint,
-                            loginPrincipalFactory, loginHook.orElseGet(() -> new LoginHook() {
+                            loginPrincipalFactory, loginHook.getIfAvailable(() -> new LoginHook() {
                             })
                     );
             http
@@ -125,15 +124,16 @@ public class SecurityConfig {
             auth.authenticationProvider(daoAuthenticationProvider());
 
             // not lambda expression because GoogleAuthenticationProvider throws exceptions
-            if (googleResolver.isPresent()) {
-                auth.authenticationProvider(new GoogleAuthenticationProvider(googleResolver.get(), userDetailsService));
+            if (googleResolver.getIfAvailable() != null) {
+                auth.authenticationProvider(
+                        new GoogleAuthenticationProvider(googleResolver.getIfAvailable(), userDetailsService));
             }
 
-            twitterResolver.ifPresent(tw ->
+            twitterResolver.ifAvailable(tw ->
                     auth.authenticationProvider(new TwitterAuthenticationProvider(tw, userDetailsService,
                             objectMapper)));
 
-            facebookResolver.ifPresent(fr ->
+            facebookResolver.ifAvailable(fr ->
                     auth.authenticationProvider(new FacebookAuthenticationProvider(fr, userDetailsService,
                             objectMapper)));
         }
@@ -158,7 +158,6 @@ public class SecurityConfig {
                     .csrf().disable();
         }
     }
-
 
     /**
      * With this configuration /error endpoint is publicly available and security context is not available
@@ -340,7 +339,6 @@ public class SecurityConfig {
          * This method is usually usefull together with allowPublicAccess(). allowPublicAccess configures aendpoint
          * as publicly available, this method enables authentication. This is useful when we want public access,
          * but if user is logged in, we want to have access to authentication token.
-         *
          */
         @SuppressWarnings("WeakerAccess")
         public void enableAuthenticationSupport(AuthenticationManagerBuilder auth) {
