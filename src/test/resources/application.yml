@@ -1,5 +1,5 @@
 mapperTest.db:
-  url: jdbc:mysql://localhost:3306/security
+  url: jdbc:mysql://localhost:${mapperTest.db.port}/security
   username: security
   password: security
   typeAliasesPackage: pl.sparkbit.security.domain
