@@ -2,6 +2,7 @@ package pl.sparkbit.security.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import pl.sparkbit.security.password.encoder.PasswordEncoderType;
 
@@ -11,6 +12,7 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Set;
 
+@Component
 @ConfigurationProperties("sparkbit.security")
 @Data
 @SuppressWarnings("WeakerAccess")

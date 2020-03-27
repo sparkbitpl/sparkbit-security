@@ -52,7 +52,8 @@ public class SparkbitSecurityAutoConfigurationTest {
                     WebMvcAutoConfiguration.class,
                     SecurityAutoConfiguration.class,
                     MybatisAutoConfiguration.class,
-                    SparkbitSecurityAutoConfiguration.class
+                    SparkbitSecurityAutoConfiguration.class,
+                    SecurityProperties.class
             ));
 
     @Test
@@ -178,28 +179,19 @@ public class SparkbitSecurityAutoConfigurationTest {
     public static class CallbacksConfig {
         @Bean
         public PasswordResetChallengeCallback passwordResetChallengeCallback() {
-            return new PasswordResetChallengeCallback() {
-                @Override
-                public void transmitToUser(SecurityChallenge challenge) {
-                }
+            return challenge -> {
             };
         }
 
         @Bean
         public EmailVerificationChallengeCallback emailVerificationChallengeCallback() {
-            return new EmailVerificationChallengeCallback() {
-                @Override
-                public void transmitToUser(SecurityChallenge challenge) {
-                }
+            return challenge -> {
             };
         }
 
         @Bean
         public ExtraAuthnCheckChallengeCallback extraAuthnCheckChallengeCallback() {
-            return new ExtraAuthnCheckChallengeCallback() {
-                @Override
-                public void transmitToUser(SecurityChallenge challenge) {
-                }
+            return challenge -> {
             };
         }
     }
