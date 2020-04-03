@@ -14,7 +14,7 @@ import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.CREDS_1;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.CREDS_1_USER_ID;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityTestDataUtils.session;
 
-public class SessionMapperTest extends MapperTestBase {
+public class SessionMapperTest extends MapperTest {
 
     @Autowired
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")

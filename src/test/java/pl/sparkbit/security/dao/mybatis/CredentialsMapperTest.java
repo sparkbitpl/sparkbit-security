@@ -11,7 +11,7 @@ import pl.sparkbit.security.domain.Credentials;
 
 import static org.junit.Assert.assertEquals;
 
-public class CredentialsMapperTest extends MapperTestBase {
+public class CredentialsMapperTest extends MapperTest {
 
     @Autowired
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")

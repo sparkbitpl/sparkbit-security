@@ -22,7 +22,7 @@ import static pl.sparkbit.security.dao.mybatis.data.SecurityDbTables.*;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityTestData.*;
 import static pl.sparkbit.security.dao.mybatis.data.SecurityTestDataUtils.session;
 
-public class UserDetailsMapperTest extends MapperTestBase {
+public class UserDetailsMapperTest extends MapperTest {
 
     @Autowired
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
