@@ -1,3 +1,3 @@
-mapperTest.db:
-  typeAliasesPackage: pl.sparkbit.security.domain
-  schemaFiles: security-schema.sql,test-schema.sql
+mapper-test.db:
+  type-aliases-package: pl.sparkbit.security.domain
+  schema-files: security-schema.sql,test-schema.sql

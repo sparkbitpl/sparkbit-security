@@ -19,7 +19,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
 
-        <sparkbit.commons.version>2.0.7</sparkbit.commons.version>
+        <sparkbit.commons.version>2.0.8</sparkbit.commons.version>
     </properties>
 
     <build>
