@@ -79,6 +79,7 @@ class PHPass {
         return output.toString();
     }
 
+    @SuppressWarnings("checkstyle:npathcomplexity")
     private String cryptPrivate(String password, String setting) {
         String output = "*0";
         if (((setting.length() < 2) ? setting : setting.substring(0, 2)).equalsIgnoreCase(output)) {
@@ -143,6 +144,7 @@ class PHPass {
         return "*";
     }
 
+    @SuppressWarnings("checkstyle:NPathComplexity")
     boolean checkPassword(String password, String storedHash) {
         String hash = cryptPrivate(password, storedHash);
         MessageDigest md = null;

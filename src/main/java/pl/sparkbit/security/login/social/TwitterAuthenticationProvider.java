@@ -97,7 +97,8 @@ public class TwitterAuthenticationProvider implements AuthenticationProvider {
                 throw new BadCredentialsException("Email from Twitter servers does not match the given email");
             }
             return userDetailsService.loadUserByUsername(authentication.getName());
-        } catch (IOException | InterruptedException | ExecutionException | RuntimeException e) {
+        } catch (@SuppressWarnings("checkstyle:illegalcatch")
+            IOException | InterruptedException | ExecutionException | RuntimeException e) {
             throw new BadCredentialsException("Twitter Token is invalid", e);
         }
     }

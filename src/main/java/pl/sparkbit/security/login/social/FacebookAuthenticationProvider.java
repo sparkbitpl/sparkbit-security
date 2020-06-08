@@ -89,7 +89,8 @@ public class FacebookAuthenticationProvider implements AuthenticationProvider {
                 throw new BadCredentialsException("Email from Facebook servers does not match the given email");
             }
             return userDetailsService.loadUserByUsername(authentication.getName());
-        } catch (IOException | InterruptedException | ExecutionException | RuntimeException e) {
+        } catch (@SuppressWarnings("checkstyle:IllegalCatch")
+            IOException | InterruptedException | ExecutionException | RuntimeException e) {
             throw new BadCredentialsException("Facebook code is invalid", e);
         }
     }
