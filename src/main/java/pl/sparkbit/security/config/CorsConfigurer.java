@@ -17,6 +17,7 @@ public class CorsConfigurer implements WebMvcConfigurer {
                 .exposedHeaders(configuration.getCors().getExposedHeaders())
                 .allowedMethods(configuration.getCors().getAllowedMethods())
                 .allowedOrigins(configuration.getCors().getAllowedOrigins())
+                .allowedOriginPatterns(configuration.getCors().getAllowedOriginPatterns())
                 .maxAge(configuration.getCors().getMaxAge().getSeconds());
     }
 }

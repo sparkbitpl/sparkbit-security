@@ -323,7 +323,8 @@ sparkbit:
       allow-credentials: true
       allowed-headers: "*"
       allowed-methods: GET, POST, PUT, DELETE, HEAD
-      allowed-origins: "*"
+      allowed-origins: ""
+      allowed-origin-patterns: "*"
       max-age: 30m
       exposed-headers: X-Sparkbit-Session-Expiration-Timestamp
 ```

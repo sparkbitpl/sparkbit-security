@@ -122,7 +122,9 @@ public class SecurityProperties {
         @NotNull
         private String[] allowedMethods = {"GET", "POST", "PUT", "DELETE", "HEAD"};
         @NotNull
-        private String allowedOrigins = "*";
+        private String allowedOrigins = "";
+        @NotNull
+        private String allowedOriginPatterns = "*";
         @NotNull
         private String exposedHeaders = "X-Sparkbit-Session-Expiration-Timestamp";
         @NotNull
